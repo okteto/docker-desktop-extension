@@ -16,11 +16,22 @@ COPY client /app/client
 RUN --mount=type=cache,target=/usr/local/share/.cache/yarn-${TARGETARCH} yarn build
 
 FROM debian:bullseye-slim
+
 LABEL org.opencontainers.image.title="okteto" \
     org.opencontainers.image.description="Remote Development for Docker Compose" \
     org.opencontainers.image.vendor="Okteto" \
     com.docker.desktop.extension.api.version=">= 0.2.0" \
     com.docker.desktop.extension.icon="https://www.okteto.com/okteto-symbol-circle-inverse-1.1.png"
+
+RUN apt update -y && apt install curl -y
+RUN mkdir /darwin && \
+    curl -sLf --retry 3 -o /darwin/okteto https://github.com/okteto/okteto/releases/download/2.0.2/okteto-Darwin-x86_64 && \
+    chmod +x /darwin/okteto
+RUN mkdir /windows && \
+    curl -sLf --retry 3 -o /windows/okteto.exe https://github.com/okteto/okteto/releases/download/2.0.2/okteto.exe
+RUN mkdir /linux && \
+    curl -sLf --retry 3 -o /linux/okteto https://github.com/okteto/okteto/releases/download/2.0.2/okteto-Linux-x86_64 && \
+    chmod +x /linux/okteto
 
 COPY --from=client-builder /app/client/dist ui
 COPY okteto.svg .

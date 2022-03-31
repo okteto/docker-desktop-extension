@@ -8,5 +8,26 @@
       "root": "/ui",
       "src": "index.html"
     }
+  },
+  "host": {
+    "binaries": [
+      {
+        "darwin": [
+          {
+            "path": "/darwin/okteto"
+          }
+        ],
+        "windows": [
+          {
+            "path": "/windows/okteto.exe"
+          }
+        ],
+        "linux": [
+          {
+            "path": "/linux/okteto"
+          }
+        ]
+      }
+    ]
   }
 }

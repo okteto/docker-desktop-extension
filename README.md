@@ -40,13 +40,13 @@ make extension
 # Install extension
 
 ```
-docker extension install okteto/docker-desktop-extension:0.0.2
+make install-extension
 ```
 
 # Update extension
 
 ```
-docker extension update okteto/docker-desktop-extension:0.0.2
+make update-extension
 ```
 
 # Developing with hot reload

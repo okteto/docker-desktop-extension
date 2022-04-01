@@ -1,25 +1,25 @@
-interface OktetoResult<E> {
+export interface OktetoResult<E> {
   value: E
-  error?: string
+  error: string | null
 };
 
-interface OktetoContext {
+export interface OktetoContext {
   name: string
   namespace: string
   builder: string
   registry: string
 };
 
-type OktetoContextList = OktetoResult<Array<OktetoContext>>;
+export type OktetoContextList = Array<OktetoContext>;
 
-const getContextList = () : Promise<OktetoContextList> => {
+const getContextList = () : Promise<OktetoResult<OktetoContextList>> => {
   return new Promise(done => {
     let output = '';
     let error: string | null = null;
+    let value: OktetoContextList = [];
     window.ddClient.extension.host.cli.exec('okteto', ['context', 'list', '-o', 'json'], {
       stream: {
         onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
-          // console.log(line.stdout);
           output += line.stdout;
         },
         onError(e: string): void {
@@ -27,24 +27,22 @@ const getContextList = () : Promise<OktetoContextList> => {
           error = `${error ?? ''}${e}`;
         },
         onClose(exitCode: number): void {
-          console.log(`onClose with exit code ${exitCode}`);
-          const result: OktetoContextList = { value: [] };
           if (exitCode == 0) {
-            result.value = JSON.parse(output);
+            value = JSON.parse(output);
           }
-          console.log(result);
-          done(result);
+          done({ value, error });
         },
       },
     });
   });
 };
 
-const setContext = (context: string) : Promise<OktetoResult<string>> => {
+const getContext = () : Promise<OktetoResult<OktetoContext | null>> => {
   return new Promise(done => {
     let output = '';
     let error: string | null = null;
-    window.ddClient.extension.host.cli.exec('okteto', ['context', 'use', context], {
+    let value: OktetoContext | null = null;
+    window.ddClient.extension.host.cli.exec('okteto', ['context', 'show', '-o', 'json'], {
       stream: {
         onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
           output += line.stdout;
@@ -54,11 +52,35 @@ const setContext = (context: string) : Promise<OktetoResult<string>> => {
           error = `${error ?? ''}${e}`;
         },
         onClose(exitCode: number): void {
-          const result: OktetoResult<string> = { value: '' };
           if (exitCode == 0) {
-            result.value
+            value = JSON.parse(output);
           }
-          done(result);
+          done({ value, error });
+        },
+      },
+    });
+  });
+};
+
+const setContext = (contextName: string) : Promise<OktetoResult<boolean>> => {
+  return new Promise(done => {
+    let output = '';
+    let error: string | null = null;
+    let value = false;
+    window.ddClient.extension.host.cli.exec('okteto', ['context', 'use', contextName], {
+      stream: {
+        onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
+          output += line.stdout;
+        },
+        onError(e: string): void {
+          console.error(e);
+          error = `${error ?? ''}${e}`;
+        },
+        onClose(exitCode: number): void {
+          if (exitCode == 0) {
+            value = true;
+          }
+          done({ value, error });
         },
       },
     });
@@ -67,5 +89,6 @@ const setContext = (context: string) : Promise<OktetoResult<string>> => {
 
 export default {
   getContextList,
+  getContext,
   setContext
 };

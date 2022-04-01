@@ -1,13 +1,17 @@
 import { useState } from 'react';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
-import { Box, Button } from '@mui/material';
+import { Box } from '@mui/material';
 
+import { useOkteto } from './contexts/Okteto.context';
 import PathSelector from './views/PathSelector';
 import Environment from './views/Environment';
+import Login from './views/Login';
+import Loader from './views/Loader';
 
 export function App() {
   const ddClient = createDockerDesktopClient();
 
+  const { currentContext, loading } = useOkteto();
   const [path, setPath] = useState<string | null>(null);
 
   const handleLaunch = (path: string) => {
@@ -25,12 +29,20 @@ export function App() {
       py: 2,
       height: '100vh',
     }}>
-      {!path &&
-        <PathSelector onLaunch={handleLaunch} />
-      }
-      {path &&
-        <Environment path={path} onReset={handleReset} />
-      }
+      {loading ? <Loader /> : (
+        <>
+          {!currentContext ? (
+            <Login />
+          ) : (
+            <>
+              {path ?
+                <Environment path={path} onReset={handleReset} /> :
+                <PathSelector onLaunch={handleLaunch} />
+              }
+            </>
+          )}
+        </>
+      )}
     </Box>
   );
 }

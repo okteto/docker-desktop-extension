@@ -1,4 +1,4 @@
-import { ChangeEvent, useMemo, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { Box, Button } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import FormLabel from '@mui/material/FormLabel';
@@ -10,7 +10,7 @@ type PathSelectorProps = {
   onLaunch?: (path: string) => void
 };
 
-const defaultPath = '';
+const defaultPath = '/Users/rlamana/Repositories/okteto/compose-getting-started/docker-compose.yml';
 
 function PathSelector({ onLaunch }: PathSelectorProps) {
   const [path, setPath] = useState(defaultPath);
@@ -46,16 +46,14 @@ function PathSelector({ onLaunch }: PathSelectorProps) {
           />
         </FormControl>
 
-        <Button variant="contained" size="large" onClick={() => onLaunch?.(path)}>
+        <Button
+          variant="contained"
+          size="large"
+          sx={{ fontSize: '1rem' }}
+          onClick={() => onLaunch?.(path)}
+        >
           Launch Remote Environment
         </Button>
-
-        {false && <Button variant="contained" size="large" onClick={async () => {
-          const contexts = await okteto.getContextList();
-          console.log(contexts);
-        }}>
-          Login
-        </Button>}
       </Box>
     </Box>
   );

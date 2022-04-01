@@ -30,13 +30,7 @@ function Environment({ path, onReset }: EnvironmentProps) {
   }, [path]);
 
   return (
-    <Box sx={{
-      display: 'flex',
-      flex: 1,
-      flexDirection: 'column',
-      height: '100%',
-      gap: 1
-    }}>
+    <>
       Docker-compose file: {path}
       <Output>
         {output}
@@ -44,7 +38,7 @@ function Environment({ path, onReset }: EnvironmentProps) {
       <Button variant="contained" size="large" onClick={onReset}>
         Stop
       </Button>
-    </Box>
+    </>
   );
 }
 

@@ -13,7 +13,7 @@ function Output({ children }: OutputProps) {
       width: '100%',
       px: 3,
       py: 2,
-      bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
+      bgcolor: theme => theme.palette.mode === 'dark' ? '#101010' : '#fff',
       color: theme => theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
       border: '0',
       borderRadius: 2,

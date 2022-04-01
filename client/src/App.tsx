@@ -26,7 +26,7 @@ export function App() {
   return (
     <Box sx={{
       m: 0,
-      px: 1,
+      px: 0,
       py: 2,
       height: '100vh',
     }}>
@@ -35,12 +35,18 @@ export function App() {
           {!isLoggedIn ? (
             <Login />
           ) : (
-            <>
+            <Box sx={{
+              display: 'flex',
+              flex: 1,
+              flexDirection: 'column',
+              height: '100%',
+              gap: 1
+            }}>
               {path ?
                 <Environment path={path} onReset={handleReset} /> :
                 <PathSelector onLaunch={handleLaunch} />
               }
-            </>
+            </Box>
           )}
         </>
       )}

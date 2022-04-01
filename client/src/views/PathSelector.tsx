@@ -1,10 +1,11 @@
 import { ChangeEvent, useState } from 'react';
-import { Box, Button } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
 
 import okteto from '../api/okteto';
+import logoDark from '../images/logo-dark.svg';
 
 type PathSelectorProps = {
   onLaunch?: (path: string) => void
@@ -20,42 +21,67 @@ function PathSelector({ onLaunch }: PathSelectorProps) {
   };
 
   return (
-    <Box sx={{
-      display: 'flex',
-      flex: 1,
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: '100%',
-      width: '100%'
-    }}>
+    <>
       <Box sx={{
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: 'row',
         alignItems: 'center',
         width: '100%',
+        bgcolor: theme => theme.palette.mode === 'dark' ? '#13222a' : 'grey.800',
+        borderRadius: 1,
+        boxShadow: 2,
+        py: 2,
+        px: 3,
+        mb: 2,
         gap: 2
       }}>
-        <FormControl sx={{ flex: 1, width: '100%'}}>
-          <FormLabel>Docker-compose.yml full path:</FormLabel>
-          <TextField
-            defaultValue={defaultPath}
-            hiddenLabel
-            placeholder="/path/to/your/docker-compose"
-            onChange={handlePathChange}
-          />
-        </FormControl>
-
+        <img src={logoDark} width="100" />
+        <div style={{ flex: '1 auto' }} />
+        <Typography variant="body2">
+          Connected to: <strong>Okteto Cloud</strong>
+        </Typography>
         <Button
-          variant="contained"
-          size="large"
-          sx={{ fontSize: '1rem' }}
-          onClick={() => onLaunch?.(path)}
+          variant="outlined"
+          size="small"
+          onClick={() => {}}
         >
-          Launch Remote Environment
+          Logout
         </Button>
       </Box>
-    </Box>
+
+      <Box sx={{
+        display: 'flex',
+        flex: 1,
+        flexDirection: 'column',
+        width: '100%'
+      }}>
+        <Box sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          width: '100%',
+          gap: 1
+        }}>
+          <FormControl sx={{ flex: 1, width: '100%'}}>
+            <TextField
+              defaultValue={defaultPath}
+              hiddenLabel
+              placeholder="/path/to/your/docker-compose"
+              onChange={handlePathChange}
+            />
+          </FormControl>
+
+          <Button
+            variant="contained"
+            size="large"
+            sx={{ fontSize: '1rem', height: '3.2rem' }}
+            onClick={() => onLaunch?.(path)}
+          >
+            Launch Remote Environment
+          </Button>
+        </Box>
+      </Box>
+    </>
   );
 }
 

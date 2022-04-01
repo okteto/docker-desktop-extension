@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode, Dispatch, SetStateAction } from 'react';
+import { createContext, useContext, useState, ReactNode, Dispatch, SetStateAction, useEffect } from 'react';
 
 import okteto, { OktetoContext } from '../api/okteto';
 import useIntervalWhileVisible from '../hooks/useIntervalWhileVisible';
@@ -7,6 +7,7 @@ interface OktetoInterface {
   currentContext: OktetoContext | null
   login: () => void
   loading: boolean
+  ready: boolean
 }
 
 const Okteto = createContext<OktetoInterface | null>(null);
@@ -21,29 +22,36 @@ const CLOUD_CONTEXT_NAME = 'https://cloud.okteto.com';
 const OktetoProvider = ({ children } : OktetoProviderProps) => {
   const [currentContext, setCurrentContext] = useState<OktetoContext | null>(null);
   const [loading, setLoading] = useState(false);
+  const [ready, setReady] = useState(false);
 
   const login = async () => {
     setLoading(true);
     await okteto.setContext(CLOUD_CONTEXT_NAME);
   };
 
-  useIntervalWhileVisible(async () => {
-    // Update current context.
+  const refreshCurrentContext = async () => {
     const { value, error } = await okteto.getContext();
-    if (!error && value?.name === CLOUD_CONTEXT_NAME) {
-      if (loading) setLoading(false);
-      setCurrentContext(value);
-    } else {
-      setCurrentContext(null);
-    }
-  }, CONTEXT_POLLING_INTERVAL, true);
+    const isLoggedIn = !error && value?.name === CLOUD_CONTEXT_NAME;
+    setCurrentContext(isLoggedIn ? value : null);
+  };
 
+  useEffect(() => {
+    if (loading) {
+      setLoading(false);
+    }
+  }, [currentContext]);
+
+  useIntervalWhileVisible(async () => {
+    await refreshCurrentContext();
+    setReady(true);
+  }, CONTEXT_POLLING_INTERVAL);
 
   return (
     <Okteto.Provider value={{
       currentContext,
       loading,
-      login
+      login,
+      ready
     }}>
       {children}
     </Okteto.Provider>

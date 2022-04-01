@@ -11,8 +11,9 @@ import Loader from './views/Loader';
 export function App() {
   const ddClient = createDockerDesktopClient();
 
-  const { currentContext, loading } = useOkteto();
+  const { currentContext, loading, ready } = useOkteto();
   const [path, setPath] = useState<string | null>(null);
+  const isLoggedIn = !!currentContext;
 
   const handleLaunch = (path: string) => {
     setPath(path);
@@ -29,9 +30,9 @@ export function App() {
       py: 2,
       height: '100vh',
     }}>
-      {loading ? <Loader /> : (
+      {!ready || loading ? <Loader /> : (
         <>
-          {!currentContext ? (
+          {!isLoggedIn ? (
             <Login />
           ) : (
             <>

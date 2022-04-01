@@ -4,6 +4,8 @@ import TextField from '@mui/material/TextField';
 import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
 
+import okteto from '../api/okteto';
+
 type PathSelectorProps = {
   onLaunch?: (path: string) => void
 };
@@ -47,6 +49,13 @@ function PathSelector({ onLaunch }: PathSelectorProps) {
         <Button variant="contained" size="large" onClick={() => onLaunch?.(path)}>
           Launch Remote Environment
         </Button>
+
+        {false && <Button variant="contained" size="large" onClick={async () => {
+          const contexts = await okteto.getContextList();
+          console.log(contexts);
+        }}>
+          Login
+        </Button>}
       </Box>
     </Box>
   );

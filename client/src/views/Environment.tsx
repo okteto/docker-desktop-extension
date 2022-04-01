@@ -12,7 +12,7 @@ function Environment({ path, onReset }: EnvironmentProps) {
   const [output, setOutput] = useState('Running okteto...\n');
 
   useEffect(() => {
-    const args = ['deploy', '-f', path, '-o', 'plain'];
+    const args = ['up', '-f', path, '-l', 'plain'];
     window.ddClient.extension.host.cli.exec('okteto', args, {
       stream: {
         onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {

@@ -10,17 +10,17 @@ GO_BUILD=$(STATIC_FLAGS) go build -trimpath -ldflags=$(LDFLAGS)
 INFO_COLOR = \033[0;36m
 NO_COLOR   = \033[m
 
-install-extension: build-extension ## Install the extension
+install-extension: extension ## Install the extension
 	docker extension install $(IMAGE):$(TAG)
 
-update-extension: build-extension ## Update the extension
+update-extension: extension ## Update the extension
 	docker extension update $(IMAGE):$(TAG)
 
 prepare-buildx: ## Create buildx builder for multi-arch build, if not exists
 	docker buildx inspect $(BUILDER) || docker buildx create --name=$(BUILDER) --driver=docker-container --driver-opt=network=host
 
 extension: prepare-buildx ## Build & Upload extension image to hub. Do not push if tag already exists: make push-extension tag=0.1
-	docker buildx build --push --builder=$(BUILDER) --platform=linux/amd64,linux/arm64 --build-arg TAG=$(TAG) --tag=$(IMAGE):$(TAG) .
+	docker pull $(IMAGE):$(tag) && echo "Failure: Tag already exists" || docker buildx build --push --builder=$(BUILDER) --platform=linux/amd64,linux/arm64 --build-arg TAG=$(TAG) --tag=$(IMAGE):$(TAG) .
 
 help: ## Show this help
 	@echo Please specify a build target. The choices are:

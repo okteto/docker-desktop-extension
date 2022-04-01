@@ -5,7 +5,7 @@ const useIntervalWhileVisible = (callback: () => void, delay = 0, immediate = tr
     let interval: number;
 
     const handleVisibilityChange = () => {
-      clearInterval(interval);
+      window.clearInterval(interval);
       if (document.visibilityState === 'hidden') return;
       if (immediate) callback();
       interval = window.setInterval(callback, delay);

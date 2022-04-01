@@ -10,7 +10,7 @@ type PathSelectorProps = {
   onLaunch?: (path: string) => void
 };
 
-const defaultPath = '/Users/rlamana/Repositories/okteto/compose-getting-started/docker-compose.yml';
+const defaultPath = '';
 
 function PathSelector({ onLaunch }: PathSelectorProps) {
   const [path, setPath] = useState(defaultPath);

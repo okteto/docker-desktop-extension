@@ -5,19 +5,22 @@ import FormControl from '@mui/material/FormControl';
 
 import { useOkteto } from '../contexts/Okteto.context';
 import okteto from '../api/okteto';
+import illustration from '../images/illustration.svg';
 
-const defaultPath = '/Users/rlamana/Repositories/okteto/compose-getting-started/docker-compose.yml';
+const defaultFile = '/Users/rlamana/Repositories/okteto/compose-getting-started/docker-compose.yml';
 
 function SelectCompose() {
-  const { launchEnvironment } = useOkteto();
-  const [path, setPath] = useState(defaultPath);
+  const { environment, selectEnvironment } = useOkteto();
+  const [file, setFile] = useState(defaultFile);
 
-  const handlePathChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setPath(e.target.value);
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setFile(e.target.value);
   };
 
   const handleLaunch = () => {
-    launchEnvironment(path);
+    if (file) {
+      selectEnvironment(file);
+    }
   };
 
   return (
@@ -28,6 +31,8 @@ function SelectCompose() {
         flexDirection: 'column',
         width: '100%'
       }}>
+        {/* <img src={illustration} width="240" /> */}
+
         <Box sx={{
           display: 'flex',
           flexDirection: 'row',
@@ -37,10 +42,10 @@ function SelectCompose() {
         }}>
           <FormControl sx={{ flex: 1, width: '100%'}}>
             <TextField
-              defaultValue={defaultPath}
+              defaultValue={defaultFile}
               hiddenLabel
-              placeholder="/path/to/your/docker-compose"
-              onChange={handlePathChange}
+              placeholder="/file/to/your/docker-compose"
+              onChange={handleFileChange}
             />
           </FormControl>
 
@@ -57,8 +62,9 @@ function SelectCompose() {
             variant="contained"
             size="large"
             sx={{ fontSize: '1rem', height: '3.2rem' }}
-            onClick={() => {
-              okteto.getEndpointsList(defaultPath);
+            onClick={async () => {
+              const { value: endpoints } = await okteto.endpoints(defaultFile);
+              console.log(endpoints);
             }}
           >
             Test

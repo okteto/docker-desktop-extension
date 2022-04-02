@@ -1,4 +1,6 @@
-import { createContext, useContext, useState, ReactNode, Dispatch, SetStateAction, useEffect } from 'react';
+import {
+  createContext, useContext, useState, useCallback, ReactNode, useEffect
+} from 'react';
 
 import okteto, { OktetoContext } from '../api/okteto';
 import useIntervalWhileVisible from '../hooks/useIntervalWhileVisible';
@@ -17,8 +19,8 @@ interface OktetoStore {
 
   login: () => void
   logout: () => void
-  launchEnvironment: (f: string) => void
-  stopEnvironment: () => void
+  stopEnvironment: () => void,
+  selectEnvironment: (f: string) => void
 }
 
 const Okteto = createContext<OktetoStore | null>(null);
@@ -36,16 +38,16 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
 
-  const login = async () => {
+  const login = useCallback(() => {
     setLoading(true);
-    await okteto.setContext(CLOUD_CONTEXT_NAME);
-  };
+    okteto.contextUse(CLOUD_CONTEXT_NAME);
+  }, [setLoading]);
 
-  const logout = async () => {
-    await okteto.deleteContext(CLOUD_CONTEXT_NAME);
-  };
+  const logout = useCallback(() => {
+    okteto.contextDelete(CLOUD_CONTEXT_NAME);
+  }, []);
 
-  const launchEnvironment = async (file: string) => {
+  const selectEnvironment = (file: string) => {
     setEnvironment({
       file,
       link: 'https://cloud.okteto.com',
@@ -58,7 +60,7 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
   };
 
   const refreshCurrentContext = async () => {
-    const { value, error } = await okteto.getContext();
+    const { value, error } = await okteto.contextShow();
     const isLoggedIn = !error && value?.name === CLOUD_CONTEXT_NAME;
     setCurrentContext(isLoggedIn ? value : null);
   };
@@ -83,8 +85,8 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
 
       login,
       logout,
-      launchEnvironment,
-      stopEnvironment
+      stopEnvironment,
+      selectEnvironment
     }}>
       {children}
     </Okteto.Provider>

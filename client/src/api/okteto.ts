@@ -12,7 +12,7 @@ export interface OktetoContext {
 
 export type OktetoContextList = Array<OktetoContext>;
 
-const getContextList = () : Promise<OktetoResult<OktetoContextList>> => {
+const contextList = () : Promise<OktetoResult<OktetoContextList>> => {
   return new Promise(done => {
     let output = '';
     let error: string | null = null;
@@ -37,7 +37,7 @@ const getContextList = () : Promise<OktetoResult<OktetoContextList>> => {
   });
 };
 
-const getContext = () : Promise<OktetoResult<OktetoContext | null>> => {
+const contextShow = () : Promise<OktetoResult<OktetoContext | null>> => {
   return new Promise(done => {
     let output = '';
     let error: string | null = null;
@@ -62,7 +62,7 @@ const getContext = () : Promise<OktetoResult<OktetoContext | null>> => {
   });
 };
 
-const setContext = (contextName: string) : Promise<OktetoResult<boolean>> => {
+const contextUse = (contextName: string) : Promise<OktetoResult<boolean>> => {
   return new Promise(done => {
     let output = '';
     let error: string | null = null;
@@ -87,7 +87,7 @@ const setContext = (contextName: string) : Promise<OktetoResult<boolean>> => {
   });
 };
 
-const deleteContext = (contextName: string) : Promise<OktetoResult<boolean>> => {
+const contextDelete = (contextName: string) : Promise<OktetoResult<boolean>> => {
   return new Promise(done => {
     let output = '';
     let error: string | null = null;
@@ -112,7 +112,7 @@ const deleteContext = (contextName: string) : Promise<OktetoResult<boolean>> => 
   });
 };
 
-const getEndpointsList = (manifestFile: string) : Promise<OktetoResult<OktetoContextList>> => {
+const endpoints = (manifestFile: string) : Promise<OktetoResult<OktetoContextList>> => {
   return new Promise(done => {
     let output = '';
     let error: string | null = null;
@@ -127,7 +127,10 @@ const getEndpointsList = (manifestFile: string) : Promise<OktetoResult<OktetoCon
           error = `${error ?? ''}${e}`;
         },
         onClose(exitCode: number): void {
-          console.log(output);
+          const fakeOutput = `[
+            "https://vote-rlamana.cloud.okteto.net/"
+          ]`;
+          output = fakeOutput;
           if (exitCode == 0) {
             value = JSON.parse(output);
           }
@@ -138,10 +141,37 @@ const getEndpointsList = (manifestFile: string) : Promise<OktetoResult<OktetoCon
   });
 };
 
+const up = (manifestFile: string, onOutputChange: (stdout: string) => void) : Promise<OktetoResult<boolean>> => {
+  return new Promise(done => {
+    let error: string | null = null;
+    let value = false;
+    let stdout = '';
+    window.ddClient.extension.host.cli.exec('okteto', ['up', '-f', manifestFile, '-l', 'plain'], {
+      stream: {
+        onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
+          stdout += line.stdout;
+          onOutputChange(stdout);
+        },
+        onError(e: any): void {
+          console.error(e);
+          error = `${error ?? ''}${e}`;
+        },
+        onClose(exitCode: number): void {
+          if (exitCode == 0) {
+            value = true;
+          }
+          done({ value, error });
+        },
+      },
+    });
+  });
+};
+
 export default {
-  getContextList,
-  getContext,
-  setContext,
-  deleteContext,
-  getEndpointsList
+  contextList,
+  contextShow,
+  contextUse,
+  contextDelete,
+  endpoints,
+  up
 };

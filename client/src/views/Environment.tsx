@@ -16,8 +16,8 @@ const endpoints = [
 ];
 
 function Environment() {
-  const [output, setOutput] = useState('Running okteto...\n');
   const { environment, stopEnvironment } = useOkteto();
+  const [output, setOutput] = useState('Running okteto...\n');
 
   const handleOpenEnvironment = () => {
     if (environment) {
@@ -26,23 +26,20 @@ function Environment() {
   };
 
   useEffect(() => {
-    if (environment?.file) {
-      const args = ['up', '-f', environment.file, '-l', 'plain'];
-      window.ddClient.extension.host.cli.exec('okteto', args, {
-        stream: {
-          onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
-            console.log(line.stdout);
-            setOutput(output => `${output}${line.stdout ?? ''}${line.stderr ?? ''}`);
-          },
-          onError(error: any): void {
-            console.error(error);
-          },
-          onClose(exitCode: number): void {
-            console.log(`onClose with exit code ${exitCode}`);
-          },
+    if (!environment?.file) return;
+    const args = ['up', '-f', environment.file, '-l', 'plain'];
+    window.ddClient.extension.host.cli.exec('okteto', args, {
+      stream: {
+        onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
+          setOutput(output => `${output}${line.stdout ?? ''}${line.stderr ?? ''}`);
         },
-      });
-    }
+        onError(error: any): void {
+          console.error(error);
+        },
+        onClose(exitCode: number): void {
+        }
+      },
+    });
   }, [environment]);
 
   return (
@@ -110,7 +107,7 @@ function Environment() {
       </Box>
 
       <Output>
-        {output}
+        {output ?? 'No output.'}
       </Output>
     </>
   );

@@ -7,6 +7,7 @@ import PathSelector from './views/PathSelector';
 import Environment from './views/Environment';
 import Login from './views/Login';
 import Loader from './views/Loader';
+import Header from './components/Header';
 
 export function App() {
   const ddClient = createDockerDesktopClient();
@@ -42,6 +43,7 @@ export function App() {
               height: '100%',
               gap: 1
             }}>
+              <Header />
               {path ?
                 <Environment path={path} onReset={handleReset} /> :
                 <PathSelector onLaunch={handleLaunch} />

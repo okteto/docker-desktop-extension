@@ -87,6 +87,31 @@ const setContext = (contextName: string) : Promise<OktetoResult<boolean>> => {
   });
 };
 
+const deleteContext = (contextName: string) : Promise<OktetoResult<boolean>> => {
+  return new Promise(done => {
+    let output = '';
+    let error: string | null = null;
+    let value = false;
+    window.ddClient.extension.host.cli.exec('okteto', ['context', 'delete', contextName], {
+      stream: {
+        onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
+          output += line.stdout;
+        },
+        onError(e: string): void {
+          console.error(e);
+          error = `${error ?? ''}${e}`;
+        },
+        onClose(exitCode: number): void {
+          if (exitCode == 0) {
+            value = true;
+          }
+          done({ value, error });
+        },
+      },
+    });
+  });
+};
+
 const getEndpointsList = (manifestFile: string) : Promise<OktetoResult<OktetoContextList>> => {
   return new Promise(done => {
     let output = '';
@@ -117,5 +142,6 @@ export default {
   getContextList,
   getContext,
   setContext,
+  deleteContext,
   getEndpointsList
 };

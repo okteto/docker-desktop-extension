@@ -1,10 +1,13 @@
 import { Box, Button, Typography } from '@mui/material';
 
+import { useOkteto } from '../contexts/Okteto.context';
 import logoDark from '../images/logo-dark.svg';
 
 type HeaderProps = {};
 
 function Header({}: HeaderProps) {
+  const { logout } = useOkteto();
+
   return (
     <Box sx={{
       display: 'flex',
@@ -24,7 +27,11 @@ function Header({}: HeaderProps) {
       <Button
         variant="outlined"
         size="small"
-        onClick={() => {}}
+        onClick={logout}
+        sx={{
+          color: 'white',
+          borderColor: 'white'
+        }}
       >
         Logout
       </Button>

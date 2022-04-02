@@ -17,6 +17,7 @@ function Output({ children }: OutputProps) {
       color: 'grey.300',
       border: '0',
       borderRadius: 1,
+      boxShadow: 1,
       fontSize: '0.8rem',
       fontWeight: 'normal',
       overflowX: 'hidden',

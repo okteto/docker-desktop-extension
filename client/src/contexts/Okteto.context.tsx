@@ -3,14 +3,25 @@ import { createContext, useContext, useState, ReactNode, Dispatch, SetStateActio
 import okteto, { OktetoContext } from '../api/okteto';
 import useIntervalWhileVisible from '../hooks/useIntervalWhileVisible';
 
-interface OktetoInterface {
-  currentContext: OktetoContext | null
-  login: () => void
-  loading: boolean
-  ready: boolean
+interface OktetoEnvironment {
+  file: string
+  link: string
+  endpoints: Array<string>
 }
 
-const Okteto = createContext<OktetoInterface | null>(null);
+interface OktetoStore {
+  currentContext: OktetoContext | null
+  environment: OktetoEnvironment | null
+  loading: boolean
+  ready: boolean
+
+  login: () => void
+  logout: () => void
+  launchEnvironment: (f: string) => void
+  stopEnvironment: () => void
+}
+
+const Okteto = createContext<OktetoStore | null>(null);
 
 type OktetoProviderProps = {
   children?: ReactNode
@@ -21,12 +32,29 @@ const CLOUD_CONTEXT_NAME = 'https://cloud.okteto.com';
 
 const OktetoProvider = ({ children } : OktetoProviderProps) => {
   const [currentContext, setCurrentContext] = useState<OktetoContext | null>(null);
+  const [environment, setEnvironment] = useState<OktetoEnvironment | null>(null);
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
 
   const login = async () => {
     setLoading(true);
     await okteto.setContext(CLOUD_CONTEXT_NAME);
+  };
+
+  const logout = async () => {
+    await okteto.deleteContext(CLOUD_CONTEXT_NAME);
+  };
+
+  const launchEnvironment = async (file: string) => {
+    setEnvironment({
+      file,
+      link: 'https://cloud.okteto.com',
+      endpoints: []
+    });
+  };
+
+  const stopEnvironment = async () => {
+    setEnvironment(null);
   };
 
   const refreshCurrentContext = async () => {
@@ -49,16 +77,21 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
   return (
     <Okteto.Provider value={{
       currentContext,
+      environment,
       loading,
+      ready,
+
       login,
-      ready
+      logout,
+      launchEnvironment,
+      stopEnvironment
     }}>
       {children}
     </Okteto.Provider>
   );
 };
 
-const useOkteto = () : OktetoInterface => {
+const useOkteto = () : OktetoStore => {
   const ctx = useContext(Okteto);
   if (ctx === null) {
     throw new Error('useOkteto must be used within a OktetoProvider');

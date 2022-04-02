@@ -2,41 +2,48 @@ import { useEffect, useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import LinkIcon from '@mui/icons-material/Link';
+import StopCircleIcon from '@mui/icons-material/StopCircle';
+import OpenInBrowserIcon from '@mui/icons-material/OpenInBrowser';
 
+import { useOkteto } from '../contexts/Okteto.context';
 import Output from '../components/Output';
 import Atom from '../components/Atom';
 import Link from '../components/Link';
-
-type EnvironmentProps = {
-  path: string
-  onReset?: () => void
-};
 
 const endpoints = [
   'https://movies-rlamana.staging.okteto.net',
   'https://movies-rlamana.staging.okteto.net/api'
 ];
 
-function Environment({ path, onReset }: EnvironmentProps) {
+function Environment() {
   const [output, setOutput] = useState('Running okteto...\n');
+  const { environment, stopEnvironment } = useOkteto();
+
+  const handleOpenEnvironment = () => {
+    if (environment) {
+      window.ddClient.host.openExternal(environment.link);
+    }
+  };
 
   useEffect(() => {
-    const args = ['up', '-f', path, '-l', 'plain'];
-    window.ddClient.extension.host.cli.exec('okteto', args, {
-      stream: {
-        onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
-          console.log(line.stdout);
-          setOutput(output => `${output}${line.stdout ?? ''}${line.stderr ?? ''}`);
+    if (environment?.file) {
+      const args = ['up', '-f', environment.file, '-l', 'plain'];
+      window.ddClient.extension.host.cli.exec('okteto', args, {
+        stream: {
+          onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
+            console.log(line.stdout);
+            setOutput(output => `${output}${line.stdout ?? ''}${line.stderr ?? ''}`);
+          },
+          onError(error: any): void {
+            console.error(error);
+          },
+          onClose(exitCode: number): void {
+            console.log(`onClose with exit code ${exitCode}`);
+          },
         },
-        onError(error: any): void {
-          console.error(error);
-        },
-        onClose(exitCode: number): void {
-          console.log(`onClose with exit code ${exitCode}`);
-        },
-      },
-    });
-  }, [path]);
+      });
+    }
+  }, [environment]);
 
   return (
     <>
@@ -48,20 +55,53 @@ function Environment({ path, onReset }: EnvironmentProps) {
         borderRadius: 1,
         px: 3,
         py: 2,
-        gap: 2
+        gap: 2,
+        boxShadow: 1
       }}>
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+          flexDirection: 'row',
+          width: '100%',
+          gap: 1
+        }}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+            Remote Environment
+          </Typography>
+          <div style={{ flex: '1 auto' }} />
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<OpenInBrowserIcon />}
+            onClick={handleOpenEnvironment}
+          >
+            Open in Okteto
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            startIcon={<StopCircleIcon />}
+            onClick={stopEnvironment}
+          >
+            Stop
+          </Button>
+        </Box>
+
         <Atom
           label="Docker-compose file:"
           icon={<InsertDriveFileIcon htmlColor="#B0BCD7" />}
         >
-          <Typography variant="body1">{path}</Typography>
+          <Typography variant="body1">{environment?.file}</Typography>
         </Atom>
 
         <Atom
           label="Endpoints:"
           icon={<LinkIcon htmlColor="#B0BCD7" />}
         >
-          {endpoints.map(endpoint => (
+          {environment?.endpoints.length === 0 &&
+            <Typography variant="body1">No endpoints available</Typography>
+          }
+          {environment?.endpoints.map(endpoint => (
             <Link href={endpoint}>
               {endpoint}
             </Link>
@@ -72,9 +112,6 @@ function Environment({ path, onReset }: EnvironmentProps) {
       <Output>
         {output}
       </Output>
-      <Button variant="contained" size="large" onClick={onReset}>
-        Stop
-      </Button>
     </>
   );
 }

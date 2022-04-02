@@ -2,19 +2,22 @@ import { ChangeEvent, useState } from 'react';
 import { Box, Button } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
-import okteto from '../api/okteto';
 
-type PathSelectorProps = {
-  onLaunch?: (path: string) => void
-};
+import { useOkteto } from '../contexts/Okteto.context';
+import okteto from '../api/okteto';
 
 const defaultPath = '/Users/rlamana/Repositories/okteto/compose-getting-started/docker-compose.yml';
 
-function PathSelector({ onLaunch }: PathSelectorProps) {
+function SelectCompose() {
+  const { launchEnvironment } = useOkteto();
   const [path, setPath] = useState(defaultPath);
 
   const handlePathChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPath(e.target.value);
+  };
+
+  const handleLaunch = () => {
+    launchEnvironment(path);
   };
 
   return (
@@ -45,7 +48,7 @@ function PathSelector({ onLaunch }: PathSelectorProps) {
             variant="contained"
             size="large"
             sx={{ fontSize: '1rem', height: '3.2rem' }}
-            onClick={() => onLaunch?.(path)}
+            onClick={handleLaunch}
           >
             Launch Remote Environment
           </Button>
@@ -66,4 +69,4 @@ function PathSelector({ onLaunch }: PathSelectorProps) {
   );
 }
 
-export default PathSelector;
+export default SelectCompose;

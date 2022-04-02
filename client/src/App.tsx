@@ -3,26 +3,17 @@ import { createDockerDesktopClient } from '@docker/extension-api-client';
 import { Box } from '@mui/material';
 
 import { useOkteto } from './contexts/Okteto.context';
-import PathSelector from './views/PathSelector';
 import Environment from './views/Environment';
+import SelectCompose from './views/SelectCompose';
 import Login from './views/Login';
 import Loader from './views/Loader';
-import Header from './components/Header';
+import Header from './views/Header';
 
 export function App() {
-  const ddClient = createDockerDesktopClient();
+  createDockerDesktopClient();
 
-  const { currentContext, loading, ready } = useOkteto();
-  const [path, setPath] = useState<string | null>(null);
+  const { currentContext, environment, loading, ready } = useOkteto();
   const isLoggedIn = !!currentContext;
-
-  const handleLaunch = (path: string) => {
-    setPath(path);
-  };
-
-  const handleReset = () => {
-    setPath(null);
-  };
 
   return (
     <Box sx={{
@@ -44,9 +35,9 @@ export function App() {
               gap: 1
             }}>
               <Header />
-              {path ?
-                <Environment path={path} onReset={handleReset} /> :
-                <PathSelector onLaunch={handleLaunch} />
+              {environment?.file ?
+                <Environment /> :
+                <SelectCompose />
               }
             </Box>
           )}

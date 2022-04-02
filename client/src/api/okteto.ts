@@ -151,7 +151,7 @@ const up = (manifestFile: string, onOutputChange: (stdout: string) => void) : Pr
     window.ddClient.extension.host.cli.exec('okteto', ['up', '-f', manifestFile, '-l', 'plain'], {
       stream: {
         onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
-          stdout += line.stdout;
+          stdout = `${stdout}${line.stdout ?? ''}${line.stderr ?? ''}`;
           onOutputChange(stdout);
         },
         onError(e: any): void {

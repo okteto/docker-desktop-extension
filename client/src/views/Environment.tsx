@@ -27,18 +27,8 @@ function Environment() {
 
   useEffect(() => {
     if (!environment?.file) return;
-    const args = ['up', '-f', environment.file, '-l', 'plain'];
-    window.ddClient.extension.host.cli.exec('okteto', args, {
-      stream: {
-        onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
-          setOutput(output => `${output}${line.stdout ?? ''}${line.stderr ?? ''}`);
-        },
-        onError(error: any): void {
-          console.error(error);
-        },
-        onClose(exitCode: number): void {
-        }
-      },
+    okteto.up(environment.file, (stdout) => {
+      setOutput(stdout);
     });
   }, [environment]);
 

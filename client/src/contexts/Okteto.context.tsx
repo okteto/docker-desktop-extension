@@ -42,6 +42,7 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
 
   const logout = useCallback(() => {
     okteto.contextDelete(CLOUD_CONTEXT_NAME);
+    setEnvironment(null);
   }, []);
 
   const selectEnvironment = (file: string) => {

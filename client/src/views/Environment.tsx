@@ -4,7 +4,8 @@ import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import LinkIcon from '@mui/icons-material/Link';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import OpenInBrowserIcon from '@mui/icons-material/OpenInBrowser';
-import useInterval from 'use-interval'
+import { useTheme } from '@mui/material/styles';
+import useInterval from 'use-interval';
 
 import { useOkteto } from '../contexts/Okteto.context';
 import okteto from '../api/okteto';
@@ -15,6 +16,7 @@ import Link from '../components/Link';
 const ENDPOINTS_POLLING_INTERVAL = 5000;
 
 function Environment() {
+  const theme = useTheme();
   const { environment, stopEnvironment } = useOkteto();
   const [endpoints, setEndpoints] = useState<Array<string>>([]);
   const [output, setOutput] = useState('Running okteto...\n');
@@ -40,18 +42,22 @@ function Environment() {
     }
   }, ENDPOINTS_POLLING_INTERVAL);
 
+  const iconColor = theme.palette.mode === 'dark' ? '#B0BCD7' : '#BABABA';
+
   return (
     <>
       <Box sx={{
         display: 'flex',
         flexDirection: 'column',
         width: '100%',
-        bgcolor: theme => theme.palette.mode === 'dark' ? '#13222a' : 'grey.800',
+        bgcolor: theme => theme.palette.mode === 'dark' ? '#13222a' : 'grey.200',
+        border: '1px solid',
+        borderColor: theme => theme.palette.mode === 'dark' ? 'transparent' : 'grey.300',
         borderRadius: 1,
         px: 3,
         py: 2,
         gap: 2,
-        boxShadow: 1
+        // boxShadow: 1
       }}>
         <Box sx={{
           display: 'flex',
@@ -84,14 +90,14 @@ function Environment() {
 
         <Atom
           label="Docker-compose file:"
-          icon={<InsertDriveFileIcon htmlColor="#B0BCD7" />}
+          icon={<InsertDriveFileIcon htmlColor={iconColor} />}
         >
           <Typography variant="body1">{environment?.file}</Typography>
         </Atom>
 
         <Atom
           label="Endpoints:"
-          icon={<LinkIcon htmlColor="#B0BCD7" />}
+          icon={<LinkIcon htmlColor={iconColor} />}
         >
           {endpoints.length === 0 &&
             <Typography variant="body1">No endpoints available</Typography>

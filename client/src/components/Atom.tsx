@@ -14,7 +14,9 @@ function Atom({ children, label, icon }: AtomProps) {
         {icon}
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
           {label &&
-            <Typography variant="body1" sx={{ color: '#B0BCD7'}}>
+            <Typography variant="body1" sx={{
+              color: theme => theme.palette.mode === 'dark' ? '#B0BCD7' : 'grey.700',
+            }}>
               {label}
             </Typography>
           }

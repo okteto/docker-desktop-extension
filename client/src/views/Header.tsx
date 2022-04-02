@@ -1,11 +1,14 @@
 import { Box, Button, Typography } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
 import { useOkteto } from '../contexts/Okteto.context';
 import logoDark from '../images/logo-dark.svg';
+import logoLight from '../images/logo-light.svg';
 
 type HeaderProps = {};
 
 function Header({}: HeaderProps) {
+  const theme = useTheme();
   const { logout } = useOkteto();
 
   return (
@@ -19,7 +22,7 @@ function Header({}: HeaderProps) {
       px: 1,
       gap: 2
     }}>
-      <img src={logoDark} width="100" />
+      <img src={theme.palette.mode === 'dark' ? logoDark : logoLight} width="100" />
       <div style={{ flex: '1 auto' }} />
       <Typography variant="body2">
         Connected to: <strong>Okteto Cloud</strong>
@@ -29,8 +32,8 @@ function Header({}: HeaderProps) {
         size="small"
         onClick={logout}
         sx={{
-          color: 'white',
-          borderColor: 'white'
+          color: theme => theme.palette.mode === 'dark' ? 'white' : 'primary',
+          borderColor: theme => theme.palette.mode === 'dark' ? 'white' : 'primary'
         }}
       >
         Logout

@@ -14,7 +14,14 @@ function Link({ href, children }: LinkProps) {
   };
 
   return (
-    <MuiLink variant="body1" sx={{ cursor: 'pointer', color: '#00D1CA' }} onClick={handleOpen}>
+    <MuiLink
+      variant="body1"
+      sx={{
+        cursor: 'pointer',
+        color: theme => theme.palette.mode === 'dark' ? '#00D1CA' : '#1ca8b8'
+      }}
+      onClick={handleOpen}
+    >
       {children}
     </MuiLink>
   );

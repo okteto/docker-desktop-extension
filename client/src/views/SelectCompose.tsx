@@ -4,10 +4,10 @@ import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
 
 import { useOkteto } from '../contexts/Okteto.context';
-import okteto from '../api/okteto';
 import illustration from '../images/illustration.svg';
 
-const defaultFile = '/Users/rlamana/Repositories/okteto/compose-getting-started/docker-compose.yml';
+const defaultFile = '';
+// /Users/rlamana/Repositories/okteto/compose-getting-started/docker-compose.yml';
 
 function SelectCompose() {
   const { environment, selectEnvironment } = useOkteto();
@@ -56,18 +56,6 @@ function SelectCompose() {
             onClick={handleLaunch}
           >
             Launch Remote Environment
-          </Button>
-
-          <Button
-            variant="contained"
-            size="large"
-            sx={{ fontSize: '1rem', height: '3.2rem' }}
-            onClick={async () => {
-              const { value: endpoints } = await okteto.endpoints(defaultFile);
-              console.log(endpoints);
-            }}
-          >
-            Test
           </Button>
         </Box>
       </Box>

@@ -1,12 +1,21 @@
 import { useEffect, useState } from 'react';
-import { Box, Button } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import LinkIcon from '@mui/icons-material/Link';
 
 import Output from '../components/Output';
+import Atom from '../components/Atom';
+import Link from '../components/Link';
 
 type EnvironmentProps = {
   path: string
   onReset?: () => void
 };
+
+const endpoints = [
+  'https://movies-rlamana.staging.okteto.net',
+  'https://movies-rlamana.staging.okteto.net/api'
+];
 
 function Environment({ path, onReset }: EnvironmentProps) {
   const [output, setOutput] = useState('Running okteto...\n');
@@ -31,7 +40,35 @@ function Environment({ path, onReset }: EnvironmentProps) {
 
   return (
     <>
-      Docker-compose file: {path}
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        bgcolor: theme => theme.palette.mode === 'dark' ? '#13222a' : 'grey.800',
+        borderRadius: 1,
+        px: 3,
+        py: 2,
+        gap: 2
+      }}>
+        <Atom
+          label="Docker-compose file:"
+          icon={<InsertDriveFileIcon htmlColor="#B0BCD7" />}
+        >
+          <Typography variant="body1">{path}</Typography>
+        </Atom>
+
+        <Atom
+          label="Endpoints:"
+          icon={<LinkIcon htmlColor="#B0BCD7" />}
+        >
+          {endpoints.map(endpoint => (
+            <Link href={endpoint}>
+              {endpoint}
+            </Link>
+          ))}
+        </Atom>
+      </Box>
+
       <Output>
         {output}
       </Output>

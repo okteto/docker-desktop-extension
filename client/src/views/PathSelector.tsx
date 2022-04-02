@@ -2,6 +2,7 @@ import { ChangeEvent, useState } from 'react';
 import { Box, Button } from '@mui/material';
 import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
+import okteto from '../api/okteto';
 
 type PathSelectorProps = {
   onLaunch?: (path: string) => void
@@ -47,6 +48,17 @@ function PathSelector({ onLaunch }: PathSelectorProps) {
             onClick={() => onLaunch?.(path)}
           >
             Launch Remote Environment
+          </Button>
+
+          <Button
+            variant="contained"
+            size="large"
+            sx={{ fontSize: '1rem', height: '3.2rem' }}
+            onClick={() => {
+              okteto.getEndpointsList(defaultPath);
+            }}
+          >
+            Test
           </Button>
         </Box>
       </Box>

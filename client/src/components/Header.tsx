@@ -11,12 +11,9 @@ function Header({}: HeaderProps) {
       flexDirection: 'row',
       alignItems: 'center',
       width: '100%',
-      // bgcolor: theme => theme.palette.mode === 'dark' ? '#13222a' : 'grey.800',
       borderRadius: 1,
-      // boxShadow: 2,
       py: 2,
       px: 1,
-      mb: 2,
       gap: 2
     }}>
       <img src={logoDark} width="100" />

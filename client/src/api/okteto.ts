@@ -87,8 +87,35 @@ const setContext = (contextName: string) : Promise<OktetoResult<boolean>> => {
   });
 };
 
+const getEndpointsList = (manifestFile: string) : Promise<OktetoResult<OktetoContextList>> => {
+  return new Promise(done => {
+    let output = '';
+    let error: string | null = null;
+    let value: OktetoContextList = [];
+    window.ddClient.extension.host.cli.exec('okteto', ['endpoints', '-f', manifestFile, '-o', 'json'], {
+      stream: {
+        onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
+          output += line.stdout;
+        },
+        onError(e: string): void {
+          console.error(e);
+          error = `${error ?? ''}${e}`;
+        },
+        onClose(exitCode: number): void {
+          console.log(output);
+          if (exitCode == 0) {
+            value = JSON.parse(output);
+          }
+          done({ value, error });
+        },
+      },
+    });
+  });
+};
+
 export default {
   getContextList,
   getContext,
-  setContext
+  setContext,
+  getEndpointsList
 };

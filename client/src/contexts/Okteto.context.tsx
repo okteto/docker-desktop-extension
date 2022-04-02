@@ -1,14 +1,11 @@
-import {
-  createContext, useContext, useState, useCallback, ReactNode, useEffect
-} from 'react';
+import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
+import useInterval from 'use-interval';
 
 import okteto, { OktetoContext } from '../api/okteto';
-import useIntervalWhileVisible from '../hooks/useIntervalWhileVisible';
 
 interface OktetoEnvironment {
   file: string
   link: string
-  endpoints: Array<string>
 }
 
 interface OktetoStore {
@@ -50,8 +47,7 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
   const selectEnvironment = (file: string) => {
     setEnvironment({
       file,
-      link: 'https://cloud.okteto.com',
-      endpoints: []
+      link: 'https://cloud.okteto.com'
     });
   };
 
@@ -65,16 +61,16 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
     setCurrentContext(isLoggedIn ? value : null);
   };
 
+  useInterval(async () => {
+    await refreshCurrentContext();
+    setReady(true);
+  }, CONTEXT_POLLING_INTERVAL);
+
   useEffect(() => {
     if (loading) {
       setLoading(false);
     }
   }, [currentContext]);
-
-  useIntervalWhileVisible(async () => {
-    await refreshCurrentContext();
-    setReady(true);
-  }, CONTEXT_POLLING_INTERVAL);
 
   return (
     <Okteto.Provider value={{

@@ -36,7 +36,7 @@ export function App() {
             }}>
               <Header />
               {environment?.file ?
-                <Environment /> :
+                <Environment key={environment.file} /> :
                 <SelectCompose />
               }
             </Box>

@@ -4,19 +4,19 @@ import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import LinkIcon from '@mui/icons-material/Link';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import OpenInBrowserIcon from '@mui/icons-material/OpenInBrowser';
+import useInterval from 'use-interval'
 
 import { useOkteto } from '../contexts/Okteto.context';
+import okteto from '../api/okteto';
 import Output from '../components/Output';
 import Atom from '../components/Atom';
 import Link from '../components/Link';
 
-const endpoints = [
-  'https://movies-rlamana.staging.okteto.net',
-  'https://movies-rlamana.staging.okteto.net/api'
-];
+const ENDPOINTS_POLLING_INTERVAL = 5000;
 
 function Environment() {
   const { environment, stopEnvironment } = useOkteto();
+  const [endpoints, setEndpoints] = useState<Array<string>>([]);
   const [output, setOutput] = useState('Running okteto...\n');
 
   const handleOpenEnvironment = () => {
@@ -41,6 +41,14 @@ function Environment() {
       },
     });
   }, [environment]);
+
+  useInterval(async () => {
+    if (!environment?.file) return;
+    const { value, error } = await okteto.endpoints(environment?.file);
+    if (!error && value) {
+      setEndpoints(value);
+    }
+  }, ENDPOINTS_POLLING_INTERVAL);
 
   return (
     <>
@@ -95,11 +103,11 @@ function Environment() {
           label="Endpoints:"
           icon={<LinkIcon htmlColor="#B0BCD7" />}
         >
-          {environment?.endpoints.length === 0 &&
+          {endpoints.length === 0 &&
             <Typography variant="body1">No endpoints available</Typography>
           }
-          {environment?.endpoints.map(endpoint => (
-            <Link href={endpoint}>
+          {endpoints.map(endpoint => (
+            <Link href={endpoint} key={endpoint}>
               {endpoint}
             </Link>
           ))}

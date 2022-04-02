@@ -7,10 +7,10 @@ import { useOkteto } from '../contexts/Okteto.context';
 import illustration from '../images/illustration.svg';
 
 const defaultFile = '';
-// /Users/rlamana/Repositories/okteto/compose-getting-started/docker-compose.yml';
+// '/Users/rlamana/Repositories/okteto/compose-getting-started/docker-compose.yml';
 
 function SelectCompose() {
-  const { environment, selectEnvironment } = useOkteto();
+  const { selectEnvironment } = useOkteto();
   const [file, setFile] = useState(defaultFile);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {

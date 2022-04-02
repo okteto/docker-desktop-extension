@@ -112,7 +112,7 @@ const contextDelete = (contextName: string) : Promise<OktetoResult<boolean>> => 
   });
 };
 
-type OktetoEndpointsList = Array<string>;
+export type OktetoEndpointsList = Array<string>;
 
 const endpoints = (manifestFile: string) : Promise<OktetoResult<OktetoEndpointsList>> => {
   return new Promise(done => {
@@ -147,12 +147,12 @@ const up = (manifestFile: string, onOutputChange: (stdout: string) => void) : Pr
   return new Promise(done => {
     let error: string | null = null;
     let value = false;
-    let stdout = '';
-    window.ddClient.extension.host.cli.exec('okteto', ['up', '-f', manifestFile, '-l', 'plain'], {
+    let output = '';
+    window.ddClient.extension.host.cli.exec('okteto', ['up', '-f', manifestFile, '--log-output', 'plain'], {
       stream: {
         onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
-          stdout = `${stdout}${line.stdout ?? ''}${line.stderr ?? ''}`;
-          onOutputChange(stdout);
+          output = `${output}${line.stdout ?? ''}${line.stderr ?? ''}`;
+          onOutputChange(output);
         },
         onError(e: any): void {
           console.error(e);

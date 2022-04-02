@@ -19,7 +19,7 @@ function Environment() {
   const theme = useTheme();
   const { environment, stopEnvironment } = useOkteto();
   const [endpoints, setEndpoints] = useState<Array<string>>([]);
-  const [output, setOutput] = useState('Running okteto...\n');
+  const [output, setOutput] = useState('');
 
   const handleOpenEnvironment = () => {
     if (environment) {
@@ -57,7 +57,6 @@ function Environment() {
         px: 3,
         py: 2,
         gap: 2,
-        // boxShadow: 1
       }}>
         <Box sx={{
           display: 'flex',
@@ -110,9 +109,7 @@ function Environment() {
         </Atom>
       </Box>
 
-      <Output>
-        {output ?? 'No output.'}
-      </Output>
+      <Output output={output ?? ''} />
     </>
   );
 }

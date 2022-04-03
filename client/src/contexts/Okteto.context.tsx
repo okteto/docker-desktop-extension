@@ -48,7 +48,7 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
   const selectEnvironment = (file: string) => {
     setEnvironment({
       file,
-      link: 'https://cloud.okteto.com'
+      link: `https://cloud.okteto.com/#/spaces/${currentContext?.namespace ?? ''}`
     });
   };
 

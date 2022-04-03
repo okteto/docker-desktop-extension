@@ -7,12 +7,12 @@ import { App } from './App';
 
 ReactDOM.render(
   <React.StrictMode>
-    <DockerMuiThemeProvider>
-      <CssBaseline />
-      <OktetoProvider>
-        <App />
-      </OktetoProvider>
-    </DockerMuiThemeProvider>
+    <OktetoProvider>
+      <DockerMuiThemeProvider>
+        <CssBaseline />
+          <App />
+      </DockerMuiThemeProvider>
+    </OktetoProvider>
   </React.StrictMode>,
   document.getElementById('root'),
 );

@@ -1,30 +1,43 @@
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { Box } from '@mui/material';
+import OutputLine from './OutputLine';
 
 type OutputProps = {
-  children?: ReactNode
+  output: string
 };
 
-function Output({ children }: OutputProps) {
+const convertOutput = (output: string): Array<string> => {
+  return output
+    .split('\n')
+    .map(outputLine => outputLine.replace(/^.*\[K/, '')); // Take into account the erase line char.
+};
+
+function Output({ output }: OutputProps) {
+  const lines = useMemo(() => {
+    return convertOutput(output);
+  }, [output]);
+
   return (
-    <Box component="code" sx={{
-      display: 'block',
+    <Box component="div" sx={{
+      display: 'flex',
+      flexDirection: 'column',
       flex: 1,
       width: '100%',
       px: 3,
       py: 2,
-      bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
-      color: theme => theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
+      bgcolor: '#101010',
+      color: 'grey.300',
       border: '0',
-      borderRadius: 2,
+      borderRadius: 1,
+      boxShadow: 1,
       fontSize: '0.8rem',
       fontWeight: 'normal',
       overflowX: 'hidden',
       overflowY: 'auto'
     }}>
-      <Box component="pre" sx={{ m: 0, p: 0 }}>
-        {children}
-      </Box>
+      {lines.map((line, i) => (
+        <OutputLine key={`Line-${i}`} line={line} />
+      ))}
     </Box>
   );
 }

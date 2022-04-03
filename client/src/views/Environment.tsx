@@ -1,50 +1,116 @@
 import { useEffect, useState } from 'react';
-import { Box, Button } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import LinkIcon from '@mui/icons-material/Link';
+import StopCircleIcon from '@mui/icons-material/StopCircle';
+import OpenInBrowserIcon from '@mui/icons-material/OpenInBrowser';
+import { useTheme } from '@mui/material/styles';
+import useInterval from 'use-interval';
 
+import { useOkteto } from '../contexts/Okteto.context';
+import okteto from '../api/okteto';
 import Output from '../components/Output';
+import Atom from '../components/Atom';
+import Link from '../components/Link';
 
-type EnvironmentProps = {
-  path: string
-  onReset?: () => void
-};
+const ENDPOINTS_POLLING_INTERVAL = 5000;
 
-function Environment({ path, onReset }: EnvironmentProps) {
-  const [output, setOutput] = useState('Running okteto...\n');
+function Environment() {
+  const theme = useTheme();
+  const { environment, stopEnvironment } = useOkteto();
+  const [endpoints, setEndpoints] = useState<Array<string>>([]);
+  const [output, setOutput] = useState('');
+
+  const handleOpenEnvironment = () => {
+    if (environment) {
+      window.ddClient.host.openExternal(environment.link);
+    }
+  };
 
   useEffect(() => {
-    const args = ['up', '-f', path, '-l', 'plain'];
-    window.ddClient.extension.host.cli.exec('okteto', args, {
-      stream: {
-        onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
-          console.log(line.stdout);
-          setOutput(output => `${output}${line.stdout ?? ''}${line.stderr ?? ''}`);
-        },
-        onError(error: any): void {
-          console.error(error);
-        },
-        onClose(exitCode: number): void {
-          console.log(`onClose with exit code ${exitCode}`);
-        },
-      },
+    if (!environment?.file) return;
+    okteto.up(environment.file, (stdout) => {
+      setOutput(stdout);
     });
-  }, [path]);
+  }, [environment]);
+
+  useInterval(async () => {
+    if (!environment?.file) return;
+    const { value, error } = await okteto.endpoints(environment?.file);
+    if (!error && value) {
+      setEndpoints(value);
+    }
+  }, ENDPOINTS_POLLING_INTERVAL);
+
+  const iconColor = theme.palette.mode === 'dark' ? '#B0BCD7' : '#BABABA';
 
   return (
-    <Box sx={{
-      display: 'flex',
-      flex: 1,
-      flexDirection: 'column',
-      height: '100%',
-      gap: 1
-    }}>
-      Docker-compose file: {path}
-      <Output>
-        {output}
-      </Output>
-      <Button variant="contained" size="large" onClick={onReset}>
-        Stop
-      </Button>
-    </Box>
+    <>
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        bgcolor: theme => theme.palette.mode === 'dark' ? '#13222a' : 'grey.200',
+        border: '1px solid',
+        borderColor: theme => theme.palette.mode === 'dark' ? 'transparent' : 'grey.300',
+        borderRadius: 1,
+        px: 3,
+        py: 2,
+        gap: 2,
+      }}>
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+          flexDirection: 'row',
+          width: '100%',
+          gap: 1
+        }}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+            Remote Environment
+          </Typography>
+          <div style={{ flex: '1 auto' }} />
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<OpenInBrowserIcon />}
+            onClick={handleOpenEnvironment}
+          >
+            Open in Okteto
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            startIcon={<StopCircleIcon />}
+            onClick={stopEnvironment}
+          >
+            Stop
+          </Button>
+        </Box>
+
+        <Atom
+          label="Docker-compose file:"
+          icon={<InsertDriveFileIcon htmlColor={iconColor} />}
+        >
+          <Typography variant="body1">{environment?.file}</Typography>
+        </Atom>
+
+        <Atom
+          label="Endpoints:"
+          icon={<LinkIcon htmlColor={iconColor} />}
+        >
+          {endpoints.length === 0 &&
+            <Typography variant="body1">No endpoints available</Typography>
+          }
+          {endpoints.map(endpoint => (
+            <Link href={endpoint} key={endpoint}>
+              {endpoint}
+            </Link>
+          ))}
+        </Atom>
+      </Box>
+
+      <Output output={output ?? ''} />
+    </>
   );
 }
 

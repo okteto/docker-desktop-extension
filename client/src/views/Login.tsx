@@ -1,4 +1,3 @@
-import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
@@ -35,7 +34,7 @@ function Login({}: LoginProps) {
 
       <Typography variant="h6" sx={{ maxWidth: '650px', textAlign: 'center' }}>
         Okteto spins up a cloud environment to deploy your application stack where you can
-        see your changes live, exactly as they would look in production.
+        see your changes live, while coding locally.
       </Typography>
 
       <Button

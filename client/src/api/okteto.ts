@@ -128,10 +128,6 @@ const endpoints = (manifestFile: string) : Promise<OktetoResult<OktetoEndpointsL
           error = `${error ?? ''}${e}`;
         },
         onClose(exitCode: number): void {
-          const fakeOutput = `[
-            "https://vote-rlamana.cloud.okteto.net/"
-          ]`;
-          output = fakeOutput;
           if (exitCode == 0) {
             value = JSON.parse(output);
           }

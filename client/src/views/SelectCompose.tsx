@@ -57,7 +57,7 @@ function SelectCompose() {
             <TextField
               defaultValue={defaultFile}
               hiddenLabel
-              placeholder="/file/to/your/docker-compose-file"
+              placeholder="/file/to/your/docker-compose.yml"
               onChange={handleFileChange}
             />
           </FormControl>

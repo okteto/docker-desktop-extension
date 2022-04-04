@@ -8,8 +8,7 @@ import { useOkteto } from '../contexts/Okteto.context';
 import diagramDark from '../images/diagram-dark.svg';
 import diagramLight from '../images/diagram-light.svg';
 
-const defaultFile = '';
-// '/Users/rlamana/Repositories/okteto/compose-getting-started/docker-compose.yml';
+const defaultFile = '/Users/rlamana/Repositories/okteto/compose-getting-started/docker-compose.yml';
 
 function SelectCompose() {
   const theme = useTheme();
@@ -43,7 +42,7 @@ function SelectCompose() {
         />
 
         <Typography variant="h6" sx={{ maxWidth: '540px', textAlign: 'center' }}>
-          Select a docker-compose.yml file to spin up a cloud environment with your application stack.
+          Select a Docker Compose file to spin up a cloud environment with your application stack.
         </Typography>
 
         <Box sx={{
@@ -57,7 +56,7 @@ function SelectCompose() {
             <TextField
               defaultValue={defaultFile}
               hiddenLabel
-              placeholder="/file/to/your/docker-compose"
+              placeholder="/file/to/your/docker-compose-file"
               onChange={handleFileChange}
             />
           </FormControl>

@@ -88,7 +88,7 @@ function Environment() {
         </Box>
 
         <Atom
-          label="Docker-compose file:"
+          label="Compose File:"
           icon={<InsertDriveFileIcon htmlColor={iconColor} />}
         >
           <Typography variant="body1">{environment?.file}</Typography>

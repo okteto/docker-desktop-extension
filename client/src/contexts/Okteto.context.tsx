@@ -20,11 +20,11 @@ interface OktetoStore {
   selectEnvironment: (f: string) => void
 }
 
-const Okteto = createContext<OktetoStore | null>(null);
-
 type OktetoProviderProps = {
   children?: ReactNode
 };
+
+const Okteto = createContext<OktetoStore | null>(null);
 
 const CONTEXT_POLLING_INTERVAL = 3000;
 const CLOUD_CONTEXT_NAME = 'https://cloud.okteto.com';

@@ -5,10 +5,7 @@ import logoDark from '../images/logo-dark.svg';
 import logoLight from '../images/logo-light.svg';
 import { useOkteto } from '../contexts/Okteto.context';
 
-type LoginProps = {
-};
-
-function Login({}: LoginProps) {
+function Login() {
   const theme = useTheme();
   const { login } = useOkteto();
 

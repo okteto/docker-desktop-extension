@@ -11,6 +11,7 @@ export interface OktetoContext {
 };
 
 export type OktetoContextList = Array<OktetoContext>;
+export type OktetoEndpointsList = Array<string>;
 
 const contextList = () : Promise<OktetoResult<OktetoContextList>> => {
   return new Promise(done => {
@@ -111,8 +112,6 @@ const contextDelete = (contextName: string) : Promise<OktetoResult<boolean>> => 
     });
   });
 };
-
-export type OktetoEndpointsList = Array<string>;
 
 const endpoints = (manifestFile: string) : Promise<OktetoResult<OktetoEndpointsList>> => {
   return new Promise(done => {

@@ -1,12 +1,15 @@
 import { ReactNode } from 'react';
-import { Link as MuiLink } from '@mui/material';
+import { Link as MuiLink, SxProps, Theme, TypographyProps } from '@mui/material';
 
 type LinkProps = {
-  children?: ReactNode,
+  children?: ReactNode
   href?: string
+  variant?: TypographyProps['variant']
+  sx?: SxProps<Theme>
+  color?: string
 };
 
-function Link({ href, children }: LinkProps) {
+function Link({ href, variant = 'body1', color, sx, children }: LinkProps) {
   const handleOpen = () => {
     if (href) {
       window.ddClient.host.openExternal(href);
@@ -15,10 +18,14 @@ function Link({ href, children }: LinkProps) {
 
   return (
     <MuiLink
-      variant="body1"
+      variant={variant}
       sx={{
+        ...sx,
         cursor: 'pointer',
-        color: theme => theme.palette.mode === 'dark' ? '#00D1CA' : '#1ca8b8'
+        color: theme => {
+          if (color) return color;
+          return theme.palette.mode === 'dark' ? '#00D1CA' : '#1ca8b8';
+        }
       }}
       onClick={handleOpen}
     >

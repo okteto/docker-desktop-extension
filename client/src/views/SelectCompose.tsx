@@ -43,7 +43,7 @@ function SelectCompose() {
         />
 
         <Typography variant="h6" sx={{ maxWidth: '540px', textAlign: 'center' }}>
-          Select a Docker Compose file to spin up a cloud environment with your application stack.
+          Select a Compose file to launch your remote development environment.
         </Typography>
 
         <Box sx={{

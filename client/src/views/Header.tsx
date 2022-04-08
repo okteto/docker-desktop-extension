@@ -24,9 +24,14 @@ function Header({}) {
       <img src={theme.palette.mode === 'dark' ? logoDark : logoLight} width="100" />
       <div style={{ flex: '1 auto' }} />
       <Typography variant="body2">
-        Connected to: <Link href="https://cloud.okteto.com" variant="body2" color="white" sx={{
-          fontWeight: 'bold'
-        }}>
+        Connected to: <Link
+          href="https://cloud.okteto.com"
+          variant="body2"
+          sx={{
+            fontWeight: 'bold',
+            color: 'primary'
+          }}
+        >
           Okteto Cloud
         </Link>
       </Typography>

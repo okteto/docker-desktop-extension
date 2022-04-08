@@ -56,14 +56,14 @@ If you are working on the frontend code of your extension and don't want to rebu
 To do that, in one terminal start your UI development server:
 
 ```
-cd ui
-npm start
+cd client
+yarn start
 ```
 
 This will start a development server that listens on port 3000. You can now tell Docker Desktop to use this as the frontend source, in another terminal run:
 
 ```
-docker extension dev ui-source okteto http://localhost:3000
+docker extension dev ui-source okteto/docker-desktop-extension http://localhost:3000
 ```
 
 Close and reopen the Docker Desktop dashboard and go to your extension, all the changes to the frontend code will now be immediately visible.
@@ -71,5 +71,5 @@ Close and reopen the Docker Desktop dashboard and go to your extension, all the 
 Once you are done you can remove the ui-source override by running:
 
 ```
-docker extension dev reset okteto
+docker extension dev reset okteto/docker-desktop-extension
 ```

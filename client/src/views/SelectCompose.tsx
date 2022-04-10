@@ -8,8 +8,7 @@ import { useOkteto } from '../contexts/Okteto.context';
 import diagramDark from '../images/diagram-dark.svg';
 import diagramLight from '../images/diagram-light.svg';
 
-const defaultFile = '';
-//'/Users/rlamana/Repositories/okteto/compose-getting-started/docker-compose.yml';
+const defaultFile = '/Users/rlamana/Repositories/okteto/microservices-demo-compose/docker-compose.yml';
 
 function SelectCompose() {
   const theme = useTheme();

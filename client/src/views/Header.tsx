@@ -1,5 +1,8 @@
 import { Box, Button, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
 
 import Link from '../components/Link';
 import { useOkteto } from '../contexts/Okteto.context';
@@ -8,7 +11,11 @@ import logoLight from '../images/logo-light.svg';
 
 function Header({}) {
   const theme = useTheme();
-  const { logout } = useOkteto();
+  const { selectContext, currentContext, contextList } = useOkteto();
+
+  const handleContextChange = ({ target }: SelectChangeEvent) => {
+    selectContext(target.value)
+  };
 
   return (
     <Box sx={{
@@ -35,17 +42,19 @@ function Header({}) {
           Okteto Cloud
         </Link>
       </Typography>
-      <Button
-        variant="outlined"
-        size="small"
-        onClick={logout}
-        sx={{
-          color: theme => theme.palette.mode === 'dark' ? 'white' : 'primary',
-          borderColor: theme => theme.palette.mode === 'dark' ? 'white' : 'primary'
-        }}
-      >
-        Logout
-      </Button>
+
+      <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+        <Select
+          value={currentContext?.name ?? ''}
+          onChange={handleContextChange}
+          displayEmpty
+          inputProps={{ 'aria-label': 'Without label' }}
+        >
+          {contextList.map(context => (
+            <MenuItem key={context.name} value={context.name}>{context.name}</MenuItem>
+          ))}
+        </Select>
+      </FormControl>
     </Box>
   );
 }

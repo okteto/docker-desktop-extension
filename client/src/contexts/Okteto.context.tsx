@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
 import useInterval from 'use-interval';
 
-import okteto, { OktetoContext } from '../api/okteto';
+import okteto, { OktetoContext, OktetoContextList } from '../api/okteto';
 
 interface OktetoEnvironment {
   file: string
@@ -10,6 +10,7 @@ interface OktetoEnvironment {
 
 interface OktetoStore {
   currentContext: OktetoContext | null
+  contextList: OktetoContextList
   environment: OktetoEnvironment | null
   loading: boolean
   ready: boolean
@@ -18,6 +19,7 @@ interface OktetoStore {
   logout: () => void
   stopEnvironment: () => void,
   selectEnvironment: (f: string) => void
+  selectContext: (f: string) => void
 }
 
 type OktetoProviderProps = {
@@ -31,6 +33,7 @@ const CLOUD_CONTEXT_NAME = 'https://cloud.okteto.com';
 
 const OktetoProvider = ({ children } : OktetoProviderProps) => {
   const [currentContext, setCurrentContext] = useState<OktetoContext | null>(null);
+  const [contextList, setContextList] = useState<OktetoContextList>([]);
   const [environment, setEnvironment] = useState<OktetoEnvironment | null>(null);
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
@@ -52,18 +55,26 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
     });
   };
 
+  const selectContext = useCallback((contextName: string) => {
+    okteto.contextUse(contextName);
+    // Should we stop running environment? Warn users: "You have running environments, do you want to switch?"
+  }, []);
+
   const stopEnvironment = async () => {
     setEnvironment(null);
   };
 
-  const refreshCurrentContext = async () => {
-    const { value, error } = await okteto.contextShow();
-    const isLoggedIn = !error && value?.name === CLOUD_CONTEXT_NAME;
-    setCurrentContext(isLoggedIn ? value : null);
+  const refreshContext = async () => {
+    const { value: context, error } = await okteto.contextShow();
+    const isLoggedIn = !error && context?.name === CLOUD_CONTEXT_NAME;
+    setCurrentContext(isLoggedIn ? context : null);
+
+    const { value: list } = await okteto.contextList();
+    setContextList(list ?? []);
   };
 
   useInterval(async () => {
-    await refreshCurrentContext();
+    await refreshContext();
     setReady(true);
   }, CONTEXT_POLLING_INTERVAL);
 
@@ -76,6 +87,7 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
   return (
     <Okteto.Provider value={{
       currentContext,
+      contextList,
       environment,
       loading,
       ready,
@@ -83,7 +95,8 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
       login,
       logout,
       stopEnvironment,
-      selectEnvironment
+      selectEnvironment,
+      selectContext
     }}>
       {children}
     </Okteto.Provider>

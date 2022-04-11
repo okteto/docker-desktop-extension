@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
@@ -7,13 +6,14 @@ import FormControl from '@mui/material/FormControl';
 import LinearProgress from '@mui/material/LinearProgress';
 
 import Link from '../components/Link';
-import { useOkteto } from '../contexts/Okteto.context';
+import { useOkteto, defaultContextName } from '../contexts/Okteto.context';
 import logoDark from '../images/logo-dark.svg';
 import logoLight from '../images/logo-light.svg';
 
 function Header({}) {
   const theme = useTheme();
   const { selectContext, currentContext, contextList, loading } = useOkteto();
+  const moreThanCloud = !(contextList.length === 1 && contextList[0].name === defaultContextName);
 
   const handleContextChange = async ({ target }: SelectChangeEvent) => {
     await selectContext(target.value);
@@ -60,18 +60,20 @@ function Header({}) {
           }
         </Typography>
 
-        <FormControl sx={{ minWidth: 120 }} size="small" disabled={loading}>
-          <Select
-            value={currentContext?.name ?? ''}
-            onChange={handleContextChange}
-            displayEmpty
-            inputProps={{ 'aria-label': 'Without label' }}
-          >
-            {contextList.map(context => (
-              <MenuItem key={context.name} value={context.name}>{context.name}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        {moreThanCloud &&
+          <FormControl sx={{ minWidth: 120 }} size="small" disabled={loading}>
+            <Select
+              value={currentContext?.name ?? ''}
+              onChange={handleContextChange}
+              displayEmpty
+              inputProps={{ 'aria-label': 'Without label' }}
+            >
+              {contextList.map(context => (
+                <MenuItem key={context.name} value={context.name}>{context.name}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        }
       </Box>
     </>
   );

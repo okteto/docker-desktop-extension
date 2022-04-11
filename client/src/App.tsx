@@ -22,7 +22,9 @@ export function App() {
       py: 2,
       height: '100vh',
     }}>
-      {!ready || loading ? <Loader /> : (
+      {!ready ? (
+        <Loader />
+      ) : (
         <>
           {!isLoggedIn ? (
             <Login />

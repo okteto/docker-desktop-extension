@@ -29,7 +29,7 @@ type OktetoProviderProps = {
 const Okteto = createContext<OktetoStore | null>(null);
 
 const CONTEXT_POLLING_INTERVAL = 3000;
-const CLOUD_CONTEXT_NAME = 'https://cloud.okteto.com';
+export const defaultContextName = 'https://cloud.okteto.com';
 
 const OktetoProvider = ({ children } : OktetoProviderProps) => {
   const [currentContext, setCurrentContext] = useState<OktetoContext | null>(null);
@@ -40,13 +40,13 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
 
   const login = async () => {
     setLoading(true);
-    await okteto.contextUse(CLOUD_CONTEXT_NAME);
+    await okteto.contextUse(defaultContextName);
     setLoading(false);
   };
 
   const logout = async () => {
     setLoading(true);
-    await okteto.contextDelete(CLOUD_CONTEXT_NAME);
+    await okteto.contextDelete(defaultContextName);
     setEnvironment(null);
     setLoading(false);
   };
@@ -76,7 +76,7 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
     setContextList(list);
 
     // We consider a user as logged in if he has configured Okteto Cloud's context.
-    const isLoggedIn = list.find(context => context.name === CLOUD_CONTEXT_NAME);
+    const isLoggedIn = list.find(context => context.name === defaultContextName);
     const context = list.find(context => context.current);
     if (!isLoggedIn) {
       setCurrentContext(null);

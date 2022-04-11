@@ -68,7 +68,7 @@ const contextUse = (contextName: string) : Promise<OktetoResult<boolean>> => {
     let output = '';
     let error: string | null = null;
     let value = false;
-    window.ddClient.extension.host.cli.exec('okteto', ['context', 'use', contextName], {
+    window.ddClient.extension.host.cli.exec('okteto', ['context', 'use', contextName, '--docker-desktop'], {
       stream: {
         onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
           output += line.stdout;

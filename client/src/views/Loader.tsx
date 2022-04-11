@@ -7,7 +7,8 @@ function Loader() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    setTimeout(() => setShow(true), WAIT_BEFORE_SHOW);
+    const t = setTimeout(() => setShow(true), WAIT_BEFORE_SHOW);
+    return (() => clearTimeout(t));
   }, []);
 
   return (

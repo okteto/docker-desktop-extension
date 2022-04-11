@@ -69,7 +69,7 @@ const contextUse = (contextName: string) : Promise<OktetoResult<OktetoContext | 
     let output = '';
     let error: string | null = null;
     let value: OktetoContext | null = null;
-    window.ddClient.extension.host.cli.exec('okteto', ['context', 'use', contextName, '--log-output', 'json'], {
+    window.ddClient.extension.host.cli.exec('okteto', ['context', 'use', contextName, '--docker-desktop', '--log-output', 'json'], {
       stream: {
         onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
           output += line.stdout;

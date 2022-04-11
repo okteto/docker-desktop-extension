@@ -8,6 +8,7 @@ export interface OktetoContext {
   namespace: string
   builder: string
   registry: string
+  current: boolean
 };
 
 export type OktetoContextList = Array<OktetoContext>;
@@ -63,12 +64,12 @@ const contextShow = () : Promise<OktetoResult<OktetoContext | null>> => {
   });
 };
 
-const contextUse = (contextName: string) : Promise<OktetoResult<boolean>> => {
+const contextUse = (contextName: string) : Promise<OktetoResult<OktetoContext | null>> => {
   return new Promise(done => {
     let output = '';
     let error: string | null = null;
-    let value = false;
-    window.ddClient.extension.host.cli.exec('okteto', ['context', 'use', contextName, '--docker-desktop'], {
+    let value: OktetoContext | null = null;
+    window.ddClient.extension.host.cli.exec('okteto', ['context', 'use', contextName, '--docker-desktop', '--log-output', 'json'], {
       stream: {
         onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
           output += line.stdout;
@@ -79,7 +80,7 @@ const contextUse = (contextName: string) : Promise<OktetoResult<boolean>> => {
         },
         onClose(exitCode: number): void {
           if (exitCode == 0) {
-            value = true;
+            value = JSON.parse(output);
           }
           done({ value, error });
         },

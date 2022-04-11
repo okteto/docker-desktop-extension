@@ -12,7 +12,7 @@ const defaultFile = '/Users/rlamana/Repositories/okteto/microservices-demo-compo
 
 function SelectCompose() {
   const theme = useTheme();
-  const { selectEnvironment } = useOkteto();
+  const { selectEnvironment, loading } = useOkteto();
   const [file, setFile] = useState(defaultFile);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -62,6 +62,7 @@ function SelectCompose() {
           </FormControl>
 
           <Button
+            disabled={loading}
             variant="contained"
             size="large"
             sx={{ fontSize: '1rem', height: '3.2rem' }}

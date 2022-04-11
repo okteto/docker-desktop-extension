@@ -38,15 +38,18 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
 
-  const login = useCallback(() => {
+  const login = async () => {
     setLoading(true);
-    okteto.contextUse(CLOUD_CONTEXT_NAME);
-  }, [setLoading]);
+    await okteto.contextUse(CLOUD_CONTEXT_NAME);
+    setLoading(false);
+  };
 
-  const logout = useCallback(() => {
-    okteto.contextDelete(CLOUD_CONTEXT_NAME);
+  const logout = async () => {
+    setLoading(true);
+    await okteto.contextDelete(CLOUD_CONTEXT_NAME);
     setEnvironment(null);
-  }, []);
+    setLoading(false);
+  };
 
   const selectEnvironment = (file: string) => {
     setEnvironment({
@@ -55,22 +58,28 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
     });
   };
 
-  const selectContext = useCallback((contextName: string) => {
-    okteto.contextUse(contextName);
-    // Should we stop running environment? Warn users: "You have running environments, do you want to switch?"
-  }, []);
+  const selectContext = async (contextName: string) => {
+    setLoading(true);
+    const { value: ok } = await okteto.contextUse(contextName);
+    if (ok) {
+      await refreshContext();
+    }
+    setLoading(false);
+    // TODO: Should we stop running environment?
+    // Warn users: "You have running environments, do you want to switch?"
+  };
 
   const stopEnvironment = async () => {
     setEnvironment(null);
   };
 
   const refreshContext = async () => {
-    const { value: context, error } = await okteto.contextShow();
-    const isLoggedIn = !error && context?.name === CLOUD_CONTEXT_NAME;
-    setCurrentContext(isLoggedIn ? context : null);
-
-    const { value: list } = await okteto.contextList();
-    setContextList(list ?? []);
+    const { value: currentContext = null } = await okteto.contextShow();
+    const { value: list = [] } = await okteto.contextList();
+    // We consider a user as logged in if he has configured Okteto Cloud's context.
+    const isLoggedIn = list.find(context => context.name === CLOUD_CONTEXT_NAME);
+    setCurrentContext(isLoggedIn ? currentContext : null);
+    setContextList(list);
   };
 
   useInterval(async () => {
@@ -79,8 +88,8 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
   }, CONTEXT_POLLING_INTERVAL);
 
   useEffect(() => {
-    if (loading) {
-      setLoading(false);
+    if (currentContext !== null) {
+      // refreshContext(); // Enable again when we remove the polling and the context is passed as a parameter.
     }
   }, [currentContext]);
 

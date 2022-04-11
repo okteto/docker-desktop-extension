@@ -60,13 +60,11 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
 
   const selectContext = async (contextName: string) => {
     setLoading(true);
-    const { value: ok } = await okteto.contextUse(contextName);
-    if (ok) {
-      await refreshContext();
+    const { value: context } = await okteto.contextUse(contextName);
+    if (context) {
+      setCurrentContext(context);
     }
     setLoading(false);
-    // TODO: Should we stop running environment?
-    // Warn users: "You have running environments, do you want to switch?"
   };
 
   const stopEnvironment = async () => {
@@ -74,24 +72,25 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
   };
 
   const refreshContext = async () => {
-    const { value: currentContext = null } = await okteto.contextShow();
     const { value: list = [] } = await okteto.contextList();
+    setContextList(list);
+
     // We consider a user as logged in if he has configured Okteto Cloud's context.
     const isLoggedIn = list.find(context => context.name === CLOUD_CONTEXT_NAME);
-    setCurrentContext(isLoggedIn ? currentContext : null);
-    setContextList(list);
+    const context = list.find(context => context.current);
+    if (!isLoggedIn) {
+      setCurrentContext(null);
+    } else if (context) {
+      setCurrentContext(context);
+    }
   };
 
   useInterval(async () => {
+    // Don't refresh until current command execution has finished.
+    if (loading) return;
     await refreshContext();
     setReady(true);
-  }, CONTEXT_POLLING_INTERVAL);
-
-  useEffect(() => {
-    if (currentContext !== null) {
-      // refreshContext(); // Enable again when we remove the polling and the context is passed as a parameter.
-    }
-  }, [currentContext]);
+  }, CONTEXT_POLLING_INTERVAL, true);
 
   return (
     <Okteto.Provider value={{

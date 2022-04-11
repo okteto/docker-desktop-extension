@@ -1,6 +1,15 @@
+import { useEffect, useState } from 'react';
 import { Box, CircularProgress } from '@mui/material';
 
+const WAIT_BEFORE_SHOW = 1000;
+
 function Loader() {
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => setShow(true), WAIT_BEFORE_SHOW);
+  }, []);
+
   return (
     <Box sx={{
       display: 'flex',
@@ -10,7 +19,9 @@ function Loader() {
       justifyContent: 'center',
       height: '100%'
     }}>
-      <CircularProgress />
+      {show &&
+        <CircularProgress />
+      }
     </Box>
   );
 }

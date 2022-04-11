@@ -1,5 +1,5 @@
 IMAGE?=okteto/docker-desktop-extension
-TAG?=0.1.5
+TAG?=0.1.6
 
 BUILDER=buildx-multi-arch
 

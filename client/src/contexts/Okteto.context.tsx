@@ -5,7 +5,7 @@ import okteto, { OktetoContext, OktetoContextList } from '../api/okteto';
 
 interface OktetoEnvironment {
   file: string
-  link: string
+  link: string | null
 }
 
 interface OktetoStore {
@@ -31,6 +31,16 @@ const Okteto = createContext<OktetoStore | null>(null);
 const CONTEXT_POLLING_INTERVAL = 3000;
 export const defaultContextName = 'https://cloud.okteto.com';
 
+const isOktetoInstance = (context: OktetoContext) => {
+  let url;
+  try {
+    url = new URL(context.name);
+  } catch (_) {
+    return false;
+  }
+  return url.protocol === "http:" || url.protocol === "https:";
+};
+
 const OktetoProvider = ({ children } : OktetoProviderProps) => {
   const [currentContext, setCurrentContext] = useState<OktetoContext | null>(null);
   const [contextList, setContextList] = useState<OktetoContextList>([]);
@@ -52,13 +62,19 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
   };
 
   const selectEnvironment = (file: string) => {
+    // TODO: Is this the proper way to know if its an Okteto Context?
+    const link = currentContext && isOktetoInstance(currentContext) ?
+      `https://cloud.okteto.com/#/spaces/${currentContext?.namespace ?? ''}` :
+      null;
+
     setEnvironment({
       file,
-      link: `https://cloud.okteto.com/#/spaces/${currentContext?.namespace ?? ''}`
+      link
     });
   };
 
   const selectContext = async (contextName: string) => {
+    // TODO: What do we do if context is changed with an environment launched? Dialog?
     setLoading(true);
     const { value: context } = await okteto.contextUse(contextName);
     if (context) {

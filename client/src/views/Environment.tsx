@@ -7,6 +7,7 @@ import OpenInBrowserIcon from '@mui/icons-material/OpenInBrowser';
 import { useTheme } from '@mui/material/styles';
 import useInterval from 'use-interval';
 
+import { colors } from '../components/Theme';
 import { useOkteto } from '../contexts/Okteto.context';
 import okteto from '../api/okteto';
 import Output from '../components/Output';
@@ -42,7 +43,7 @@ function Environment() {
     }
   }, ENDPOINTS_POLLING_INTERVAL);
 
-  const iconColor = theme.palette.mode === 'dark' ? '#B0BCD7' : '#BABABA';
+  const iconColor = theme.palette.mode === 'dark' ? '#B0BCD7' : '#888';
 
   return (
     <>
@@ -50,7 +51,7 @@ function Environment() {
         display: 'flex',
         flexDirection: 'column',
         width: '100%',
-        bgcolor: theme => theme.palette.mode === 'dark' ? '#13222a' : 'grey.200',
+        bgcolor: theme => theme.palette.mode === 'dark' ? colors.card.primary.dark : colors.card.primary.light,
         border: '1px solid',
         borderColor: theme => theme.palette.mode === 'dark' ? 'transparent' : 'grey.300',
         borderRadius: 1,

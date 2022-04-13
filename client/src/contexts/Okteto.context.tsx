@@ -5,7 +5,8 @@ import okteto, { OktetoContext, OktetoContextList } from '../api/okteto';
 
 interface OktetoEnvironment {
   file: string
-  link: string | null
+  link: string
+  contextName: string
 }
 
 interface OktetoStore {
@@ -16,7 +17,6 @@ interface OktetoStore {
   ready: boolean
 
   login: () => void
-  logout: () => void
   stopEnvironment: () => void,
   selectEnvironment: (f: string) => void
   selectContext: (f: string) => void
@@ -44,27 +44,19 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
     setLoading(false);
   };
 
-  const logout = async () => {
-    setLoading(true);
-    await okteto.contextDelete(defaultContextName);
-    setEnvironment(null);
-    setLoading(false);
-  };
-
   const selectEnvironment = (file: string) => {
-    const link = currentContext ?
-      `${currentContext.name}/#/spaces/${currentContext.namespace}` :
-      null;
+    if (!currentContext) return;
     setEnvironment({
       file,
-      link
+      link: `${currentContext.name}/#/spaces/${currentContext.namespace}`,
+      contextName: currentContext.name
     });
   };
 
   const selectContext = async (contextName: string) => {
     // TODO: What do we do if context is changed with an environment launched? Dialog?
     setLoading(true);
-    const { value: context } = await okteto.contextUse(contextName);
+    const context = contextList.find(c => c.name === contextName);
     if (context) {
       setCurrentContext(context);
     }
@@ -80,11 +72,11 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
     setContextList(list);
 
     // We consider a user as logged in if he has configured Okteto Cloud's context.
-    const isLoggedIn = list.find(context => context.name === defaultContextName);
-    const context = list.find(context => context.current);
+    const isLoggedIn = Boolean(list.find(c => c.name === defaultContextName));
     if (!isLoggedIn) {
       setCurrentContext(null);
-    } else if (context) {
+    } else if (!currentContext) {
+      const context = list.find(c => c.name === defaultContextName) ?? null;
       setCurrentContext(context);
     }
   };
@@ -105,7 +97,6 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
       ready,
 
       login,
-      logout,
       stopEnvironment,
       selectEnvironment,
       selectContext

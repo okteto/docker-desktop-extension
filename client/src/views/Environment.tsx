@@ -18,7 +18,7 @@ const ENDPOINTS_POLLING_INTERVAL = 5000;
 
 function Environment() {
   const theme = useTheme();
-  const { environment, stopEnvironment } = useOkteto();
+  const { environment, currentContext, stopEnvironment } = useOkteto();
   const [endpoints, setEndpoints] = useState<Array<string>>([]);
   const [output, setOutput] = useState('');
 
@@ -29,15 +29,15 @@ function Environment() {
   };
 
   useEffect(() => {
-    if (!environment?.file) return;
-    okteto.up(environment.file, (stdout) => {
+    if (!environment) return;
+    okteto.up(environment.file, environment.contextName, (stdout) => {
       setOutput(stdout);
     });
   }, [environment]);
 
   useInterval(async () => {
-    if (!environment?.file) return;
-    const { value, error } = await okteto.endpoints(environment?.file);
+    if (!environment) return;
+    const { value, error } = await okteto.endpoints(environment.file, environment.contextName);
     if (!error && value) {
       setEndpoints(value);
     }

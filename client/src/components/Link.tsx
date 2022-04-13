@@ -1,6 +1,8 @@
 import { ReactNode } from 'react';
 import { Link as MuiLink, SxProps, Theme, TypographyProps } from '@mui/material';
 
+import { colors } from './Theme';
+
 type LinkProps = {
   children?: ReactNode
   href?: string
@@ -24,7 +26,7 @@ function Link({ href, variant = 'body1', color, sx, children }: LinkProps) {
         cursor: 'pointer',
         color: theme => {
           if (color) return color;
-          return theme.palette.mode === 'dark' ? '#00D1CA' : '#1ca8b8';
+          return theme.palette.mode === 'dark' ? colors.brand.green.dark : colors.brand.green.light;
         }
       }}
       onClick={handleOpen}

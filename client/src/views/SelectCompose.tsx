@@ -5,6 +5,7 @@ import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
 
 import { useOkteto } from '../contexts/Okteto.context';
+import { shadows, colors } from '../components/Theme';
 import diagramDark from '../images/diagram-dark.svg';
 import diagramLight from '../images/diagram-light.svg';
 
@@ -71,6 +72,33 @@ function SelectCompose() {
             Launch Remote Environment
           </Button>
         </Box>
+      </Box>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          px: 3,
+          py: 2,
+          m: 2,
+          borderRadius: 2,
+          boxShadow: shadows.primary,
+          bgcolor: theme.palette.mode === 'dark' ? colors.card.primary.dark : colors.card.primary.light
+        }}
+      >
+        <Typography variant="body1" sx={{ flex: 1 }}>
+          <strong>New to Okteto?</strong><br />
+          Learn how Okteto helps simplify the application development process by leveraging remote environments.
+        </Typography>
+
+        <Button
+          variant="contained"
+          size="large"
+          sx={{ fontSize: '.9rem' }}
+          onClick={() => window.ddClient.host.openExternal('https://www.okteto.com/docs/')}
+        >
+          Read Docs
+        </Button>
       </Box>
     </>
   );

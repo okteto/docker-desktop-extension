@@ -14,7 +14,21 @@ export interface OktetoContext {
 export type OktetoContextList = Array<OktetoContext>;
 export type OktetoEndpointsList = Array<string>;
 
-const contextList = () : Promise<OktetoResult<OktetoContextList>> => {
+const isOktetoContext = (context: OktetoContext) => {
+  // As of Okteto CLI 2.1.1-rc.2, the output of the `context list` command
+  // doesn't provide a way to distinguish Okteto contexts from Kubernetes contexts.
+  // The `name` field contains the URL for Okteto contexts and that's at the moment
+  // the only way to do so.
+  let url;
+  try {
+    url = new URL(context.name);
+  } catch (_) {
+    return false;
+  }
+  return url.protocol === "http:" || url.protocol === "https:";
+};
+
+const contextList = (oktetoOnly = true) : Promise<OktetoResult<OktetoContextList>> => {
   return new Promise(done => {
     let output = '';
     let error: string | null = null;
@@ -30,7 +44,15 @@ const contextList = () : Promise<OktetoResult<OktetoContextList>> => {
         },
         onClose(exitCode: number): void {
           if (exitCode == 0) {
-            value = JSON.parse(output);
+            try {
+              value = JSON.parse(output)
+              if (oktetoOnly) {
+                value = value.filter((context: OktetoContext) => isOktetoContext(context));
+              }
+            } catch(e) {
+              console.error(e);
+              value = [];
+            }
           }
           done({ value, error });
         },

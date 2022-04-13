@@ -5,7 +5,7 @@ import okteto, { OktetoContext, OktetoContextList } from '../api/okteto';
 
 interface OktetoEnvironment {
   file: string
-  link: string
+  link: string | null
 }
 
 interface OktetoStore {
@@ -52,13 +52,17 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
   };
 
   const selectEnvironment = (file: string) => {
+    const link = currentContext ?
+      `${currentContext.name}/#/spaces/${currentContext.namespace}` :
+      null;
     setEnvironment({
       file,
-      link: `https://cloud.okteto.com/#/spaces/${currentContext?.namespace ?? ''}`
+      link
     });
   };
 
   const selectContext = async (contextName: string) => {
+    // TODO: What do we do if context is changed with an environment launched? Dialog?
     setLoading(true);
     const { value: context } = await okteto.contextUse(contextName);
     if (context) {

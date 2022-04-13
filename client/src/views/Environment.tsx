@@ -69,15 +69,20 @@ function Environment() {
           <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
             Remote Environment
           </Typography>
+
           <div style={{ flex: '1 auto' }} />
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<OpenInBrowserIcon />}
-            onClick={handleOpenEnvironment}
-          >
-            Open in Okteto
-          </Button>
+
+          {environment?.link &&
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<OpenInBrowserIcon />}
+              onClick={handleOpenEnvironment}
+            >
+              Open in Okteto
+            </Button>
+          }
+
           <Button
             variant="contained"
             color="error"

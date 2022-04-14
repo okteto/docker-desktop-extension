@@ -141,7 +141,7 @@ const endpoints = (manifestFile: string, contextName: string) : Promise<OktetoRe
     let output = '';
     let error: string | null = null;
     let value: OktetoEndpointsList = [];
-    const args = ['endpoints', '-f', manifestFile, '--context', contextName, '-o', 'json'];
+    const args = ['endpoints', '-f', manifestFile, '-c', contextName, '-o', 'json'];
     window.ddClient.extension.host.cli.exec('okteto', args, {
       stream: {
         onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
@@ -167,7 +167,7 @@ const up = (manifestFile: string, contextName: string, onOutputChange: (stdout: 
     let error: string | null = null;
     let value = false;
     let output = '';
-    const args = ['up', '-f', manifestFile, '--context', contextName, '--log-output', 'plain'];
+    const args = ['up', '-f', manifestFile, '-c', contextName, '--log-output', 'plain'];
     window.ddClient.extension.host.cli.exec('okteto', args, {
       stream: {
         onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {

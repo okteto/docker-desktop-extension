@@ -161,12 +161,13 @@ const contextDelete = (contextName: string) : Promise<OktetoResult<boolean>> => 
   });
 };
 
-const endpoints = (manifestFile: string) : Promise<OktetoResult<OktetoEndpointsList>> => {
+const endpoints = (manifestFile: string, contextName: string) : Promise<OktetoResult<OktetoEndpointsList>> => {
   return new Promise(done => {
     let output = '';
     let error: string | null = null;
     let value: OktetoEndpointsList = [];
-    window.ddClient.extension.host.cli.exec('okteto', ['endpoints', '-f', manifestFile, '-o', 'json'], {
+    const args = ['endpoints', '-f', manifestFile, '-c', contextName, '-o', 'json'];
+    window.ddClient.extension.host.cli.exec('okteto', args, {
       stream: {
         onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
           output += line.stdout;
@@ -186,12 +187,13 @@ const endpoints = (manifestFile: string) : Promise<OktetoResult<OktetoEndpointsL
   });
 };
 
-const up = (manifestFile: string, onOutputChange: (stdout: string) => void) : Promise<OktetoResult<boolean>> => {
+const up = (manifestFile: string, contextName: string, onOutputChange: (stdout: string) => void) : Promise<OktetoResult<boolean>> => {
   return new Promise(done => {
     let error: string | null = null;
     let value = false;
     let output = '';
-    window.ddClient.extension.host.cli.exec('okteto', ['up', '-f', manifestFile, '--detach', '--log-output', 'plain'], {
+    const args = ['up', '-f', manifestFile, '-c', contextName, '--detach', '--log-output', 'plain'];
+    window.ddClient.extension.host.cli.exec('okteto', args, {
       stream: {
         onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
           output = `${output}${line.stdout ?? ''}${line.stderr ?? ''}`;

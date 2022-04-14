@@ -28,6 +28,31 @@ const isOktetoContext = (context: OktetoContext) => {
   return url.protocol === "http:" || url.protocol === "https:";
 };
 
+const version = () : Promise<OktetoResult<string | null>> => {
+  return new Promise(done => {
+    let output = '';
+    let error: string | null = null;
+    let value: string | null = null;
+    window.ddClient.extension.host.cli.exec('okteto', ['version'], {
+      stream: {
+        onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
+          output += line.stdout;
+        },
+        onError(e: string): void {
+          console.error(e);
+          error = `${error ?? ''}${e}`;
+        },
+        onClose(exitCode: number): void {
+          if (exitCode == 0) {
+            value = output;
+          }
+          done({ value, error });
+        },
+      },
+    });
+  });
+};
+
 const contextList = (oktetoOnly = true) : Promise<OktetoResult<OktetoContextList>> => {
   return new Promise(done => {
     let output = '';
@@ -167,7 +192,7 @@ const up = (manifestFile: string, contextName: string, onOutputChange: (stdout: 
     let error: string | null = null;
     let value = false;
     let output = '';
-    const args = ['up', '-f', manifestFile, '-c', contextName, '--log-output', 'plain'];
+    const args = ['up', '-f', manifestFile, '-c', contextName, '--detach', '--log-output', 'plain'];
     window.ddClient.extension.host.cli.exec('okteto', args, {
       stream: {
         onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
@@ -195,5 +220,6 @@ export default {
   contextUse,
   contextDelete,
   endpoints,
+  version,
   up
 };

@@ -6,7 +6,7 @@ import Header from './components/Header';
 import Environment from './views/Environment';
 import SelectCompose from './views/SelectCompose';
 import Login from './views/Login';
-import Loader from './views/Loader';
+import Loader from './components/Loader';
 
 export function App() {
   createDockerDesktopClient();
@@ -22,7 +22,9 @@ export function App() {
       height: '100vh',
     }}>
       {!ready ? (
-        <Loader />
+        <Box sx={{ display: 'flex', height: '100%' }}>
+          <Loader />
+        </Box>
       ) : (
         <>
           {!isLoggedIn ? (

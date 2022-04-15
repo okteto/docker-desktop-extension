@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { ExecProcess } from '@docker/extension-api-client-types/dist/v1';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import useInterval from 'use-interval';
 
 import okteto, { OktetoContext, OktetoContextList } from '../api/okteto';
@@ -7,12 +8,14 @@ interface OktetoEnvironment {
   file: string
   link: string
   contextName: string
+  process: ExecProcess | undefined
 }
 
 interface OktetoStore {
   currentContext: OktetoContext | null
   contextList: OktetoContextList
   environment: OktetoEnvironment | null
+  output: string
   loading: boolean
   ready: boolean
 
@@ -35,6 +38,7 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
   const [currentContext, setCurrentContext] = useState<OktetoContext | null>(null);
   const [contextList, setContextList] = useState<OktetoContextList>([]);
   const [environment, setEnvironment] = useState<OktetoEnvironment | null>(null);
+  const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
 
@@ -46,10 +50,14 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
 
   const selectEnvironment = (file: string) => {
     if (!currentContext) return;
+    setOutput('');
     setEnvironment({
       file,
       link: `${currentContext.name}/#/spaces/${currentContext.namespace}`,
-      contextName: currentContext.name
+      contextName: currentContext.name,
+      process: okteto.up(file, currentContext.name, stdout => {
+        setOutput(stdout);
+      })
     });
   };
 
@@ -64,6 +72,8 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
   };
 
   const stopEnvironment = async () => {
+    environment?.process?.close();
+    setOutput('');
     setEnvironment(null);
   };
 
@@ -88,11 +98,19 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
     setReady(true);
   }, CONTEXT_POLLING_INTERVAL, true);
 
+  useEffect(() => {
+    return () => {
+      // When unmounted destroy any running environment.
+      stopEnvironment();
+    }
+  }, []);
+
   return (
     <Okteto.Provider value={{
       currentContext,
       contextList,
       environment,
+      output,
       loading,
       ready,
 

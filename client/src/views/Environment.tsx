@@ -18,22 +18,14 @@ const ENDPOINTS_POLLING_INTERVAL = 5000;
 
 function Environment() {
   const theme = useTheme();
-  const { environment, currentContext, stopEnvironment } = useOkteto();
+  const { output, environment, stopEnvironment } = useOkteto();
   const [endpoints, setEndpoints] = useState<Array<string>>([]);
-  const [output, setOutput] = useState('');
 
   const handleOpenEnvironment = () => {
     if (environment) {
       window.ddClient.host.openExternal(environment.link);
     }
   };
-
-  useEffect(() => {
-    if (!environment) return;
-    okteto.up(environment.file, environment.contextName, (stdout) => {
-      setOutput(stdout);
-    });
-  }, [environment]);
 
   useInterval(async () => {
     if (!environment) return;
@@ -113,7 +105,7 @@ function Environment() {
         </Atom>
       </Box>
 
-      <Output output={output ?? ''} />
+      <Output output={output} />
     </>
   );
 }

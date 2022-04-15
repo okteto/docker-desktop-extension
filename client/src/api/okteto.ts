@@ -1,9 +1,4 @@
-import { ExecResult } from '@docker/extension-api-client-types/dist/v1';
-
-export interface OktetoResult<E> {
-  value: E
-  error: string | null
-};
+import { ExecProcess } from "@docker/extension-api-client-types/dist/v1"
 
 export interface OktetoContext {
   name: string
@@ -82,30 +77,19 @@ const endpoints = async (manifestFile: string, contextName: string) : Promise<Ok
   return [];
 };
 
-const up = (manifestFile: string, contextName: string, onOutputChange: (stdout: string) => void) : Promise<OktetoResult<boolean>> => {
-  return new Promise(done => {
-    let error: string | null = null;
-    let value = false;
-    let output = '';
-    const args = ['up', '-f', manifestFile, '-c', contextName, '--detach', '--log-output', 'plain'];
-    window.ddClient.extension?.host?.cli.exec('okteto', args, {
-      stream: {
-        onOutput(data) {
-          output = `${output}${data.stdout ?? ''}${data.stderr ?? ''}`;
-          onOutputChange(output);
-        },
-        onError(e: any) {
-          console.error(e);
-          error = `${error ?? ''}${e}`;
-        },
-        onClose(exitCode: number) {
-          if (exitCode == 0) {
-            value = true;
-          }
-          done({ value, error });
-        },
+const up = (manifestFile: string, contextName: string, onOutputChange: (stdout: string) => void) : ExecProcess | undefined => {
+  let output = '';
+  const args = ['up', '-f', manifestFile, '-c', contextName, '--detach', '--log-output', 'plain'];
+  return window.ddClient.extension?.host?.cli.exec('okteto', args, {
+    stream: {
+      onOutput(data) {
+        output = `${output}${data.stdout ?? ''}${data.stderr ?? ''}`;
+        onOutputChange(output);
       },
-    });
+      onError(e: any) {
+        console.error(e);
+      }
+    },
   });
 };
 

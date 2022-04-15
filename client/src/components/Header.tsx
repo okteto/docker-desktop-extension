@@ -4,6 +4,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import LinearProgress from '@mui/material/LinearProgress';
+import { useConfirm } from 'material-ui-confirm';
 
 import Link from './Link';
 import { useOkteto, defaultContextName } from '../contexts/Okteto.context';
@@ -12,11 +13,32 @@ import logoLight from '../images/logo-light.svg';
 
 function Header({}) {
   const theme = useTheme();
-  const { selectContext, currentContext, contextList, loading } = useOkteto();
+  const confirm = useConfirm();
+  const { environment, selectContext, currentContext, contextList, loading } = useOkteto();
   const moreThanCloud = !(contextList.length === 1 && contextList[0].name === defaultContextName);
 
   const handleContextChange = async ({ target }: SelectChangeEvent) => {
-    await selectContext(target.value);
+    try {
+      if (environment) {
+        await confirm({
+          title: 'Switch Context',
+          content: (
+            <Typography variant="body1">
+              Switching contexts will stop your running environment. Are you sure you want to continue?
+            </Typography>
+          ),
+          confirmationButtonProps: {
+            variant: 'contained'
+          },
+          cancellationButtonProps: {
+            variant: 'outlined'
+          }
+        });
+      }
+      selectContext(target.value);
+    } catch(_) {
+      return;
+    }
   };
 
   return (

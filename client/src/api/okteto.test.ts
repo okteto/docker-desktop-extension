@@ -46,7 +46,7 @@ describe('Okteto CLI Calls', () => {
 
   describe('Context List', () => {
     it('should return a list of contexts', async () => {
-      execMock = (cmd: string, args: string[]): Promise<ExecResult> => {
+      execMock = (cmd: string, args: string[]) => {
         return Promise.resolve({
           ...defaultExecResult,
           parseJsonObject: () => [contextA, contextB]
@@ -66,6 +66,45 @@ describe('Okteto CLI Calls', () => {
       const list = await okteto.contextList();
       expect(console.error).toHaveBeenCalled();
       expect(list).toEqual([]);
+    });
+
+    it('should return empty list on exception', async () => {
+      execMock = (cmd: string, args: string[]) => {
+        throw Error();
+      }
+      const context = await okteto.contextList();
+      expect(context).toEqual([]);
+    });
+  });
+
+  describe('Context Use', () => {
+    it('should return the selected context', async () => {
+      execMock = (cmd: string, args: string[]) => {
+        return Promise.resolve({
+          ...defaultExecResult,
+          parseJsonObject: () => contextA
+        });
+      }
+      const context = await okteto.contextUse(contextA.name);
+      expect(context).toEqual(contextA);
+    });
+
+    it('should return null on error', async () => {
+      execMock = (cmd: string, args: string[]) => {
+        return Promise.reject({
+          parseJsonObject: () => contextA
+        });
+      }
+      const context = await okteto.contextUse(contextA.name);
+      expect(context).toEqual(null);
+    });
+
+    it('should return null on exception', async () => {
+      execMock = (cmd: string, args: string[]) => {
+        throw Error();
+      }
+      const context = await okteto.contextUse(contextA.name);
+      expect(context).toEqual(null);
     });
   });
 })

@@ -1,6 +1,4 @@
 {
-  "name": "okteto",
-  "provider": "Okteto",
   "icon": "okteto.svg",
   "ui": {
     "dashboard-tab": {

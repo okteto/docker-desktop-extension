@@ -1,29 +1,25 @@
 import { ChangeEvent, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Box, Button, Typography } from '@mui/material';
-import TextField from '@mui/material/TextField';
-import FormControl from '@mui/material/FormControl';
 
 import { useOkteto } from '../contexts/Okteto.context';
 import { shadows, colors } from '../components/Theme';
 import diagramDark from '../images/diagram-dark.svg';
 import diagramLight from '../images/diagram-light.svg';
 
-const defaultFile = '';
-//'/Users/rlamana/Repositories/okteto/microservices-demo-compose/docker-compose.yml';
-
 function SelectCompose() {
   const theme = useTheme();
   const { selectEnvironment, loading } = useOkteto();
-  const [file, setFile] = useState(defaultFile);
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setFile(e.target.value);
-  };
+  const handleLaunch = async () => {
+    const result = await window.ddClient.desktopUI.dialog.showOpenDialog({
+      properties: ['openFile'],
+      filters: [{ name: 'Compose File', extensions: ['yml', 'yaml'] }]
+    });
 
-  const handleLaunch = () => {
-    if (file) {
-      selectEnvironment(file);
+    const { canceled, filePaths = [] } = result;
+    if (!canceled && filePaths.length > 0) {
+      selectEnvironment(filePaths[0]);
     }
   };
 
@@ -43,7 +39,7 @@ function SelectCompose() {
           width="240"
         />
 
-        <Typography variant="h6" sx={{ maxWidth: '540px', textAlign: 'center' }}>
+        <Typography variant="h6" sx={{ maxWidth: '400px', textAlign: 'center' }}>
           Select a Compose file to launch your remote development environment.
         </Typography>
 
@@ -54,15 +50,6 @@ function SelectCompose() {
           width: '100%',
           gap: 2
         }}>
-          <FormControl sx={{ flex: 1, width: '100%', maxWidth: '540px'}}>
-            <TextField
-              defaultValue={defaultFile}
-              hiddenLabel
-              placeholder="/file/to/your/docker-compose.yml"
-              onChange={handleFileChange}
-            />
-          </FormControl>
-
           <Button
             disabled={loading}
             variant="contained"

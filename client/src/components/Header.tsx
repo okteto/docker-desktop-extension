@@ -5,7 +5,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import LinearProgress from '@mui/material/LinearProgress';
 
-import Link from '../components/Link';
+import Link from './Link';
 import { useOkteto, defaultContextName } from '../contexts/Okteto.context';
 import logoDark from '../images/logo-dark.svg';
 import logoLight from '../images/logo-light.svg';

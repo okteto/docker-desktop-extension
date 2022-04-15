@@ -2,11 +2,11 @@ import { createDockerDesktopClient } from '@docker/extension-api-client';
 import { Box } from '@mui/material';
 
 import { useOkteto } from './contexts/Okteto.context';
+import Header from './components/Header';
 import Environment from './views/Environment';
 import SelectCompose from './views/SelectCompose';
 import Login from './views/Login';
 import Loader from './views/Loader';
-import Header from './views/Header';
 
 export function App() {
   createDockerDesktopClient();

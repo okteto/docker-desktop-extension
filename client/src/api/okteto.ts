@@ -33,16 +33,16 @@ const version = () : Promise<OktetoResult<string | null>> => {
     let output = '';
     let error: string | null = null;
     let value: string | null = null;
-    window.ddClient.extension.host.cli.exec('okteto', ['version'], {
+    window.ddClient.extension?.host?.cli.exec('okteto', ['version'], {
       stream: {
-        onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
-          output += line.stdout;
+        onOutput(data) {
+          output += data.stdout;
         },
-        onError(e: string): void {
+        onError(e: string) {
           console.error(e);
           error = `${error ?? ''}${e}`;
         },
-        onClose(exitCode: number): void {
+        onClose(exitCode: number) {
           if (exitCode == 0) {
             value = output;
           }
@@ -58,16 +58,16 @@ const contextList = (oktetoOnly = true) : Promise<OktetoResult<OktetoContextList
     let output = '';
     let error: string | null = null;
     let value: OktetoContextList = [];
-    window.ddClient.extension.host.cli.exec('okteto', ['context', 'list', '-o', 'json'], {
+    const result = window.ddClient.extension?.host?.cli.exec('okteto', ['context', 'list', '-o', 'json'], {
       stream: {
-        onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
-          output += line.stdout;
+        onOutput(data) {
+          output += data.stdout;
         },
-        onError(e: string): void {
+        onError(e: string) {
           console.error(e);
           error = `${error ?? ''}${e}`;
         },
-        onClose(exitCode: number): void {
+        onClose(exitCode: number) {
           if (exitCode == 0) {
             try {
               value = JSON.parse(output)
@@ -91,16 +91,16 @@ const contextShow = () : Promise<OktetoResult<OktetoContext | null>> => {
     let output = '';
     let error: string | null = null;
     let value: OktetoContext | null = null;
-    window.ddClient.extension.host.cli.exec('okteto', ['context', 'show', '-o', 'json'], {
+    window.ddClient.extension?.host?.cli.exec('okteto', ['context', 'show', '-o', 'json'], {
       stream: {
-        onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
-          output += line.stdout;
+        onOutput(data) {
+          output += data.stdout;
         },
-        onError(e: string): void {
+        onError(e: string) {
           console.error(e);
           error = `${error ?? ''}${e}`;
         },
-        onClose(exitCode: number): void {
+        onClose(exitCode: number) {
           if (exitCode == 0) {
             value = JSON.parse(output);
           }
@@ -116,16 +116,16 @@ const contextUse = (contextName: string) : Promise<OktetoResult<OktetoContext | 
     let output = '';
     let error: string | null = null;
     let value: OktetoContext | null = null;
-    window.ddClient.extension.host.cli.exec('okteto', ['context', 'use', contextName, '--docker-desktop', '--log-output', 'json'], {
+    window.ddClient.extension?.host?.cli.exec('okteto', ['context', 'use', contextName, '--docker-desktop', '--log-output', 'json'], {
       stream: {
-        onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
-          output += line.stdout;
+        onOutput(data) {
+          output += data.stdout;
         },
-        onError(e: string): void {
+        onError(e: string) {
           console.error(e);
           error = `${error ?? ''}${e}`;
         },
-        onClose(exitCode: number): void {
+        onClose(exitCode: number) {
           if (exitCode == 0) {
             value = JSON.parse(output);
           }
@@ -141,16 +141,16 @@ const contextDelete = (contextName: string) : Promise<OktetoResult<boolean>> => 
     let output = '';
     let error: string | null = null;
     let value = false;
-    window.ddClient.extension.host.cli.exec('okteto', ['context', 'delete', contextName], {
+    window.ddClient.extension?.host?.cli.exec('okteto', ['context', 'delete', contextName], {
       stream: {
-        onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
-          output += line.stdout;
+        onOutput(data) {
+          output += data.stdout;
         },
-        onError(e: string): void {
+        onError(e: string) {
           console.error(e);
           error = `${error ?? ''}${e}`;
         },
-        onClose(exitCode: number): void {
+        onClose(exitCode: number) {
           if (exitCode == 0) {
             value = true;
           }
@@ -167,16 +167,16 @@ const endpoints = (manifestFile: string, contextName: string) : Promise<OktetoRe
     let error: string | null = null;
     let value: OktetoEndpointsList = [];
     const args = ['endpoints', '-f', manifestFile, '-c', contextName, '-o', 'json'];
-    window.ddClient.extension.host.cli.exec('okteto', args, {
+    window.ddClient.extension?.host?.cli.exec('okteto', args, {
       stream: {
-        onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
-          output += line.stdout;
+        onOutput(data) {
+          output += data.stdout;
         },
-        onError(e: string): void {
+        onError(e: string) {
           console.error(e);
           error = `${error ?? ''}${e}`;
         },
-        onClose(exitCode: number): void {
+        onClose(exitCode: number) {
           if (exitCode == 0) {
             value = JSON.parse(output);
           }
@@ -193,17 +193,17 @@ const up = (manifestFile: string, contextName: string, onOutputChange: (stdout: 
     let value = false;
     let output = '';
     const args = ['up', '-f', manifestFile, '-c', contextName, '--detach', '--log-output', 'plain'];
-    window.ddClient.extension.host.cli.exec('okteto', args, {
+    window.ddClient.extension?.host?.cli.exec('okteto', args, {
       stream: {
-        onOutput(line: { stdout: string | undefined, stderr: string | undefined }): void {
-          output = `${output}${line.stdout ?? ''}${line.stderr ?? ''}`;
+        onOutput(data) {
+          output = `${output}${data.stdout ?? ''}${data.stderr ?? ''}`;
           onOutputChange(output);
         },
-        onError(e: any): void {
+        onError(e: any) {
           console.error(e);
           error = `${error ?? ''}${e}`;
         },
-        onClose(exitCode: number): void {
+        onClose(exitCode: number) {
           if (exitCode == 0) {
             value = true;
           }

@@ -68,7 +68,7 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
   };
 
   const refreshContext = async () => {
-    const { value: list = [] } = await okteto.contextList();
+    const list = await okteto.contextList();
     setContextList(list);
 
     // We consider a user as logged in if he has configured Okteto Cloud's context.

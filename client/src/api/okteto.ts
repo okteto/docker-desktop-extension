@@ -1,3 +1,5 @@
+import { ExecResult } from '@docker/extension-api-client-types/dist/v1';
+
 export interface OktetoResult<E> {
   value: E
   error: string | null
@@ -28,163 +30,56 @@ const isOktetoContext = (context: OktetoContext) => {
   return url.protocol === "http:" || url.protocol === "https:";
 };
 
-const version = () : Promise<OktetoResult<string | null>> => {
-  return new Promise(done => {
-    let output = '';
-    let error: string | null = null;
-    let value: string | null = null;
-    window.ddClient.extension?.host?.cli.exec('okteto', ['version'], {
-      stream: {
-        onOutput(data) {
-          output += data.stdout;
-        },
-        onError(e: string) {
-          console.error(e);
-          error = `${error ?? ''}${e}`;
-        },
-        onClose(exitCode: number) {
-          if (exitCode == 0) {
-            value = output;
-          }
-          done({ value, error });
-        },
-      },
-    });
-  });
+const version = async () : Promise<string | null> => {
+  try {
+    const result = await window.ddClient.extension?.host?.cli.exec('okteto', ['version']);
+    if (result) {
+      result.lines().join('\n')
+    }
+  } catch(_) {
+    console.error('Error executing "okteto version" command');
+  }
+  return null;
 };
 
-const contextList = (oktetoOnly = true) : Promise<OktetoResult<OktetoContextList>> => {
-  return new Promise(done => {
-    let output = '';
-    let error: string | null = null;
-    let value: OktetoContextList = [];
-    const result = window.ddClient.extension?.host?.cli.exec('okteto', ['context', 'list', '-o', 'json'], {
-      stream: {
-        onOutput(data) {
-          output += data.stdout;
-        },
-        onError(e: string) {
-          console.error(e);
-          error = `${error ?? ''}${e}`;
-        },
-        onClose(exitCode: number) {
-          if (exitCode == 0) {
-            try {
-              value = JSON.parse(output)
-              if (oktetoOnly) {
-                value = value.filter((context: OktetoContext) => isOktetoContext(context));
-              }
-            } catch(e) {
-              console.error(e);
-              value = [];
-            }
-          }
-          done({ value, error });
-        },
-      },
-    });
-  });
+const contextList = async (oktetoOnly = true) : Promise<OktetoContextList> => {
+  try {
+    const args = ['context', 'list', '-o', 'json'];
+    const result = await window.ddClient.extension?.host?.cli.exec('okteto', args);
+    if (result) {
+      const list = result.parseJsonObject();
+      return oktetoOnly ? list.filter((context: OktetoContext) => isOktetoContext(context)) : list;
+    }
+  } catch(_) {
+    console.error('Error executing "okteto context" command');
+  }
+  return [];
 };
 
-const contextShow = () : Promise<OktetoResult<OktetoContext | null>> => {
-  return new Promise(done => {
-    let output = '';
-    let error: string | null = null;
-    let value: OktetoContext | null = null;
-    window.ddClient.extension?.host?.cli.exec('okteto', ['context', 'show', '-o', 'json'], {
-      stream: {
-        onOutput(data) {
-          output += data.stdout;
-        },
-        onError(e: string) {
-          console.error(e);
-          error = `${error ?? ''}${e}`;
-        },
-        onClose(exitCode: number) {
-          if (exitCode == 0) {
-            value = JSON.parse(output);
-          }
-          done({ value, error });
-        },
-      },
-    });
-  });
+const contextUse = async (contextName: string) : Promise<OktetoContext | null> => {
+  try {
+    const args = ['context', 'use', contextName, '--docker-desktop', '--log-output', 'json'];
+    const result = await window.ddClient.extension?.host?.cli.exec('okteto', args);
+    if (result) {
+      return result.parseJsonObject();
+    }
+  } catch(_) {
+    console.error('Error executing "okteto use" command');
+  }
+  return null;
 };
 
-const contextUse = (contextName: string) : Promise<OktetoResult<OktetoContext | null>> => {
-  return new Promise(done => {
-    let output = '';
-    let error: string | null = null;
-    let value: OktetoContext | null = null;
-    window.ddClient.extension?.host?.cli.exec('okteto', ['context', 'use', contextName, '--docker-desktop', '--log-output', 'json'], {
-      stream: {
-        onOutput(data) {
-          output += data.stdout;
-        },
-        onError(e: string) {
-          console.error(e);
-          error = `${error ?? ''}${e}`;
-        },
-        onClose(exitCode: number) {
-          if (exitCode == 0) {
-            value = JSON.parse(output);
-          }
-          done({ value, error });
-        },
-      },
-    });
-  });
-};
-
-const contextDelete = (contextName: string) : Promise<OktetoResult<boolean>> => {
-  return new Promise(done => {
-    let output = '';
-    let error: string | null = null;
-    let value = false;
-    window.ddClient.extension?.host?.cli.exec('okteto', ['context', 'delete', contextName], {
-      stream: {
-        onOutput(data) {
-          output += data.stdout;
-        },
-        onError(e: string) {
-          console.error(e);
-          error = `${error ?? ''}${e}`;
-        },
-        onClose(exitCode: number) {
-          if (exitCode == 0) {
-            value = true;
-          }
-          done({ value, error });
-        },
-      },
-    });
-  });
-};
-
-const endpoints = (manifestFile: string, contextName: string) : Promise<OktetoResult<OktetoEndpointsList>> => {
-  return new Promise(done => {
-    let output = '';
-    let error: string | null = null;
-    let value: OktetoEndpointsList = [];
+const endpoints = async (manifestFile: string, contextName: string) : Promise<OktetoEndpointsList> => {
+  try {
     const args = ['endpoints', '-f', manifestFile, '-c', contextName, '-o', 'json'];
-    window.ddClient.extension?.host?.cli.exec('okteto', args, {
-      stream: {
-        onOutput(data) {
-          output += data.stdout;
-        },
-        onError(e: string) {
-          console.error(e);
-          error = `${error ?? ''}${e}`;
-        },
-        onClose(exitCode: number) {
-          if (exitCode == 0) {
-            value = JSON.parse(output);
-          }
-          done({ value, error });
-        },
-      },
-    });
-  });
+    const result = await window.ddClient.extension?.host?.cli.exec('okteto', args);
+    if (result) {
+      return result.parseJsonObject();
+    }
+  } catch(_) {
+    console.error('Error executing "okteto endpoints" command');
+  }
+  return [];
 };
 
 const up = (manifestFile: string, contextName: string, onOutputChange: (stdout: string) => void) : Promise<OktetoResult<boolean>> => {
@@ -216,9 +111,7 @@ const up = (manifestFile: string, contextName: string, onOutputChange: (stdout: 
 
 export default {
   contextList,
-  contextShow,
   contextUse,
-  contextDelete,
   endpoints,
   version,
   up

@@ -37,10 +37,8 @@ function Environment() {
 
   useInterval(async () => {
     if (!environment) return;
-    const { value, error } = await okteto.endpoints(environment.file, environment.contextName);
-    if (!error && value) {
-      setEndpoints(value);
-    }
+    const list = await okteto.endpoints(environment.file, environment.contextName);
+    setEndpoints(list);
   }, ENDPOINTS_POLLING_INTERVAL);
 
   const iconColor = theme.palette.mode === 'dark' ? '#B0BCD7' : '#888';

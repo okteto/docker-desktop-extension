@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { createDockerDesktopClient } from '@docker/extension-api-client';
 import { Box } from '@mui/material';
 
@@ -12,7 +11,7 @@ import Header from './views/Header';
 export function App() {
   createDockerDesktopClient();
 
-  const { currentContext, environment, loading, ready } = useOkteto();
+  const { currentContext, environment, ready } = useOkteto();
   const isLoggedIn = !!currentContext;
 
   return (

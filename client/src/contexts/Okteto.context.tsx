@@ -66,6 +66,7 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
     setLoading(true);
     const context = contextList.find(c => c.name === contextName);
     if (context) {
+      stopEnvironment();
       setCurrentContext(context);
     }
     setLoading(false);

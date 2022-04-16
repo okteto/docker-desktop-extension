@@ -15,10 +15,8 @@ function Loader() {
     <Box sx={{
       display: 'flex',
       flex: 1,
-      flexDirection: 'column',
       alignItems: 'center',
-      justifyContent: 'center',
-      height: '100%'
+      justifyContent: 'center'
     }}>
       {show &&
         <CircularProgress />

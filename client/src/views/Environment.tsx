@@ -18,9 +18,8 @@ const ENDPOINTS_POLLING_INTERVAL = 5000;
 
 function Environment() {
   const theme = useTheme();
-  const { environment, currentContext, stopEnvironment } = useOkteto();
+  const { output, environment, stopEnvironment } = useOkteto();
   const [endpoints, setEndpoints] = useState<Array<string>>([]);
-  const [output, setOutput] = useState('');
 
   const handleOpenEnvironment = () => {
     if (environment) {
@@ -28,19 +27,10 @@ function Environment() {
     }
   };
 
-  useEffect(() => {
-    if (!environment) return;
-    okteto.up(environment.file, environment.contextName, (stdout) => {
-      setOutput(stdout);
-    });
-  }, [environment]);
-
   useInterval(async () => {
     if (!environment) return;
-    const { value, error } = await okteto.endpoints(environment.file, environment.contextName);
-    if (!error && value) {
-      setEndpoints(value);
-    }
+    const list = await okteto.endpoints(environment.file, environment.contextName);
+    setEndpoints(list);
   }, ENDPOINTS_POLLING_INTERVAL);
 
   const iconColor = theme.palette.mode === 'dark' ? '#B0BCD7' : '#888';
@@ -115,7 +105,7 @@ function Environment() {
         </Atom>
       </Box>
 
-      <Output output={output ?? ''} />
+      <Output output={output} />
     </>
   );
 }

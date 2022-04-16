@@ -2,6 +2,6 @@ export {};
 
 declare global {
   interface Window {
-    ddClient: DockerDesktopClient
+    ddClient: import('@docker/extension-api-client-types/dist/v1').DockerDesktopClient
   }
 }

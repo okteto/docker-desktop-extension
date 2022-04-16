@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build"
+    "build": "react-scripts build",
+    "test": "jest"
   },
   "dependencies": {
     "@docker/docker-mui-theme": "^0.0.4",
@@ -23,6 +24,11 @@
     "use-interval": "^1.4.0"
   },
   "devDependencies": {
-    "@docker/extension-api-client-types": "^0.2.3"
+    "@docker/extension-api-client-types": "^0.2.3",
+    "@types/jest": "^27.4.1",
+    "jest": "^27.5.1",
+    "jest-mock-console": "^1.2.3",
+    "ts-jest": "^27.1.4",
+    "ts-node": "^10.7.0"
   }
 }

@@ -18,9 +18,9 @@ FROM debian:bullseye-slim
 
 ENV OKTETO_VERSION=2.1.1-rc.2
 
-LABEL org.opencontainers.image.title="okteto" \
+LABEL org.opencontainers.image.title="Okteto" \
     org.opencontainers.image.description="Remote Development for Docker Compose" \
-    org.opencontainers.image.vendor="Okteto" \
+    org.opencontainers.image.vendor="Okteto Inc" \
     com.docker.desktop.extension.api.version=">= 0.2.3" \
     com.docker.desktop.extension.icon="https://www.okteto.com/okteto-symbol-circle-inverse-1.1.png"
 

@@ -36,6 +36,7 @@ describe('Okteto CLI Calls', () => {
     ((cmd: string, args: string[]) => Promise<ExecResult>) |
     ((cmd: string, args: string[], options: { stream: ExecStreamOptions }) => ExecProcess)
     = jest.fn();
+  let errorSpy: jest.SpyInstance;
 
   Object.defineProperty(window, 'ddClient', {
     value: {
@@ -49,6 +50,14 @@ describe('Okteto CLI Calls', () => {
         }
       }
     }
+  });
+
+  beforeAll(() => {
+    errorSpy = jest.spyOn(global.console, 'error').mockImplementation(jest.fn());
+  });
+
+  afterAll(() => {
+    errorSpy.mockRestore();
   });
 
   describe('Context List Command', () => {

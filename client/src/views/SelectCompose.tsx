@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { useTheme } from '@mui/material/styles';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, FormControlLabel, FormGroup, Checkbox, Typography } from '@mui/material';
 
 import { useOkteto } from '../contexts/Okteto.context';
 import { shadows, colors } from '../components/Theme';
@@ -9,6 +10,7 @@ import diagramLight from '../images/diagram-light.svg';
 function SelectCompose() {
   const theme = useTheme();
   const { selectEnvironment, loading } = useOkteto();
+  const [buildEnabled, setBuildEnabled] = useState(false);
 
   const handleLaunch = async () => {
     const result = await window.ddClient.desktopUI.dialog.showOpenDialog({
@@ -18,8 +20,12 @@ function SelectCompose() {
 
     const { canceled, filePaths = [] } = result;
     if (!canceled && filePaths.length > 0) {
-      selectEnvironment(filePaths[0]);
+      selectEnvironment(filePaths[0], buildEnabled);
     }
+  };
+
+  const handleBuildChange = () => {
+    setBuildEnabled(!buildEnabled);
   };
 
   return (
@@ -47,7 +53,7 @@ function SelectCompose() {
           flexDirection: 'column',
           alignItems: 'center',
           width: '100%',
-          gap: 2
+          gap: 1
         }}>
           <Button
             disabled={loading}
@@ -58,6 +64,13 @@ function SelectCompose() {
           >
             Launch Remote Environment
           </Button>
+          <FormGroup>
+            <FormControlLabel
+              checked={buildEnabled}
+              control={<Checkbox onChange={handleBuildChange}/>}
+              label="Build images before launching"
+            />
+          </FormGroup>
         </Box>
       </Box>
       <Box

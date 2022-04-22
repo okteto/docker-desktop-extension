@@ -21,7 +21,7 @@ interface OktetoStore {
 
   login: () => void
   stopEnvironment: () => void,
-  selectEnvironment: (f: string) => void
+  selectEnvironment: (f: string, withBuild: boolean) => void
   selectContext: (f: string) => void
 }
 
@@ -48,7 +48,7 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
     setLoading(false);
   };
 
-  const selectEnvironment = (file: string) => {
+  const selectEnvironment = (file: string, withBuild = false) => {
     if (!currentContext) return;
     setOutput('');
     setEnvironment({
@@ -57,7 +57,7 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
       contextName: currentContext.name,
       process: okteto.up(file, currentContext.name, stdout => {
         setOutput(stdout);
-      })
+      }, withBuild)
     });
   };
 

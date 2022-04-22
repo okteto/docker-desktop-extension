@@ -77,9 +77,12 @@ const endpoints = async (manifestFile: string, contextName: string) : Promise<Ok
   return [];
 };
 
-const up = (manifestFile: string, contextName: string, onOutputChange: (stdout: string) => void) : ExecProcess | undefined => {
+const up = (manifestFile: string, contextName: string, onOutputChange: (stdout: string) => void, withBuild = false) : ExecProcess | undefined => {
   let output = '';
   const args = ['up', '-f', manifestFile, '-c', contextName, '--detach', '--log-output', 'plain'];
+  if (withBuild) {
+    args.push('--build');
+  }
   return window.ddClient.extension?.host?.cli.exec('okteto', args, {
     stream: {
       onOutput(data) {

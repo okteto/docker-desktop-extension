@@ -1,4 +1,4 @@
-import { ExecResult } from '@docker/extension-api-client-types/dist/v1';
+import { ExecResult, ExecStreamOptions, ExecProcess } from '@docker/extension-api-client-types/dist/v1';
 import mockConsole from 'jest-mock-console';
 
 import okteto, { OktetoContext } from './okteto';
@@ -27,16 +27,24 @@ const contextB: OktetoContext = {
   "current": false
 };
 
+const processResult = {
+  close: jest.fn()
+};
+
 describe('Okteto CLI Calls', () => {
-  let execMock: (cmd: string, args: string[]) => Promise<ExecResult> = jest.fn();
+  let execMock:
+    ((cmd: string, args: string[]) => Promise<ExecResult>) |
+    ((cmd: string, args: string[], options: { stream: ExecStreamOptions }) => ExecProcess)
+    = jest.fn();
+  let errorSpy: jest.SpyInstance;
 
   Object.defineProperty(window, 'ddClient', {
     value: {
       extension: {
         host: {
           cli: {
-            exec: jest.fn().mockImplementation((cmd: string, args: string[]) => {
-              return execMock(cmd, args);
+            exec: jest.fn().mockImplementation((cmd: string, args: string[], options) => {
+              return execMock(cmd, args, options);
             })
           }
         }
@@ -44,7 +52,15 @@ describe('Okteto CLI Calls', () => {
     }
   });
 
-  describe('Context List', () => {
+  beforeAll(() => {
+    errorSpy = jest.spyOn(global.console, 'error').mockImplementation(jest.fn());
+  });
+
+  afterAll(() => {
+    errorSpy.mockRestore();
+  });
+
+  describe('Context List Command', () => {
     it('should return a list of contexts', async () => {
       execMock = (cmd: string, args: string[]) => {
         return Promise.resolve({
@@ -77,7 +93,7 @@ describe('Okteto CLI Calls', () => {
     });
   });
 
-  describe('Context Use', () => {
+  describe('Context Use Command', () => {
     it('should return the selected context', async () => {
       execMock = (cmd: string, args: string[]) => {
         return Promise.resolve({
@@ -105,6 +121,46 @@ describe('Okteto CLI Calls', () => {
       }
       const context = await okteto.contextUse(contextA.name);
       expect(context).toEqual(null);
+    });
+  });
+
+  describe('Up Command', () => {
+    it('should call up with the --detach option', async () => {
+      execMock = (cmd: string, args: string[]) => {
+        expect(args).toContain('--detach');
+        return processResult;
+      }
+      await okteto.up(
+        '/docker-compose.yml',
+        contextA.name,
+        jest.fn()
+      );
+    });
+
+    it('should call up with the --build option when "withBuild" is set to false', async () => {
+      execMock = (cmd: string, args: string[]) => {
+        expect(args).not.toContain('--build');
+        return processResult;
+      }
+      await okteto.up(
+        '/docker-compose.yml',
+        contextA.name,
+        jest.fn(),
+        false
+      );
+    });
+
+    it('should call up with the --build option when "withBuild" is set to true', async () => {
+      execMock = (cmd: string, args: string[]) => {
+        expect(args).toContain('--build');
+        return processResult;
+      }
+      await okteto.up(
+        '/docker-compose.yml',
+        contextA.name,
+        jest.fn(),
+        true
+      );
     });
   });
 })

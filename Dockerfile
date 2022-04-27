@@ -16,7 +16,7 @@ RUN --mount=type=cache,target=/usr/local/share/.cache/yarn-${TARGETARCH} yarn bu
 
 FROM debian:bullseye-slim
 
-ENV OKTETO_VERSION=2.1.1-rc.3
+ENV OKTETO_VERSION=2.2.0
 
 LABEL org.opencontainers.image.title="Okteto" \
     org.opencontainers.image.description="Remote Development for Docker Compose" \

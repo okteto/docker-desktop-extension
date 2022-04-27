@@ -7,8 +7,9 @@ app.get('/okteto/up', (req, res) => {
   const cmd = spawn('ls', ['-lh', '/']);
 
   cmd.stdout.on('data', (data) => {
+    // Add data to stream.
+    res.write(data);
     console.log(`stdout: ${data}`);
-    res.send(data);
   });
 
   cmd.stderr.on('data', (data) => {
@@ -16,6 +17,8 @@ app.get('/okteto/up', (req, res) => {
   });
 
   cmd.on('close', (code) => {
+    // Finish stream.
+    res.status(200).send();
     console.log(`child process exited with code ${code}`);
   });
 });

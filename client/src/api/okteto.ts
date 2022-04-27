@@ -65,6 +65,7 @@ const contextUse = async (contextName: string) : Promise<OktetoContext | null> =
 };
 
 const endpoints = async (manifestFile: string, contextName: string) : Promise<OktetoEndpointsList> => {
+
   try {
     const args = ['endpoints', '-f', manifestFile, '-c', contextName, '-o', 'json'];
     const result = await window.ddClient.extension?.host?.cli.exec('okteto', args);
@@ -91,7 +92,10 @@ const up = (manifestFile: string, contextName: string, onOutputChange: (stdout: 
       },
       onError(e: any) {
         console.error(e);
-      }
+      },
+      onClose(exitCode: number): void {
+        console.log('Okteto UP EXIT: ', exitCode);
+      },
     },
   });
 };

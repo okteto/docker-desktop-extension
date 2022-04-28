@@ -67,7 +67,7 @@ describe('Okteto CLI Calls', () => {
           ...defaultExecResult,
           parseJsonObject: () => [contextA, contextB]
         });
-      }
+      };
       const list = await okteto.contextList();
       expect(list).toEqual([contextA, contextB]);
     });
@@ -77,7 +77,7 @@ describe('Okteto CLI Calls', () => {
         return Promise.reject({
           ...defaultExecResult
         });
-      }
+      };
       mockConsole();
       const list = await okteto.contextList();
       expect(console.error).toHaveBeenCalled();
@@ -87,7 +87,7 @@ describe('Okteto CLI Calls', () => {
     it('should return empty list on exception', async () => {
       execMock = (cmd: string, args: string[]) => {
         throw Error();
-      }
+      };
       const context = await okteto.contextList();
       expect(context).toEqual([]);
     });
@@ -100,7 +100,7 @@ describe('Okteto CLI Calls', () => {
           ...defaultExecResult,
           parseJsonObject: () => contextA
         });
-      }
+      };
       const context = await okteto.contextUse(contextA.name);
       expect(context).toEqual(contextA);
     });
@@ -110,7 +110,7 @@ describe('Okteto CLI Calls', () => {
         return Promise.reject({
           parseJsonObject: () => contextA
         });
-      }
+      };
       const context = await okteto.contextUse(contextA.name);
       expect(context).toEqual(null);
     });
@@ -118,7 +118,7 @@ describe('Okteto CLI Calls', () => {
     it('should return null on exception', async () => {
       execMock = (cmd: string, args: string[]) => {
         throw Error();
-      }
+      };
       const context = await okteto.contextUse(contextA.name);
       expect(context).toEqual(null);
     });
@@ -129,7 +129,7 @@ describe('Okteto CLI Calls', () => {
       execMock = (cmd: string, args: string[]) => {
         expect(args).toContain('--detach');
         return processResult;
-      }
+      };
       await okteto.up(
         '/docker-compose.yml',
         contextA.name,
@@ -141,7 +141,7 @@ describe('Okteto CLI Calls', () => {
       execMock = (cmd: string, args: string[]) => {
         expect(args).not.toContain('--build');
         return processResult;
-      }
+      };
       await okteto.up(
         '/docker-compose.yml',
         contextA.name,
@@ -154,7 +154,20 @@ describe('Okteto CLI Calls', () => {
       execMock = (cmd: string, args: string[]) => {
         expect(args).toContain('--build');
         return processResult;
-      }
+      };
+      await okteto.up(
+        '/docker-compose.yml',
+        contextA.name,
+        jest.fn(),
+        true
+      );
+    });
+
+    it('should call up always with the --docker-desktop option', async () => {
+      execMock = (cmd: string, args: string[]) => {
+        expect(args).toContain('--docker-desktop');
+        return processResult;
+      };
       await okteto.up(
         '/docker-compose.yml',
         contextA.name,

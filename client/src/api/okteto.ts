@@ -91,6 +91,10 @@ const up = (manifestFile: string, contextName: string, onOutputChange: (stdout: 
       },
       onError(e: any) {
         console.error(e);
+        output = `${output}\nOkteto exited with error ${e}.`;
+      },
+      onClose(exitCode: number): void {
+        output = `${output}\nOkteto finished with status ${exitCode}.`;
       }
     },
   });

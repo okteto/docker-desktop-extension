@@ -4,38 +4,7 @@ Okteto extension for Docker Desktop
 
 ## Prerequisites
 
-- Install https://desktop-stage.docker.com/mac/main/arm64/75296/Docker.dmg
-- Install docker extensions
-
-### Mac (intel)
-
-```console
-tar -xvzf desktop-extension-cli-darwin-amd64.tar.gz
-mkdir -p ~/.docker/cli-plugins
-mv docker-extension ~/.docker/cli-plugins
-```
-
-```console
-docker extension enable
-```
-
-### Mac (arm)
-
-```console
-tar -xvzf desktop-extension-cli-darwin-arm64.tar.gz
-mkdir -p ~/.docker/cli-plugins
-mv docker-extension ~/.docker/cli-plugins
-```
-
-```console
-docker extension enable
-```
-
-## Release
-
-```console
-make extension
-```
+- Follow the [official docs](https://docker-desktop-extensions.netlify.app/#prerequisites)
 
 ## Install extension
 
@@ -72,4 +41,10 @@ Once you are done you can remove the ui-source override by running:
 
 ```console
 docker extension dev reset okteto/docker-desktop-extension
+```
+
+## Release
+
+```console
+make extension
 ```

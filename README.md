@@ -4,8 +4,8 @@ Okteto extension for Docker Desktop
 
 ## Prerequisites
 
-- Install https://desktop-stage.docker.com/mac/main/arm64/75296/Docker.dmg
-- Install docker extensions
+- Follow the installation instructions [here](https://github.com/docker/extensions-sdk/releases)
+- From the release assets, download the `desktop-extension-cli` binaries.
 
 ### Mac (intel)
 

@@ -14,9 +14,15 @@ RUN --mount=type=cache,target=/usr/local/share/.cache/yarn-${TARGETARCH} yarn
 COPY client /app/client
 RUN --mount=type=cache,target=/usr/local/share/.cache/yarn-${TARGETARCH} yarn build
 
-FROM debian:bullseye-slim
+FROM golang:1.17-buster as cli-builder
 
-ENV OKTETO_VERSION=2.2.0
+WORKDIR /app/cli
+
+RUN git clone --depth 1 --branch feature/docker-desktop --single-branch https://github.com/okteto/okteto.git
+WORKDIR /app/cli/okteto
+RUN make build-all
+
+FROM debian:bullseye-slim
 
 LABEL org.opencontainers.image.title="Okteto" \
     org.opencontainers.image.description="Remote Development for Docker Compose" \
@@ -24,20 +30,11 @@ LABEL org.opencontainers.image.title="Okteto" \
     com.docker.desktop.extension.api.version=">= 0.2.3" \
     com.docker.desktop.extension.icon="https://www.okteto.com/okteto-symbol-circle-inverse-1.1.png"
 
-ARG TARGETARCH
+ARG OKTETO_ARCH
 
-RUN apt update -y && apt install curl -y
-RUN mkdir /darwin
-RUN if [ "${TARGETARCH}" = "amd64" ] ; then curl -sLf --retry 3 -o /darwin/okteto https://github.com/okteto/okteto/releases/download/${OKTETO_VERSION}/okteto-Darwin-x86_64 ; fi
-RUN if [ "${TARGETARCH}" = "arm64" ] ; then curl -sLf --retry 3 -o /darwin/okteto https://github.com/okteto/okteto/releases/download/${OKTETO_VERSION}/okteto-Darwin-arm64 ; fi
-RUN chmod +x /darwin/okteto
-RUN mkdir /windows && \
-    curl -sLf --retry 3 -o /windows/okteto.exe https://github.com/okteto/okteto/releases/download/${OKTETO_VERSION}/okteto.exe
-RUN mkdir /linux
-RUN if [ "${TARGETARCH}" = "amd64" ] ; then curl -sLf --retry 3 -o /linux/okteto https://github.com/okteto/okteto/releases/download/${OKTETO_VERSION}/okteto-Linux-x86_64 ; fi
-RUN if [ "${TARGETARCH}" = "arm64" ] ; then curl -sLf --retry 3 -o /linux/okteto https://github.com/okteto/okteto/releases/download/${OKTETO_VERSION}/okteto-Linux-arm64 ; fi
-RUN chmod +x /linux/okteto
-
+COPY --from=cli-builder /app/cli/okteto/bin/okteto-Darwin-${OKTETO_ARCH} /darwin/okteto
+COPY --from=cli-builder /app/cli/okteto/bin/okteto-Linux-${OKTETO_ARCH} /linux/okteto
+COPY --from=cli-builder /app/cli/okteto/bin/okteto.exe /windows/okteto.exe
 COPY --from=client-builder /app/client/dist ui
 COPY okteto.svg .
 COPY metadata.json .

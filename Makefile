@@ -36,8 +36,8 @@ build-cli:
 	cd okteto && make build-all
 
 build-extension: clean-cli build-cli prepare-buildx ## Build & Upload extension image to hub. Do not push if tag already exists: make push-extension tag=0.1
-	docker buildx build --push --builder=$(BUILDER) --platform=linux/arm64 --build-arg TAG=$(TAG) --build-arg OKTETO_ARCH=arm64 .
-	docker buildx build --push --builder=$(BUILDER) --platform=linux/amd64 --build-arg TAG=$(TAG) --build-arg OKTETO_ARCH=x86_64 .
+	docker buildx build --builder=$(BUILDER) --platform=linux/arm64 --build-arg TAG=$(TAG) --build-arg OKTETO_ARCH=arm64 .
+	docker buildx build --builder=$(BUILDER) --platform=linux/amd64 --build-arg TAG=$(TAG) --build-arg OKTETO_ARCH=x86_64 .
 
 push-extension: clean-cli build-cli prepare-buildx ## Build & Upload extension image to hub. Do not push if tag already exists: make push-extension tag=0.1
 	docker buildx build --push --builder=$(BUILDER) --platform=linux/arm64 --build-arg TAG=$(TAG) --build-arg OKTETO_ARCH=arm64 --tag=$(IMAGE):$(TAG) .

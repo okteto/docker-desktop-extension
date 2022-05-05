@@ -26,8 +26,7 @@ jobs:
       name: Get the tag
       run: echo ::set-output name=TAG::${GITHUB_REF#refs/tags/}
 
-    - name: "Install docker extensions plugin"
-      run: make install-plugin
-
     - name: "Push"
-      run: make extension
+      run: |
+        make install-plugin
+        make extension

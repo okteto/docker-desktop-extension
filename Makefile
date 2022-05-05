@@ -10,6 +10,12 @@ GO_BUILD=$(STATIC_FLAGS) go build -trimpath -ldflags=$(LDFLAGS)
 INFO_COLOR = \033[0;36m
 NO_COLOR   = \033[m
 
+install-plugin: ## Install docker extensions plugin
+	curl -sLf --retry 3 -o desktop-extension-cli-linux-amd64.tar.gz https://github.com/docker/extensions-sdk/releases/download/v0.2.4/desktop-extension-cli-linux-amd64.tar.gz
+	tar -xvzf desktop-extension-cli-linux-amd64.tar.gz
+	mkdir -p ~/.docker/cli-plugins
+	mv docker-extension ~/.docker/cli-plugins
+
 install-extension: ## Install the extension
 	docker extension install $(IMAGE):$(TAG)
 

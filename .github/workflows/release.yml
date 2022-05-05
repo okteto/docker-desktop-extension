@@ -16,7 +16,7 @@ jobs:
         username: '${{ secrets.DOCKER_USER }}'
         password: '${{ secrets.DOCKER_PASS }}'
 
-    - name: Set up Docker Buildx
+    - name: Set up docker buildx
       uses: crazy-max/ghaction-docker-buildx@v3
       with:
         qemu-version: latest
@@ -25,6 +25,9 @@ jobs:
     - id: tag
       name: Get the tag
       run: echo ::set-output name=TAG::${GITHUB_REF#refs/tags/}
+
+    - name: "Install docker extensions plugin"
+      run: make install-plugin
 
     - name: "Push"
       run: make extension

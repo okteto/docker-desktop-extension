@@ -1,0 +1,30 @@
+name: release
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - uses: azure/docker-login@v1
+      with:
+        username: '${{ secrets.DOCKER_USER }}'
+        password: '${{ secrets.DOCKER_PASS }}'
+
+    - name: Set up Docker Buildx
+      uses: crazy-max/ghaction-docker-buildx@v3
+      with:
+        qemu-version: latest
+        buildx-version: latest
+
+    - id: tag
+      name: Get the tag
+      run: echo ::set-output name=TAG::${GITHUB_REF#refs/tags/}
+
+    - name: "Push"
+      run: make extension

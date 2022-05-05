@@ -14,14 +14,6 @@ RUN --mount=type=cache,target=/usr/local/share/.cache/yarn-${TARGETARCH} yarn
 COPY client /app/client
 RUN --mount=type=cache,target=/usr/local/share/.cache/yarn-${TARGETARCH} yarn build
 
-FROM golang:1.17-buster as cli-builder
-
-WORKDIR /app/cli
-
-RUN git clone --depth 1 --branch feature/docker-desktop --single-branch https://github.com/okteto/okteto.git
-WORKDIR /app/cli/okteto
-RUN make build-all
-
 FROM debian:bullseye-slim
 
 LABEL org.opencontainers.image.title="Okteto" \
@@ -32,9 +24,9 @@ LABEL org.opencontainers.image.title="Okteto" \
 
 ARG OKTETO_ARCH
 
-COPY --from=cli-builder /app/cli/okteto/bin/okteto-Darwin-${OKTETO_ARCH} /darwin/okteto
-COPY --from=cli-builder /app/cli/okteto/bin/okteto-Linux-${OKTETO_ARCH} /linux/okteto
-COPY --from=cli-builder /app/cli/okteto/bin/okteto.exe /windows/okteto.exe
+COPY okteto/bin/okteto-Darwin-${OKTETO_ARCH} /darwin/okteto
+COPY okteto/bin/okteto-Linux-${OKTETO_ARCH} /linux/okteto
+COPY okteto/bin/okteto.exe /windows/okteto.exe
 COPY --from=client-builder /app/client/dist ui
 COPY okteto.svg .
 COPY metadata.json .

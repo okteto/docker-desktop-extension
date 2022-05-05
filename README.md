@@ -4,7 +4,7 @@ Okteto extension for Docker Desktop
 
 ## Prerequisites
 
-- Follow the [official docs](https://docker-desktop-extensions.netlify.app/#prerequisites)
+- Follow the [official docs](https://docs.docker.com/desktop/extensions/#prerequisites)
 
 ## Install extension
 

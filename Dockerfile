@@ -24,9 +24,10 @@ LABEL org.opencontainers.image.title="Okteto" \
 
 ARG OKTETO_ARCH
 
-COPY okteto/bin/okteto-Darwin-${OKTETO_ARCH} /darwin/okteto
-COPY okteto/bin/okteto-Linux-${OKTETO_ARCH} /linux/okteto
-COPY okteto/bin/okteto.exe /windows/okteto.exe
 COPY --from=client-builder /app/client/dist ui
 COPY okteto.svg .
 COPY metadata.json .
+
+COPY ./okteto/bin/okteto-Darwin-${OKTETO_ARCH} /darwin/okteto
+COPY ./okteto/bin/okteto-Linux-${OKTETO_ARCH} /linux/okteto
+COPY ./okteto/bin/okteto.exe /windows/okteto.exe

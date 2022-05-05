@@ -22,7 +22,10 @@ LABEL org.opencontainers.image.title="Okteto" \
     org.opencontainers.image.description="Remote Development for Docker Compose" \
     org.opencontainers.image.vendor="Okteto Inc" \
     com.docker.desktop.extension.api.version=">= 0.2.3" \
-    com.docker.desktop.extension.icon="https://www.okteto.com/okteto-symbol-circle-inverse-1.1.png"
+    com.docker.desktop.extension.icon="https://www.okteto.com/okteto-symbol-circle-inverse-1.1.png" \
+    com.docker.extension.detailed-description="Remote Development for Docker Compose" \
+    com.docker.extension.publisher-url="https://okteto.com" \
+    com.docker.extension.additional-urls="[{\"title\":\"Documentation\",\"url\":\"https://okteto.com/docs\"}, {\"title\":\"Community\",\"url\":\"https://community.okteto.com/\"}]"
 
 ARG TARGETARCH
 

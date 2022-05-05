@@ -27,6 +27,4 @@ jobs:
       run: echo ::set-output name=TAG::${GITHUB_REF#refs/tags/}
 
     - name: "Push"
-      run: |
-        make install-plugin
-        make extension
+      run: make extension

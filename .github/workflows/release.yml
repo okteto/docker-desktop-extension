@@ -27,4 +27,6 @@ jobs:
       run: echo ::set-output name=TAG::${GITHUB_REF#refs/tags/}
 
     - name: "Push"
-      run: make push-extension
+      run: |
+        export TAG=${{ steps.tag.outputs.TAG }}
+        make push-extension

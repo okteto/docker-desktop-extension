@@ -1,11 +1,11 @@
 name: release
 on:
-  release:
-    types:
-      - published
+  push:
+    branches:
+      - main
 
 jobs:
-  release:
+  build:
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
@@ -22,9 +22,5 @@ jobs:
         qemu-version: latest
         buildx-version: latest
 
-    - id: tag
-      name: Get the tag
-      run: echo ::set-output name=TAG::${GITHUB_REF#refs/tags/}
-
-    - name: "Push"
-      run: make push-extension
+    - name: "Build"
+      run: make build-extension

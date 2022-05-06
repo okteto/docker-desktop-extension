@@ -79,7 +79,7 @@ const endpoints = async (manifestFile: string, contextName: string) : Promise<Ok
 
 const up = (manifestFile: string, contextName: string, onOutputChange: (stdout: string) => void, withBuild = false) : ExecProcess | undefined => {
   let output = '';
-  const args = ['up', '-f', manifestFile, '-c', contextName, '--detach', '--docker-desktop', '--deploy', '--log-output', 'plain'];
+  const args = ['up', '-f', manifestFile, '-c', contextName, '--docker-desktop', '--deploy', '--log-output', 'plain'];
   if (withBuild) {
     args.push('--build');
   }

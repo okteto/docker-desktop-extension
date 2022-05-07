@@ -18,7 +18,7 @@ FROM debian:bullseye-slim
 
 LABEL org.opencontainers.image.title="Okteto" \
     org.opencontainers.image.description="Remote Development for Docker Compose" \
-    org.opencontainers.image.vendor="Okteto Inc" \
+    org.opencontainers.image.vendor="Okteto" \
     com.docker.desktop.extension.api.version=">= 0.2.3" \
     com.docker.desktop.extension.icon="https://www.okteto.com/okteto-symbol-circle-inverse-1.1.png" \
     com.docker.extension.detailed-description="<p>Okteto&apos;s Docker Desktop extension lets you deploy your containers on Okteto Cloud.</p><p>Okteto lets you:</p><ul> <li>Launch a development environment that includes both local and remote containers</li><li>Write code using your local IDE, and see the results immediately on both your local and remote containers</li><li>Share your development environments with your teammates</li><li>Automatically create a preview environment with every pull request you create</li></ul><h2>About Okteto</h2><p>Okteto is a platform that enables teams of all sizes to deploy Remote Development Environments with one click. Don&apos;t wait hours to see results by committing, deploying, and waiting for CI builds to see the results of your code changes. Okteto spins up a cloud environment to deploy your application stack where you can see your changes live, exactly as they would look in production. Today, leading tech companies like Monday.com, LaunchDarkly, Replicated, Privacy Dynamics, Sirona Medical, Dafiti, and many more are already using Okteto remote development and preview environments every day to develop amazing experiences for their customers.</p>" \

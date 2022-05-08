@@ -64,13 +64,13 @@ function SelectCompose() {
           >
             Launch Remote Environment
           </Button>
-          <FormGroup>
+          {/* <FormGroup>
             <FormControlLabel
               checked={buildEnabled}
               control={<Checkbox onChange={handleBuildChange}/>}
               label="Build images before launching"
             />
-          </FormGroup>
+          </FormGroup> */}
         </Box>
       </Box>
       <Box

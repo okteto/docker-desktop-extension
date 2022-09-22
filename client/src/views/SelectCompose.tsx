@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTheme } from '@mui/material/styles';
-import { Box, Button, FormControlLabel, FormGroup, Checkbox, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 
 import { useOkteto } from '../contexts/Okteto.context';
 import { shadows, colors } from '../components/Theme';
@@ -64,13 +64,6 @@ function SelectCompose() {
           >
             Launch Remote Environment
           </Button>
-          {/* <FormGroup>
-            <FormControlLabel
-              checked={buildEnabled}
-              control={<Checkbox onChange={handleBuildChange}/>}
-              label="Build images before launching"
-            />
-          </FormGroup> */}
         </Box>
       </Box>
       <Box

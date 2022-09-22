@@ -125,38 +125,10 @@ docker extension dev reset okteto/docker-desktop-extension
 
 Unit tests for the project can be executed by running:
 
+```console
+cd client
+yarn test
 ```
-make test
-```
-
-This command will run all the unit tests, will try to detect race conditions, and will generate a test coverage report.
-
-Integration tests can be executed by running:
-
-```
-make integration
-```
-
-These tests will use your Kubernetes context to create a namespace and all the required k8s resources.
-
-### Linting
-
-Before making a PR, we recommend contributors to run a lint check on their code by running:
-
-```
-make lint
-```
-
-This command will run `pre-commit run --all-files` and `golangci-lint run` for the repository and raise any issue that might appear.
-
-> You will need to download these tools in order to run the lint locally
->
-> - [golangci-lint](https://golangci-lint.run/usage/install/#local-installation)
-> - [pre-commit](https://pre-commit.com/#installation)
-
-We recommend to have an [integration](https://golangci-lint.run/usage/integrations/) with your IDE so that golangci-lint is used as default linter
-
-There is also a [lint workflow](.github/workflows/lint.yml) running `pre-commit` and static code analysis for Go is done by [DeepSource](https://deepsource.io/) pipeline.
 
 ## Release
 

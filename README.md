@@ -1,50 +1,26 @@
-# docker-desktop-extension
+# Okteto Docker Extension
 
-Okteto extension for Docker Desktop
+Remote Development Environments for your Docker Compose applications.
 
-## Prerequisites
+## Overwiew
 
-- Follow the [official docs](https://docs.docker.com/desktop/extensions/#prerequisites)
+Do you love Docker Desktop, but your application is starting to get too big for your local machine? The Okteto Docker Desktop extension is exactly what you need. Get the Docker Desktop experience you love without the restrictions of having to run everything on your local machine.
 
-## Install extension
+## Try It Out Yourself!
 
-```console
-make install-extension
-```
+Using the Okteto Docker Desktop is very simple. Once you have the extension installed, simply point it to the location of the Docker compose file describing your services and click the "Launch Remote Environment" button! In a matter of minutes, all the services you require should be up and running in the cloud.
 
-## Update extension
+![Okteto Extension](docs/okteto-architecture.png)
 
-```console
-make update-extension
-```
 
-## Developing with hot reload
+## Useful links
 
-If you are working on the frontend code of your extension and don't want to rebuild the extension image each time you can setup Docker Desktop in a way that will use your development server instead of the bundled frontend code from the extension image.
+- [DockerCon Keynote Demo](https://www.youtube.com/watch?v=cq6Tpfji0vA&ab_channel=Okteto)
+- [See our guide](CONTRIBUTING.md) on how to get started
 
-To do that, in one terminal start your UI development server:
+## Thanks to all our contributors!
 
-```console
-cd client
-yarn start
-```
-
-This will start a development server that listens on port 3000. You can now tell Docker Desktop to use this as the frontend source, in another terminal run:
-
-```console
-docker extension dev ui-source okteto/docker-desktop-extension http://localhost:3000
-```
-
-Close and reopen the Docker Desktop dashboard and go to your extension, all the changes to the frontend code will now be immediately visible.
-
-Once you are done you can remove the ui-source override by running:
-
-```console
-docker extension dev reset okteto/docker-desktop-extension
-```
-
-## Release
-
-```console
-make extension
-```
+<a href="https://github.com/okteto/docker-desktop-extension/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=okteto/docker-desktop-extension" />
+</a>
+<!--  https://contrib.rocks -->

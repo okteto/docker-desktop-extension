@@ -100,10 +100,26 @@ const up = (manifestFile: string, contextName: string, onOutputChange: (stdout: 
   });
 };
 
+const status = (manifestFile: string, contextName: string, onStatusChange: (status: string) => void) : ExecProcess | undefined => {
+  const args = ['status', '-f', manifestFile, '-c', contextName, '--watch']
+  return window.ddClient.extension?.host?.cli.exec('okteto', args, {
+    stream: {
+      onOutput(data) {
+        let status = `${data.stdout ?? ''}${data.stderr ?? ''}`;
+        onStatusChange(status);
+      },
+      onError(e: any) {
+        console.error(e);
+      }
+    },
+  }); 
+};
+
 export default {
   contextList,
   contextUse,
   endpoints,
   version,
+  status,
   up
 };

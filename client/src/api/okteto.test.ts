@@ -177,4 +177,18 @@ describe('Okteto CLI Calls', () => {
       );
     });
   });
+
+  describe("Status Command", () => {
+    it('should call status command', async() => { 
+      execMock = (cmd: string, args: string[]) => {
+        expect(args).toContain('status');
+        return processResult;
+      };
+      await okteto.status(
+        '/docker-compose.yml',
+        contextA.name,
+        jest.fn()
+      );
+    });
+  });
 })

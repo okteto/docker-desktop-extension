@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import Cloud from '@mui/icons-material/Cloud'
 import LinkIcon from '@mui/icons-material/Link';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import OpenInBrowserIcon from '@mui/icons-material/OpenInBrowser';
@@ -20,6 +21,7 @@ function Environment() {
   const theme = useTheme();
   const { output, environment, stopEnvironment } = useOkteto();
   const [endpoints, setEndpoints] = useState<Array<string>>([]);
+  const [ status, setStatus ] = useState<String>("");
 
   const handleOpenEnvironment = () => {
     if (environment) {
@@ -82,6 +84,14 @@ function Environment() {
             Stop
           </Button>
         </Box>
+        
+        <Atom
+          label="Status:"
+          icon={<Cloud htmlColor={iconColor} />}
+        >
+          <Typography variant="body1">{status}</Typography>
+
+        </Atom>
 
         <Atom
           label="Compose File:"

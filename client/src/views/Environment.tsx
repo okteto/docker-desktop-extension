@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import CloudIcon from '@mui/icons-material/Cloud';
 import LinkIcon from '@mui/icons-material/Link';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import OpenInBrowserIcon from '@mui/icons-material/OpenInBrowser';
@@ -20,6 +21,7 @@ function Environment() {
   const theme = useTheme();
   const { output, environment, stopEnvironment } = useOkteto();
   const [endpoints, setEndpoints] = useState<Array<string>>([]);
+  const [status, setStatus] = useState<string>('');
 
   const handleOpenEnvironment = () => {
     if (environment) {
@@ -29,8 +31,13 @@ function Environment() {
 
   useInterval(async () => {
     if (!environment) return;
-    const list = await okteto.endpoints(environment.file, environment.contextName);
+    const [list, status] = await Promise.all([
+      okteto.endpoints(environment.file, environment.contextName),
+      okteto.status(environment.file, environment.contextName),
+    ]);
     setEndpoints(list);
+    if(status)
+    setStatus(status);
   }, ENDPOINTS_POLLING_INTERVAL);
 
   const iconColor = theme.palette.mode === 'dark' ? '#B0BCD7' : '#888';
@@ -38,24 +45,24 @@ function Environment() {
   return (
     <>
       <Box sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        width: '100%',
-        bgcolor: theme => theme.palette.mode === 'dark' ? colors.card.primary.dark : colors.card.primary.light,
-        border: '1px solid',
-        borderColor: theme => theme.palette.mode === 'dark' ? 'transparent' : 'grey.300',
-        borderRadius: 1,
-        px: 3,
-        py: 2,
-        gap: 2,
-      }}>
-        <Box sx={{
           display: 'flex',
-          alignItems: 'center',
-          flexDirection: 'row',
+          flexDirection: 'column',
           width: '100%',
-          gap: 1
+          bgcolor: theme => theme.palette.mode === 'dark' ? colors.card.primary.dark : colors.card.primary.light,
+          border: '1px solid',
+          borderColor: theme => theme.palette.mode === 'dark' ? 'transparent' : 'grey.300',
+          borderRadius: 1,
+          px: 3,
+          py: 2,
+          gap: 2,
         }}>
+        <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
+            flexDirection: 'row',
+            width: '100%',
+            gap: 1
+          }}>
           <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
             Remote Environment
           </Typography>
@@ -83,13 +90,17 @@ function Environment() {
           </Button>
         </Box>
 
+        <Atom label="Status" icon={<CloudIcon htmlColor={iconColor} />}>
+          <Typography variant="body1">{status}</Typography>
+        </Atom>
+
         <Atom
           label="Compose File:"
           icon={<InsertDriveFileIcon htmlColor={iconColor} />}
         >
           <Typography variant="body1">{environment?.file}</Typography>
         </Atom>
-
+        
         <Atom
           label="Endpoints:"
           icon={<LinkIcon htmlColor={iconColor} />}

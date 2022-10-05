@@ -1,6 +1,6 @@
-# Contributing to Okteto Docker Extension
+# Contributing to Docker Extension for Okteto
 
-Thank you for showing interest in contributing to the Okteto Docker Extension!
+Thank you for showing interest in contributing to the Docker Extension for Okteto!
 We appreciate all kinds of contributions, suggestions, and feedback.
 
 ## Code of Conduct
@@ -16,7 +16,7 @@ Reporting issues is a great way to help the project! This isn't just limited to 
 
 ### Contributing Code
 
-When contributing features or bug fixes to Okteto Docker Extension, it'll be helpful to keep the following things in mind:
+When contributing features or bug fixes to the Docker Extension for Okteto, it'll be helpful to keep the following things in mind:
 
 - Communicating your changes before you start working
 - Including unit tests whenever relevant

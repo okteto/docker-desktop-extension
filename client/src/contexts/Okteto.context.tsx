@@ -2,7 +2,7 @@ import { ExecProcess } from '@docker/extension-api-client-types/dist/v1';
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import useInterval from 'use-interval';
 
-import okteto, { OktetoContext, OktetoContextList } from '../api/okteto';
+import okteto, { OktetoContext, OktetoContextList, OktetoStatus } from '../api/okteto';
 
 interface OktetoEnvironment {
   file: string
@@ -18,6 +18,7 @@ interface OktetoStore {
   output: string
   loading: boolean
   ready: boolean
+  status: OktetoStatus | null
 
   login: () => void
   stopEnvironment: () => void,
@@ -32,12 +33,14 @@ type OktetoProviderProps = {
 const Okteto = createContext<OktetoStore | null>(null);
 
 const CONTEXT_POLLING_INTERVAL = 3000;
+const STATUS_POLLING_INTERVAL = 3000;
 export const defaultContextName = 'https://cloud.okteto.com';
 
 const OktetoProvider = ({ children } : OktetoProviderProps) => {
   const [currentContext, setCurrentContext] = useState<OktetoContext | null>(null);
   const [contextList, setContextList] = useState<OktetoContextList>([]);
   const [environment, setEnvironment] = useState<OktetoEnvironment | null>(null);
+  const [status, setStatus] = useState<OktetoStatus | null>(null);
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
@@ -92,12 +95,24 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
     }
   };
 
+  const getStatus = async () => {
+    if(!currentContext) return;
+    const status = await okteto.status(currentContext.name);
+    setStatus(status);
+  }
+
   useInterval(async () => {
     // Don't refresh until current command execution has finished.
     if (loading) return;
     await refreshContext();
     setReady(true);
   }, CONTEXT_POLLING_INTERVAL, true);
+
+  useInterval(async () => {
+    if(loading) return;
+    await getStatus();
+    setReady(true);
+  }, STATUS_POLLING_INTERVAL, true);
 
   useEffect(() => {
     return () => {
@@ -114,6 +129,7 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
       output,
       loading,
       ready,
+      status,
 
       login,
       stopEnvironment,

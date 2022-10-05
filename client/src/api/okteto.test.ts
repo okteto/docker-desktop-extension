@@ -185,9 +185,7 @@ describe('Okteto CLI Calls', () => {
         return processResult;
       };
       await okteto.status(
-        '/docker-compose.yml',
-        contextA.name,
-        jest.fn()
+        contextA.name
       );
     });
   });

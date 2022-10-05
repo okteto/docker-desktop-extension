@@ -19,9 +19,8 @@ const ENDPOINTS_POLLING_INTERVAL = 5000;
 
 function Environment() {
   const theme = useTheme();
-  const { output, environment, stopEnvironment } = useOkteto();
+  const { status, output, environment, stopEnvironment } = useOkteto();
   const [endpoints, setEndpoints] = useState<Array<string>>([]);
-  const [ status, setStatus ] = useState<String>("");
 
   const handleOpenEnvironment = () => {
     if (environment) {
@@ -89,7 +88,7 @@ function Environment() {
           label="Status:"
           icon={<Cloud htmlColor={iconColor} />}
         >
-          <Typography variant="body1">{status}</Typography>
+          <Typography variant="body1">{status?.status}</Typography>
 
         </Atom>
 

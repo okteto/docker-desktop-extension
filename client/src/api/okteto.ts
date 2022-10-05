@@ -100,10 +100,28 @@ const up = (manifestFile: string, contextName: string, onOutputChange: (stdout: 
   });
 };
 
+const status = async (
+  manifestFile: string,
+  contextName: string,
+): Promise<string | undefined> => {
+  try {
+    const args = ['status', '-f', manifestFile, '-c', contextName, '--watch'];
+
+    const status = await window.ddClient.extension?.host?.cli.exec(
+      'okteto',
+      args,
+    );
+    if (status) return status.parseJsonObject().status;
+  } catch (_) {
+    console.error('Error executing "okteto context" command');
+  }
+};
+
 export default {
   contextList,
   contextUse,
   endpoints,
   version,
+  status,
   up
 };

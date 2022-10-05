@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import CloudIcon from '@mui/icons-material/Cloud';
 import LinkIcon from '@mui/icons-material/Link';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import OpenInBrowserIcon from '@mui/icons-material/OpenInBrowser';
@@ -20,6 +21,7 @@ function Environment() {
   const theme = useTheme();
   const { output, environment, stopEnvironment } = useOkteto();
   const [endpoints, setEndpoints] = useState<Array<string>>([]);
+  const [status, setStatus] = useState<string>('');
 
   const handleOpenEnvironment = () => {
     if (environment) {
@@ -29,8 +31,12 @@ function Environment() {
 
   useInterval(async () => {
     if (!environment) return;
-    const list = await okteto.endpoints(environment.file, environment.contextName);
+    const [list, status] = await Promise.all([
+      okteto.endpoints(environment.file, environment.contextName),
+      okteto.status(environment.file, environment.contextName),
+    ]);
     setEndpoints(list);
+    if (status) setStatus(status);
   }, ENDPOINTS_POLLING_INTERVAL);
 
   const iconColor = theme.palette.mode === 'dark' ? '#B0BCD7' : '#888';
@@ -82,6 +88,10 @@ function Environment() {
             Stop
           </Button>
         </Box>
+
+        <Atom label="Status" icon={<CloudIcon htmlColor={iconColor} />}>
+          <Typography variant="body1">{status}</Typography>
+        </Atom>
 
         <Atom
           label="Compose File:"

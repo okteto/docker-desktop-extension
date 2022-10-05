@@ -45,24 +45,24 @@ function Environment() {
   return (
     <>
       <Box sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          width: '100%',
-          bgcolor: theme => theme.palette.mode === 'dark' ? colors.card.primary.dark : colors.card.primary.light,
-          border: '1px solid',
-          borderColor: theme => theme.palette.mode === 'dark' ? 'transparent' : 'grey.300',
-          borderRadius: 1,
-          px: 3,
-          py: 2,
-          gap: 2,
-        }}>
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        bgcolor: theme => theme.palette.mode === 'dark' ? colors.card.primary.dark : colors.card.primary.light,
+        border: '1px solid',
+        borderColor: theme => theme.palette.mode === 'dark' ? 'transparent' : 'grey.300',
+        borderRadius: 1,
+        px: 3,
+        py: 2,
+        gap: 2,
+      }}>
         <Box sx={{
-            display: 'flex',
-            alignItems: 'center',
-            flexDirection: 'row',
-            width: '100%',
-            gap: 1
-          }}>
+          display: 'flex',
+          alignItems: 'center',
+          flexDirection: 'row',
+          width: '100%',
+          gap: 1
+        }}>
           <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
             Remote Environment
           </Typography>
@@ -100,7 +100,7 @@ function Environment() {
         >
           <Typography variant="body1">{environment?.file}</Typography>
         </Atom>
-        
+
         <Atom
           label="Endpoints:"
           icon={<LinkIcon htmlColor={iconColor} />}

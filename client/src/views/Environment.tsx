@@ -88,7 +88,7 @@ function Environment() {
           label="Status:"
           icon={<Cloud htmlColor={iconColor} />}
         >
-          <Typography variant="body1">{status?.status}</Typography>
+          <Typography variant="body1">{status}</Typography>
 
         </Atom>
 

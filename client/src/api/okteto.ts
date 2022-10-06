@@ -10,10 +10,7 @@ export interface OktetoContext {
 
 export type OktetoContextList = Array<OktetoContext>;
 export type OktetoEndpointsList = Array<string>;
-export type OktetoStatus = {
-  status: String,
-  stderr: String
-}
+export type OktetoStatus = 'pending' | 'building' | 'deploying' | 'activating' | 'synchronizing' | 'ready' | 'failed';
 
 const isOktetoContext = (context: OktetoContext) => {
   // As of Okteto CLI 2.1.1-rc.2, the output of the `context list` command
@@ -104,18 +101,18 @@ const up = (manifestFile: string, contextName: string, onOutputChange: (stdout: 
   });
 };
 
-const status = async (contextName: string) : Promise<OktetoStatus> => {
+const status = async (manifest: string, contextName: string) : Promise<OktetoStatus> => {
   try {
-  const args = ['status', '-c', contextName]
+  const args = ['status', '-f', manifest, '-c', contextName]
   const result = await window.ddClient.extension?.host?.cli.exec('okteto', args) 
   if(result) {
     const status = result.parseJsonObject();
-    return status;
+    return status.status;
   }
   }catch(_) {
-    console.error('Error executing "okteto status" command');
+    console.error(`Error executing "okteto status" command`);
   }
-  return {status: "Pending", stderr: ""};
+  return 'pending';
 };
 
 export default {

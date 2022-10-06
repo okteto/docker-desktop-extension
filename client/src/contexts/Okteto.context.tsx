@@ -96,8 +96,8 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
   };
 
   const getStatus = async () => {
-    if(!currentContext) return;
-    const status = await okteto.status(currentContext.name);
+    if(!currentContext || !environment) return;
+    const status = await okteto.status(environment.file, currentContext.name);
     setStatus(status);
   }
 
@@ -109,9 +109,7 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
   }, CONTEXT_POLLING_INTERVAL, true);
 
   useInterval(async () => {
-    if(loading) return;
-    await getStatus();
-    setReady(true);
+     await getStatus();
   }, STATUS_POLLING_INTERVAL, true);
 
   useEffect(() => {

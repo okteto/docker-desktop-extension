@@ -2,13 +2,14 @@ import { ExecProcess } from '@docker/extension-api-client-types/dist/v1';
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import useInterval from 'use-interval';
 
-import okteto, { OktetoContext, OktetoContextList } from '../api/okteto';
+import okteto, { OktetoContext, OktetoContextList, OktetoStatus } from '../api/okteto';
 
 interface OktetoEnvironment {
   file: string
   link: string
   contextName: string
   process: ExecProcess | undefined
+  toastSuccess: () =>  void
 }
 
 interface OktetoStore {
@@ -18,6 +19,7 @@ interface OktetoStore {
   output: string
   loading: boolean
   ready: boolean
+  status: OktetoStatus| null
 
   login: () => void
   stopEnvironment: () => void,
@@ -26,21 +28,28 @@ interface OktetoStore {
 }
 
 type OktetoProviderProps = {
-  children?: ReactNode
+  children?: ReactNodedependant code to the components
 };
 
 const Okteto = createContext<OktetoStore | null>(null);
 
 const CONTEXT_POLLING_INTERVAL = 3000;
+const STATUS_POLLING_INTERVAL = 3000;
 export const defaultContextName = 'https://cloud.okteto.com';
 
 const OktetoProvider = ({ children } : OktetoProviderProps) => {
   const [currentContext, setCurrentContext] = useState<OktetoContext | null>(null);
   const [contextList, setContextList] = useState<OktetoContextList>([]);
   const [environment, setEnvironment] = useState<OktetoEnvironment | null>(null);
+  const [status, setStatus] = useState<OktetoStatus | null>(null);
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
+
+  const toastSuccess = (message:string) => { 
+    window.ddClient.desktopUI.toast.success(message)
+    return
+   }
 
   const login = async () => {
     setLoading(true);
@@ -92,12 +101,24 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
     }
   };
 
+  const getStatus = async () => {
+    if (!currentContext || !environment) return;
+    const status = await okteto.status(environment.file, currentContext.name);
+    if (status.toLowerCase() === 'ready') 
+      environment.toastSuccess('deployed');
+    setStatus(status);
+  };
+
   useInterval(async () => {
     // Don't refresh until current command execution has finished.
     if (loading) return;
     await refreshContext();
     setReady(true);
   }, CONTEXT_POLLING_INTERVAL, true);
+
+  useInterval( async () => {
+      await getStatus();
+    }, STATUS_POLLING_INTERVAL,true);
 
   useEffect(() => {
     return () => {
@@ -114,6 +135,7 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
       output,
       loading,
       ready,
+      status,
 
       login,
       stopEnvironment,

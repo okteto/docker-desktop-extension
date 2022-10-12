@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import Cloud from '@mui/icons-material/Cloud';
 import LinkIcon from '@mui/icons-material/Link';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import OpenInBrowserIcon from '@mui/icons-material/OpenInBrowser';
@@ -18,7 +19,7 @@ const ENDPOINTS_POLLING_INTERVAL = 5000;
 
 function Environment() {
   const theme = useTheme();
-  const { output, environment, stopEnvironment } = useOkteto();
+  const { status, output, environment, stopEnvironment } = useOkteto();
   const [endpoints, setEndpoints] = useState<Array<string>>([]);
 
   const handleOpenEnvironment = () => {
@@ -26,6 +27,10 @@ function Environment() {
       window.ddClient.host.openExternal(environment.link);
     }
   };
+
+  const toastSuccess = (message:string) => { 
+    window.ddClient.desktopUI.toast.success(message) 
+  }
 
   useInterval(async () => {
     if (!environment) return;
@@ -37,32 +42,40 @@ function Environment() {
 
   return (
     <>
-      <Box sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        width: '100%',
-        bgcolor: theme => theme.palette.mode === 'dark' ? colors.card.primary.dark : colors.card.primary.light,
-        border: '1px solid',
-        borderColor: theme => theme.palette.mode === 'dark' ? 'transparent' : 'grey.300',
-        borderRadius: 1,
-        px: 3,
-        py: 2,
-        gap: 2,
-      }}>
-        <Box sx={{
+      <Box
+        sx={{
           display: 'flex',
-          alignItems: 'center',
-          flexDirection: 'row',
+          flexDirection: 'column',
           width: '100%',
-          gap: 1
-        }}>
+          bgcolor: (theme) =>
+            theme.palette.mode === 'dark'
+              ? colors.card.primary.dark
+              : colors.card.primary.light,
+          border: '1px solid',
+          borderColor: (theme) =>
+            theme.palette.mode === 'dark' ? 'transparent' : 'grey.300',
+          borderRadius: 1,
+          px: 3,
+          py: 2,
+          gap: 2,
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            flexDirection: 'row',
+            width: '100%',
+            gap: 1,
+          }}
+        >
           <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
             Remote Environment
           </Typography>
 
           <div style={{ flex: '1 auto' }} />
 
-          {environment?.link &&
+          {environment?.link && (
             <Button
               variant="contained"
               color="primary"
@@ -71,7 +84,7 @@ function Environment() {
             >
               Open in Okteto
             </Button>
-          }
+          )}
 
           <Button
             variant="contained"
@@ -83,6 +96,14 @@ function Environment() {
           </Button>
         </Box>
 
+        <Atom 
+         label="Status:" 
+         icon={<Cloud htmlColor={iconColor} />}
+         >
+          <Typography variant="body1">{status}</Typography>
+
+        </Atom>
+
         <Atom
           label="Compose File:"
           icon={<InsertDriveFileIcon htmlColor={iconColor} />}
@@ -90,14 +111,11 @@ function Environment() {
           <Typography variant="body1">{environment?.file}</Typography>
         </Atom>
 
-        <Atom
-          label="Endpoints:"
-          icon={<LinkIcon htmlColor={iconColor} />}
-        >
-          {endpoints.length === 0 &&
+        <Atom label="Endpoints:" icon={<LinkIcon htmlColor={iconColor} />}>
+          {endpoints.length === 0 && (
             <Typography variant="body1">No endpoints available</Typography>
-          }
-          {endpoints.map(endpoint => (
+          )}
+          {endpoints.map((endpoint) => (
             <Link href={endpoint} key={endpoint}>
               {endpoint}
             </Link>

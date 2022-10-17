@@ -4,6 +4,7 @@ import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import LinkIcon from '@mui/icons-material/Link';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import OpenInBrowserIcon from '@mui/icons-material/OpenInBrowser';
+import ReplayIcon from '@mui/icons-material/Replay';
 import { useTheme } from '@mui/material/styles';
 import useInterval from 'use-interval';
 
@@ -18,7 +19,7 @@ const ENDPOINTS_POLLING_INTERVAL = 5000;
 
 function Environment() {
   const theme = useTheme();
-  const { output, environment, stopEnvironment } = useOkteto();
+  const { output, environment, stopEnvironment, relaunchEnvironment } = useOkteto();
   const [endpoints, setEndpoints] = useState<Array<string>>([]);
 
   const handleOpenEnvironment = () => {
@@ -73,6 +74,16 @@ function Environment() {
             </Button>
           }
 
+          <Button
+            variant="contained"
+            sx={{
+              color: theme => theme.palette.mode === 'dark' ? colors.brand.green.light : colors.brand.green.dark
+            }}
+            startIcon={<ReplayIcon />}
+            onClick={relaunchEnvironment}
+          >
+            Relaunch
+          </Button>
           <Button
             variant="contained"
             color="error"

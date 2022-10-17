@@ -93,7 +93,6 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
     }
   };
 
-  // relaunch the current environment
   const relaunchEnvironment = async () => {
     if(!environment || loading) return;
 

@@ -23,6 +23,7 @@ interface OktetoStore {
   stopEnvironment: () => void,
   selectEnvironment: (f: string, withBuild: boolean) => void
   selectContext: (f: string) => void
+  relaunchEnvironment: () => void
 }
 
 type OktetoProviderProps = {
@@ -92,6 +93,16 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
     }
   };
 
+  const relaunchEnvironment = async () => {
+    if(!environment || loading) return;
+
+    const {file, contextName} = environment;
+
+    await stopEnvironment();
+    await selectContext(contextName);
+    selectEnvironment(file);
+  }
+
   useInterval(async () => {
     // Don't refresh until current command execution has finished.
     if (loading) return;
@@ -118,7 +129,8 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
       login,
       stopEnvironment,
       selectEnvironment,
-      selectContext
+      selectContext,
+      relaunchEnvironment
     }}>
       {children}
     </Okteto.Provider>

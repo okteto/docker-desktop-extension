@@ -77,7 +77,11 @@ function Environment() {
           <Button
             variant="contained"
             sx={{
-              color: theme => theme.palette.mode === 'dark' ? colors.brand.green.light : colors.brand.green.dark
+              bgcolor: colors.brand.green.light,
+              '&:hover': {
+                filter: 'brightness(.9)',
+                bgcolor: colors.brand.green.light,
+              }
             }}
             startIcon={<ReplayIcon />}
             onClick={relaunchEnvironment}

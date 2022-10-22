@@ -5,6 +5,7 @@ import Cloud from '@mui/icons-material/Cloud';
 import LinkIcon from '@mui/icons-material/Link';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import OpenInBrowserIcon from '@mui/icons-material/OpenInBrowser';
+import ReplayIcon from '@mui/icons-material/Replay';
 import { useTheme } from '@mui/material/styles';
 import useInterval from 'use-interval';
 
@@ -20,7 +21,7 @@ const STATUS_POLLING_INTERVAL = 3000;
 
 function Environment() {
   const theme = useTheme();
-  const { output, environment, stopEnvironment, currentContext } = useOkteto();
+  const { output, environment, stopEnvironment, currentContext ,relaunchEnvironment } = useOkteto();
   const [endpoints, setEndpoints] = useState<Array<string>>([]);
   const [status, setStatus] = useState<OktetoStatus | null>(null);
   const [previousStatus, setPreviousStatus] = useState<OktetoStatus | null>(
@@ -98,6 +99,20 @@ function Environment() {
             </Button>
           )}
 
+          <Button
+            variant="contained"
+            sx={{
+              bgcolor: colors.brand.green.light,
+              '&:hover': {
+                filter: 'brightness(.9)',
+                bgcolor: colors.brand.green.light,
+              }
+            }}
+            startIcon={<ReplayIcon />}
+            onClick={relaunchEnvironment}
+          >
+            Relaunch
+          </Button>
           <Button
             variant="contained"
             color="error"

@@ -109,13 +109,13 @@ const status = async ( manifest: string, contextName: string): Promise<OktetoSta
       args,
     );
     if (result) {
-      const status = result.parseJsonObject();
-      return status.status
+      const {status} = result.parseJsonObject();
+      return status
     }
   } catch (_) {
     console.error(`Error executing "okteto status" command`);
   }
-  return 'pending';
+  return 'building';
 };
 
 export default {

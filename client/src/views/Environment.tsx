@@ -21,7 +21,7 @@ const STATUS_POLLING_INTERVAL = 3000;
 
 function Environment() {
   const theme = useTheme();
-  const { output, environment, stopEnvironment, currentContext ,relaunchEnvironment } = useOkteto();
+  const { output, environment, stopEnvironment, currentContext, relaunchEnvironment } = useOkteto();
   const [endpoints, setEndpoints] = useState<Array<string>>([]);
   const [status, setStatus] = useState<OktetoStatus | null>(null);
   const [previousStatus, setPreviousStatus] = useState<OktetoStatus | null>(

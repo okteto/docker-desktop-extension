@@ -49,7 +49,7 @@ function Environment() {
         if (!previousStatus || previousStatus !== status)
           setPreviousStatus(status)
         setStatus(status);
-    }, STATUS_POLLING_INTERVAL,true);
+    }, environment ? STATUS_POLLING_INTERVAL : null, true);
 
   const iconColor = theme.palette.mode === 'dark' ? '#B0BCD7' : '#888';
 

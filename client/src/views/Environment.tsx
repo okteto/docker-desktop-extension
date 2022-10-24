@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, capitalize, Typography } from '@mui/material';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import Cloud from '@mui/icons-material/Cloud';
 import LinkIcon from '@mui/icons-material/Link';
@@ -33,6 +33,19 @@ function Environment() {
       window.ddClient.host.openExternal(environment.link);
     }
   };
+  const refreshStatus = async () => {
+    if (!environment || !currentContext) return;
+    const status = await okteto.status(environment.file, currentContext.name);
+    if (
+      previousStatus &&
+      previousStatus === 'activating' &&
+      status === 'synchronizing'
+    )
+      window.ddClient.desktopUI.toast.success('env ready to use');
+    if (!previousStatus || previousStatus !== status)
+      setPreviousStatus(status);
+    setStatus(status);
+  };
 
   useInterval(async () => {
     if (!environment) return;
@@ -42,13 +55,7 @@ function Environment() {
 
 
     useInterval( async () => {
-      if (!environment || !currentContext) return;
-      const status = await okteto.status(environment.file, currentContext.name);
-       if (previousStatus && previousStatus === 'activating' && status === 'synchronizing' )
-         window.ddClient.desktopUI.toast.success('env ready to use');
-        if (!previousStatus || previousStatus !== status)
-          setPreviousStatus(status)
-        setStatus(status);
+      await refreshStatus()
     }, environment ? STATUS_POLLING_INTERVAL : null, true);
 
   const iconColor = theme.palette.mode === 'dark' ? '#B0BCD7' : '#888';
@@ -127,7 +134,7 @@ function Environment() {
          label="Status:" 
          icon={<Cloud htmlColor={iconColor} />}
          >
-          <Typography variant="body1">{status}</Typography>
+          <Typography variant="body1">{status ? capitalize(status):  null}</Typography>
 
         </Atom>
 

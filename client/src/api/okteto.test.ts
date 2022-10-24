@@ -186,5 +186,13 @@ describe('Okteto CLI Calls', () => {
       };
       await okteto.status('/docker-compose.yml', contextA.name);
     });
+    it('should call up always with the context and the manifest', async () => {
+      execMock = (cmd: string, args: string[]) => {
+        expect(args).toContain('manifest');
+        expect(args).toContain('contextName');
+        return processResult;
+      };
+      await okteto.status('/docker-compose.yml', contextA.name);
+    });
   });
 })

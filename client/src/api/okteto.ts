@@ -10,7 +10,7 @@ export interface OktetoContext {
 
 export type OktetoContextList = Array<OktetoContext>;
 export type OktetoEndpointsList = Array<string>;
-export type OktetoStatus =  'pending'  | 'building'  | 'deploying'  | 'activating'  | 'synchronizing'  | 'ready'  | 'failed';
+export type OktetoStatus =  'pending'  | 'building'  | 'deploying'  | 'activating'  | 'synchronizing'  | 'ready'  | 'failed' | 'unknown';
 
 const isOktetoContext = (context: OktetoContext) => {
   // As of Okteto CLI 2.1.1-rc.2, the output of the `context list` command
@@ -115,7 +115,7 @@ const status = async ( manifest: string, contextName: string): Promise<OktetoSta
   } catch (_) {
     console.error(`Error executing "okteto status" command`);
   }
-  return 'building';
+  return 'unknown';
 };
 
 export default {

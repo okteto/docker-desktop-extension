@@ -12,18 +12,20 @@ interface OktetoEnvironment {
 }
 
 interface OktetoStore {
-  currentContext: OktetoContext | null
-  contextList: OktetoContextList
-  environment: OktetoEnvironment | null
-  output: string
-  loading: boolean
-  ready: boolean
+  currentContext: OktetoContext | null;
+  contextList: OktetoContextList;
+  environment: OktetoEnvironment | null;
+  output: string;
+  loading: boolean;
+  ready: boolean;
+  status: OktetoStatus | null;
+  previousStatus: OktetoStatus | null;
 
-  login: () => void
-  stopEnvironment: () => void
-  selectEnvironment: (f: string, withBuild: boolean) => void
-  selectContext: (f: string) => void
-  relaunchEnvironment: () => void
+  login: () => void;
+  stopEnvironment: () => void;
+  selectEnvironment: (f: string, withBuild: boolean) => void;
+  selectContext: (f: string) => void;
+  relaunchEnvironment: () => void;
 }
 
 type OktetoProviderProps = {
@@ -40,6 +42,8 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
   const [currentContext, setCurrentContext] = useState<OktetoContext | null>(null);
   const [contextList, setContextList] = useState<OktetoContextList>([]);
   const [environment, setEnvironment] = useState<OktetoEnvironment | null>(null);
+  const [status, setStatus] = useState<OktetoStatus | null>(null);
+  const [previousStatus, setPreviousStatus] = useState<OktetoStatus | null>(null)
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
@@ -95,6 +99,14 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
     }
   };
 
+  const refreshStatus = async () => {
+    if (!environment || !currentContext) return;
+    const status = await okteto.status(environment.file, currentContext.name);
+    if (!previousStatus || previousStatus !== status)
+        setPreviousStatus(status);
+    setStatus(status);
+  };
+
 
   const relaunchEnvironment = async () => {
     if(!environment || loading) return;
@@ -114,6 +126,10 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
     setReady(true);
   }, CONTEXT_POLLING_INTERVAL, true);
 
+  useInterval(async () => {
+      await refreshStatus();
+    }, environment ? STATUS_POLLING_INTERVAL : null, true);
+
   useEffect(() => {
     return () => {
       // When unmounted destroy any running environment.
@@ -129,6 +145,8 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
       output,
       loading,
       ready,
+      status,
+      previousStatus,
 
       login,
       stopEnvironment,

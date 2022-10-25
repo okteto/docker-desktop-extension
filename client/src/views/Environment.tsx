@@ -17,46 +17,29 @@ import Atom from '../components/Atom';
 import Link from '../components/Link';
 
 const ENDPOINTS_POLLING_INTERVAL = 5000;
-const STATUS_POLLING_INTERVAL = 3000;
 
 function Environment() {
   const theme = useTheme();
-  const { output, environment, stopEnvironment, currentContext, relaunchEnvironment } = useOkteto();
+  const { output, environment, status, previousStatus, stopEnvironment, currentContext, relaunchEnvironment } = useOkteto();
   const [endpoints, setEndpoints] = useState<Array<string>>([]);
-  const [status, setStatus] = useState<OktetoStatus | null>(null);
-  const [previousStatus, setPreviousStatus] = useState<OktetoStatus | null>(
-    null,
-  );
+
 
   const handleOpenEnvironment = () => {
     if (environment) {
       window.ddClient.host.openExternal(environment.link);
     }
   };
-  const refreshStatus = async () => {
-    if (!environment || !currentContext) return;
-    const status = await okteto.status(environment.file, currentContext.name);
-    if (
-      previousStatus &&
-      previousStatus === 'activating' &&
-      status === 'synchronizing'
-    )
-      window.ddClient.desktopUI.toast.success('env ready to use');
-    if (!previousStatus || previousStatus !== status)
-      setPreviousStatus(status);
-    setStatus(status);
-  };
 
   useInterval(async () => {
     if (!environment) return;
     const list = await okteto.endpoints(environment.file, environment.contextName);
     setEndpoints(list);
+
+    if (previousStatus && previousStatus === 'activating' && status === 'synchronizing')
+          window.ddClient.desktopUI.toast.success('env ready to use');
+
   }, ENDPOINTS_POLLING_INTERVAL);
 
-
-    useInterval( async () => {
-      await refreshStatus()
-    }, environment ? STATUS_POLLING_INTERVAL : null, true);
 
   const iconColor = theme.palette.mode === 'dark' ? '#B0BCD7' : '#888';
 

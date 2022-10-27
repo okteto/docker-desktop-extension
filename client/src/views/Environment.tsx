@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Box, Button, capitalize, Typography } from '@mui/material';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import Cloud from '@mui/icons-material/Cloud';
@@ -20,8 +20,9 @@ const ENDPOINTS_POLLING_INTERVAL = 5000;
 
 function Environment() {
   const theme = useTheme();
-  const { output, environment, status, previousStatus, stopEnvironment, currentContext, relaunchEnvironment } = useOkteto();
+  const { output, environment, status, stopEnvironment, currentContext, relaunchEnvironment } = useOkteto();
   const [endpoints, setEndpoints] = useState<Array<string>>([]);
+  const prevStatusRef = useRef<OktetoStatus | null>(null);
 
 
   const handleOpenEnvironment = () => {
@@ -30,14 +31,17 @@ function Environment() {
     }
   };
 
+  useEffect(() => {
+    if ( prevStatusRef.current && prevStatusRef.current === 'activating' && status === 'synchronizing')
+      window.ddClient.desktopUI.toast.success('env ready to use');
+    prevStatusRef.current = status;
+  }, [status]);
+
+
   useInterval(async () => {
     if (!environment) return;
     const list = await okteto.endpoints(environment.file, environment.contextName);
     setEndpoints(list);
-
-    if (previousStatus && previousStatus === 'activating' && status === 'synchronizing')
-          window.ddClient.desktopUI.toast.success('env ready to use');
-
   }, ENDPOINTS_POLLING_INTERVAL);
 
 

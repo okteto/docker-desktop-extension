@@ -19,7 +19,6 @@ interface OktetoStore {
   loading: boolean;
   ready: boolean;
   status: OktetoStatus | null;
-  previousStatus: OktetoStatus | null;
 
   login: () => void;
   stopEnvironment: () => void;
@@ -43,7 +42,6 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
   const [contextList, setContextList] = useState<OktetoContextList>([]);
   const [environment, setEnvironment] = useState<OktetoEnvironment | null>(null);
   const [status, setStatus] = useState<OktetoStatus | null>(null);
-  const [previousStatus, setPreviousStatus] = useState<OktetoStatus | null>(null)
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
@@ -102,8 +100,6 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
   const refreshStatus = async () => {
     if (!environment || !currentContext) return;
     const status = await okteto.status(environment.file, currentContext.name);
-    if (!previousStatus || previousStatus !== status)
-        setPreviousStatus(status);
     setStatus(status);
   };
 
@@ -146,7 +142,6 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
       loading,
       ready,
       status,
-      previousStatus,
 
       login,
       stopEnvironment,

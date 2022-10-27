@@ -117,7 +117,7 @@ function Environment() {
          label="Status:" 
          icon={<Cloud htmlColor={iconColor} />}
          >
-          <Typography variant="body1">{status ? capitalize(status):  null}</Typography>
+          <Typography variant="body1">{status ? capitalize(status) :  null}</Typography>
 
         </Atom>
 

@@ -124,7 +124,7 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
 
   useInterval(async () => {
     await refreshStatus();
-    }, environment ? STATUS_POLLING_INTERVAL : null, true);
+  }, environment ? STATUS_POLLING_INTERVAL : null, true);
 
   useEffect(() => {
     return () => {

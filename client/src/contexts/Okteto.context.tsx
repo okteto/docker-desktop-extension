@@ -123,7 +123,7 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
   }, CONTEXT_POLLING_INTERVAL, true);
 
   useInterval(async () => {
-      await refreshStatus();
+    await refreshStatus();
     }, environment ? STATUS_POLLING_INTERVAL : null, true);
 
   useEffect(() => {

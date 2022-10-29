@@ -41,7 +41,7 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
   const [currentContext, setCurrentContext] = useState<OktetoContext | null>(null);
   const [contextList, setContextList] = useState<OktetoContextList>([]);
   const [environment, setEnvironment] = useState<OktetoEnvironment | null>(null);
-  const [status, setStatus] = useState<OktetoStatus | null>(null);
+  const [status, setStatus] = useState<OktetoStatus>('pending');
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);

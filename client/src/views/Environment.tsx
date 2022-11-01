@@ -33,7 +33,7 @@ function Environment() {
 
   useEffect(() => {
     if ( prevStatusRef.current && prevStatusRef.current === 'activating' && status === 'synchronizing')
-      window.ddClient.desktopUI.toast.success('env ready to use');
+      window.ddClient.desktopUI.toast.success('Environment successfully launched!');
     prevStatusRef.current = status;
   }, [status]);
 

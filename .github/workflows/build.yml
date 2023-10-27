@@ -16,11 +16,5 @@ jobs:
         username: '${{ secrets.DOCKER_USER }}'
         password: '${{ secrets.DOCKER_PASS }}'
 
-    - name: Set up docker buildx
-      uses: crazy-max/ghaction-docker-buildx@v3
-      with:
-        qemu-version: latest
-        buildx-version: latest
-
     - name: "Build"
       run: make build-extension

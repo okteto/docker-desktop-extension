@@ -21,7 +21,7 @@ validate-extension: ## Validate the extension
 	docker extension validate metadata.json
 
 build-extension: ## Build extension image but do not push
- 	docker build --platform=linux/arm64 --build-arg TAG=$(TAG) --build-arg OKTETO_ARCH=arm64 --build-arg OKTETO_VERSION=${OKTETO_VERSION} .
+	docker build --platform=linux/arm64 --build-arg TAG=$(TAG) --build-arg OKTETO_ARCH=arm64 --build-arg OKTETO_VERSION=${OKTETO_VERSION} .
 	docker build --platform=linux/amd64 --build-arg TAG=$(TAG) --build-arg OKTETO_ARCH=x86_64 --build-arg OKTETO_VERSION=${OKTETO_VERSION} .
 
 push-extension: ## Build & Upload extension image to hub. Do not push if tag already exists: make push-extension tag=0.1

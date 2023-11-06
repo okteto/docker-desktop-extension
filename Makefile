@@ -24,12 +24,13 @@ prepare-buildx: ## Create buildx builder for multi-arch build, if not exists
 	docker buildx inspect $(BUILDER) || docker buildx create --name=$(BUILDER) --driver=docker-container --driver-opt=network=host
 
 build-extension: prepare-buildx ## Build extension image but do not push
-	docker build --platform=linux/arm64 --build-arg TAG=$(TAG) --build-arg OKTETO_ARCH=arm64 --build-arg OKTETO_VERSION=${OKTETO_VERSION} .
-	docker build --platform=linux/amd64 --build-arg TAG=$(TAG) --build-arg OKTETO_ARCH=x86_64 --build-arg OKTETO_VERSION=${OKTETO_VERSION} .
+	docker build --platform=linux/arm64 --build-arg OKTETO_ARCH=arm64 --build-arg OKTETO_VERSION=${OKTETO_VERSION} .
+	docker build --platform=linux/amd64 --build-arg OKTETO_ARCH=x86_64 --build-arg OKTETO_VERSION=${OKTETO_VERSION} .
 
 push-extension: prepare-buildx ## Build & Upload extension image to hub
-	docker build --push --platform=linux/arm64 --build-arg TAG=$(TAG) --build-arg OKTETO_ARCH=arm64 --build-arg OKTETO_VERSION=${OKTETO_VERSION} --tag=$(IMAGE):$(TAG) .
-	docker build --push --platform=linux/amd64 --build-arg TAG=$(TAG) --build-arg OKTETO_ARCH=x86_64 --build-arg OKTETO_VERSION=${OKTETO_VERSION} --tag=$(IMAGE):$(TAG) .
+	docker build --push --platform=linux/arm64 --build-arg OKTETO_ARCH=arm64 --build-arg OKTETO_VERSION=${OKTETO_VERSION} -t=$(IMAGE):$(TAG)-arm64 .
+	docker build --push --platform=linux/amd64 --build-arg OKTETO_ARCH=x86_64 --build-arg OKTETO_VERSION=${OKTETO_VERSION} -t=$(IMAGE):$(TAG)-amd64 .
+	docker buildx imagetools create -t $(IMAGE):$(TAG) $(IMAGE):$(TAG)-arm64 $(IMAGE):$(TAG)-amd64
 
 help: ## Show this help
 	@echo Please specify a build target. The choices are:

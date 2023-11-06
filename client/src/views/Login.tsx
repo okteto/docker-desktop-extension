@@ -26,12 +26,11 @@ function Login() {
       <img src={theme.palette.mode === 'dark' ? logoDark : logoLight} width="240" />
 
       <Typography variant="h4">
-        Code Locally, Run Remotely
+      Hybrid Development made Simple
       </Typography>
 
       <Typography variant="h6" sx={{ maxWidth: '650px', textAlign: 'center' }}>
-        Okteto spins up a cloud environment to deploy your application stack where you can
-        see your changes live, while coding locally.
+        Seamlessly combine Docker Desktop's local containers with cloud-based Kubernetes clusters and experiment the future of cloud-native development
       </Typography>
 
       <Button

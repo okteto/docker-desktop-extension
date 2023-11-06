@@ -7,10 +7,10 @@ import { useOkteto } from '../contexts/Okteto.context';
 
 function Login() {
   const theme = useTheme();
-  const { login } = useOkteto();
+  const { loginIntoCloud } = useOkteto();
 
   const handleLogin = () => {
-    login();
+    loginIntoCloud();
   }
 
   return (

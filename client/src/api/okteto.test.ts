@@ -151,19 +151,6 @@ describe('Okteto CLI Calls', () => {
       );
     });
 
-    it('should call up always with the --docker-desktop option', async () => {
-      execMock = (cmd: string, args: string[]) => {
-        expect(args).toContain('--docker-desktop');
-        return processResult;
-      };
-      await okteto.up(
-        '/docker-compose.yml',
-        contextA.name,
-        jest.fn(),
-        true
-      );
-    });
-
     it('should call up always with the --deploy option', async () => {
       execMock = (cmd: string, args: string[]) => {
         expect(args).toContain('--deploy');

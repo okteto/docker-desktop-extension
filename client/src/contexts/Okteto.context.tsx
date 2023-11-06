@@ -19,7 +19,7 @@ interface OktetoStore {
   loading: boolean
   ready: boolean
 
-  login: () => void
+  loginIntoCloud: () => void
   stopEnvironment: () => void,
   selectEnvironment: (f: string, withBuild: boolean) => void
   selectContext: (f: string) => void
@@ -33,7 +33,7 @@ type OktetoProviderProps = {
 const Okteto = createContext<OktetoStore | null>(null);
 
 const CONTEXT_POLLING_INTERVAL = 3000;
-export const defaultContextName = 'https://cloud.okteto.com';
+export const cloudContextName = 'https://cloud.okteto.com';
 
 const OktetoProvider = ({ children } : OktetoProviderProps) => {
   const [currentContext, setCurrentContext] = useState<OktetoContext | null>(null);
@@ -43,9 +43,9 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
 
-  const login = async () => {
+  const loginIntoCloud = async () => {
     setLoading(true);
-    await okteto.contextUse(defaultContextName);
+    await okteto.contextUse(cloudContextName);
     setLoading(false);
   };
 
@@ -68,7 +68,8 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
     const context = contextList.find(c => c.name === contextName);
     if (context) {
       stopEnvironment();
-      setCurrentContext(context);
+      await okteto.contextUse(contextName);
+      refreshContext();
     }
     setLoading(false);
   };
@@ -80,17 +81,15 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
   };
 
   const refreshContext = async () => {
+    // Set context list
     const list = await okteto.contextList();
     setContextList(list);
 
-    // We consider a user as logged in if he has configured Okteto Cloud's context.
-    const isLoggedIn = Boolean(list.find(c => c.name === defaultContextName));
-    if (!isLoggedIn) {
-      setCurrentContext(null);
-    } else if (!currentContext) {
-      const context = list.find(c => c.name === defaultContextName) ?? null;
-      setCurrentContext(context);
-    }
+    // Set current context
+    const context = list.find(c => c.current);
+    setCurrentContext(context ?? null);
+
+    // console.log(currentContext, contextList);
   };
 
   const relaunchEnvironment = async () => {
@@ -126,7 +125,7 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
       loading,
       ready,
 
-      login,
+      loginIntoCloud,
       stopEnvironment,
       selectEnvironment,
       selectContext,

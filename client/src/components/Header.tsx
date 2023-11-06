@@ -7,7 +7,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import { useConfirm } from 'material-ui-confirm';
 
 import Link from './Link';
-import { useOkteto, defaultContextName } from '../contexts/Okteto.context';
+import { useOkteto, cloudContextName } from '../contexts/Okteto.context';
 import logoDark from '../images/logo-dark.svg';
 import logoLight from '../images/logo-light.svg';
 
@@ -15,7 +15,7 @@ function Header({}) {
   const theme = useTheme();
   const confirm = useConfirm();
   const { environment, selectContext, currentContext, contextList, loading } = useOkteto();
-  const moreThanCloud = !(contextList.length === 1 && contextList[0].name === defaultContextName);
+  const moreThanCloud = !(contextList.length === 1 && contextList[0].name === cloudContextName);
 
   const handleContextChange = async ({ target }: SelectChangeEvent) => {
     try {

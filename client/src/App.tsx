@@ -11,8 +11,8 @@ import Loader from './components/Loader';
 export function App() {
   createDockerDesktopClient();
 
-  const { currentContext, environment, ready } = useOkteto();
-  const isLoggedIn = !!currentContext;
+  const { contextList, environment, ready } = useOkteto();
+  const isLoggedIn = contextList?.length > 0;
 
   return (
     <Box sx={{

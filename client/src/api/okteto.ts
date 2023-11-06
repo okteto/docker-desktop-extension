@@ -1,4 +1,4 @@
-import { ExecProcess } from "@docker/extension-api-client-types/dist/v1"
+import { ExecProcess, RawExecResult } from "@docker/extension-api-client-types/dist/v1"
 
 export interface OktetoContext {
   name: string
@@ -10,6 +10,17 @@ export interface OktetoContext {
 
 export type OktetoContextList = Array<OktetoContext>;
 export type OktetoEndpointsList = Array<string>;
+
+const notifyError = (result: RawExecResult) => {
+  let msg = '';
+  switch(result.code) {
+    case 126: msg = 'Command invoked cannot execute'; break;
+    case 127: msg = 'Command not found'; break;
+    default: msg = result.stderr;
+  }
+  window.ddClient.desktopUI.toast.error(`Error executing "okteto" command: ${msg}`);
+  console.error(`Error executing ${result.cmd}`, result);
+};
 
 const isOktetoContext = (context: OktetoContext) => {
   // As of Okteto CLI 2.1.1-rc.2, the output of the `context list` command
@@ -45,21 +56,22 @@ const contextList = async (oktetoOnly = true) : Promise<OktetoContextList> => {
       const list = result.parseJsonObject();
       return oktetoOnly ? list.filter((context: OktetoContext) => isOktetoContext(context)) : list;
     }
-  } catch(_) {
-    console.error('Error executing "okteto context" command');
+  } catch(e) {
+    const error = e as RawExecResult;
+    if (error.code === 1) {
+      return [];
+    }
+    notifyError(error);
   }
   return [];
 };
 
-const contextUse = async (contextName: string) : Promise<OktetoContext | null> => {
+const contextUse = async (contextName: string) : Promise<null> => {
   try {
-    const args = ['context', 'use', contextName, '--docker-desktop', '--log-output', 'json'];
-    const result = await window.ddClient.extension?.host?.cli.exec('okteto', args);
-    if (result) {
-      return result.parseJsonObject();
-    }
-  } catch(_) {
-    console.error('Error executing "okteto use" command');
+    const args = ['context', 'use', contextName];
+    await window.ddClient.extension?.host?.cli.exec('okteto', args);
+  } catch(err) {
+    notifyError(err as RawExecResult);
   }
   return null;
 };
@@ -71,18 +83,18 @@ const endpoints = async (manifestFile: string, contextName: string) : Promise<Ok
     if (result) {
       return result.parseJsonObject();
     }
-  } catch(_) {
-    console.error('Error executing "okteto endpoints" command');
+  } catch(err) {
+    notifyError(err as RawExecResult);
   }
   return [];
 };
 
 const up = (manifestFile: string, contextName: string, onOutputChange: (stdout: string) => void, withBuild = false) : ExecProcess | undefined => {
   let output = '';
-  const args = ['up', '-f', manifestFile, '-c', contextName, '--docker-desktop', '--deploy', '--log-output', 'plain'];
-  if (withBuild) {
-    args.push('--build');
-  }
+  const args = ['deploy', '-f', manifestFile, '-c', contextName, '--build', '--log-output', 'plain'];
+  // const deployPromise = new Promise((resolve, reject) => {
+
+  // });
   return window.ddClient.extension?.host?.cli.exec('okteto', args, {
     stream: {
       onOutput(data) {
@@ -93,12 +105,51 @@ const up = (manifestFile: string, contextName: string, onOutputChange: (stdout: 
         console.error(e);
         output = `${output}\nOkteto exited with error ${e}.`;
       },
-      onClose(exitCode: number): void {
-        output = `${output}\nOkteto finished with status ${exitCode}.`;
+      onClose: async(exitCode: number): Promise<void> => {
+        console.log('EXITCODE', exitCode);
+        // output = `${output}\nOkteto finished with status ${exitCode}.`;
+        console.log('TERMINADO');
+
+        // Crear container
+        const output = await window.ddClient.docker.cli.exec('run', [
+          '--name',
+          'pupu-nginx',
+          'redis/redis-stack-server:latest'
+        ]);
+
+        setTimeout(async () => {
+          console.log('CACAACACA!');
+          const containers = await window.ddClient.docker.listContainers();
+          console.log(containers);
+        }, 30000);        
       }
     },
   });
+  
 };
+
+// const up = (manifestFile: string, contextName: string, onOutputChange: (stdout: string) => void, withBuild = false) : ExecProcess | undefined => {
+//   let output = '';
+//   const args = ['up', '-f', manifestFile, '-c', contextName, '--deploy', '--log-output', 'plain'];
+//   if (withBuild) {
+//     args.push('--build');
+//   }
+//   return window.ddClient.extension?.host?.cli.exec('okteto', args, {
+//     stream: {
+//       onOutput(data) {
+//         output = `${output}${data.stdout ?? ''}${data.stderr ?? ''}`;
+//         onOutputChange(output);
+//       },
+//       onError(e: any) {
+//         console.error(e);
+//         output = `${output}\nOkteto exited with error ${e}.`;
+//       },
+//       onClose(exitCode: number): void {
+//         output = `${output}\nOkteto finished with status ${exitCode}.`;
+//       }
+//     },
+//   });
+// };
 
 export default {
   contextList,

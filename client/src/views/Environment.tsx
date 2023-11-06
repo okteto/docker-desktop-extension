@@ -74,7 +74,7 @@ function Environment() {
             </Button>
           }
 
-          <Button
+          {/* <Button
             variant="contained"
             sx={{
               bgcolor: colors.brand.green.light,
@@ -87,7 +87,7 @@ function Environment() {
             onClick={relaunchEnvironment}
           >
             Relaunch
-          </Button>
+          </Button> */}
           <Button
             variant="contained"
             color="error"

@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM node:17.7-alpine3.14 AS client-builder
+FROM --platform=$BUILDPLATFORM node:18-alpine AS client-builder
 
 ARG TARGETARCH
 

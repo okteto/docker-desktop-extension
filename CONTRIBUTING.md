@@ -80,10 +80,6 @@ Once you do that and visit the repository, you should see a button on the GitHub
 
 ## Development Guide
 
-### Prerequisites
-
-- Follow the [official docs](https://docs.docker.com/desktop/extensions/#prerequisites)
-
 ### Install extension
 
 ```console

@@ -1,5 +1,6 @@
 IMAGE?=okteto/docker-desktop-extension
-TAG?=test
+TAG?=dev
+OKTETO_VERSION?=2.21.0
 
 BUILDER=buildx-multi-arch
 
@@ -9,12 +10,6 @@ GO_BUILD=$(STATIC_FLAGS) go build -trimpath -ldflags=$(LDFLAGS)
 
 INFO_COLOR = \033[0;36m
 NO_COLOR   = \033[m
-
-install-plugin: ## Install docker extensions plugin
-	curl -sLf --retry 3 -o desktop-extension-cli-linux-amd64.tar.gz https://github.com/docker/extensions-sdk/releases/download/v0.2.4/desktop-extension-cli-linux-amd64.tar.gz
-	tar -xvzf desktop-extension-cli-linux-amd64.tar.gz
-	mkdir -p ~/.docker/cli-plugins
-	mv docker-extension ~/.docker/cli-plugins
 
 install-extension: ## Install the extension
 	docker extension install $(IMAGE):$(TAG)
@@ -28,20 +23,13 @@ validate-extension: ## Validate the extension
 prepare-buildx: ## Create buildx builder for multi-arch build, if not exists
 	docker buildx inspect $(BUILDER) || docker buildx create --name=$(BUILDER) --driver=docker-container --driver-opt=network=host
 
-clean-cli:
-	rm -Rf okteto
+build-extension: prepare-buildx ## Build extension image but do not push
+	docker build --platform=linux/arm64 --build-arg TAG=$(TAG) --build-arg OKTETO_ARCH=arm64 --build-arg OKTETO_VERSION=${OKTETO_VERSION} .
+	docker build --platform=linux/amd64 --build-arg TAG=$(TAG) --build-arg OKTETO_ARCH=x86_64 --build-arg OKTETO_VERSION=${OKTETO_VERSION} .
 
-build-cli:
-	git clone --depth 1 --branch feature/docker-desktop --single-branch https://github.com/okteto/okteto.git
-	cd okteto && make build-all
-
-build-extension: clean-cli build-cli prepare-buildx ## Build & Upload extension image to hub. Do not push if tag already exists: make push-extension tag=0.1
-	docker buildx build --builder=$(BUILDER) --platform=linux/arm64 --build-arg TAG=$(TAG) --build-arg OKTETO_ARCH=arm64 .
-	docker buildx build --builder=$(BUILDER) --platform=linux/amd64 --build-arg TAG=$(TAG) --build-arg OKTETO_ARCH=x86_64 .
-
-push-extension: clean-cli build-cli prepare-buildx ## Build & Upload extension image to hub. Do not push if tag already exists: make push-extension tag=0.1
-	docker buildx build --push --builder=$(BUILDER) --platform=linux/arm64 --build-arg TAG=$(TAG) --build-arg OKTETO_ARCH=arm64 --tag=$(IMAGE):$(TAG) .
-	docker buildx build --push --builder=$(BUILDER) --platform=linux/amd64 --build-arg TAG=$(TAG) --build-arg OKTETO_ARCH=x86_64 --tag=$(IMAGE):$(TAG) .
+push-extension: prepare-buildx ## Build & Upload extension image to hub
+	docker build --push --platform=linux/arm64 --build-arg TAG=$(TAG) --build-arg OKTETO_ARCH=arm64 --build-arg OKTETO_VERSION=${OKTETO_VERSION} --tag=$(IMAGE):$(TAG) .
+	docker build --push --platform=linux/amd64 --build-arg TAG=$(TAG) --build-arg OKTETO_ARCH=x86_64 --build-arg OKTETO_VERSION=${OKTETO_VERSION} --tag=$(IMAGE):$(TAG) .
 
 help: ## Show this help
 	@echo Please specify a build target. The choices are:

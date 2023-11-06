@@ -1,4 +1,4 @@
-name: docker-desktop-extension-ci
+name: Tests
 on:
   pull_request:
     branches: [ main ]

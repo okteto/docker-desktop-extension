@@ -106,22 +106,41 @@ const up = (manifestFile: string, contextName: string, onOutputChange: (stdout: 
         output = `${output}\nOkteto exited with error ${e}.`;
       },
       onClose: async(exitCode: number): Promise<void> => {
-        console.log('EXITCODE', exitCode);
         // output = `${output}\nOkteto finished with status ${exitCode}.`;
-        console.log('TERMINADO');
+        console.log('CREATING CONTAINER... ');
 
+        const containerName = 'titi';
         // Crear container
         const output = await window.ddClient.docker.cli.exec('run', [
           '--name',
-          'pupu-nginx',
+          containerName,
           'redis/redis-stack-server:latest'
         ]);
 
-        setTimeout(async () => {
-          console.log('CACAACACA!');
-          const containers = await window.ddClient.docker.listContainers();
-          console.log(containers);
-        }, 30000);        
+        console.log('CREATED CONTAINER: ', output);
+        console.log('LOGS:');
+
+        await window.ddClient.docker.cli.exec('logs', ['-f', containerName], {
+          stream: {
+            onOutput(data): void {
+              // As we can receive both `stdout` and `stderr`, we wrap them in a JSON object
+              console.log(JSON.stringify(
+                {
+                  stdout: data.stdout,
+                  stderr: data.stderr,
+                },
+                null,
+                "  "
+              ));
+            },
+            onError(error: any): void {
+              console.error(error);
+            },
+            onClose(exitCode: number): void {
+              console.log("onClose with exit code " + exitCode);
+            },
+          },
+        });
       }
     },
   });

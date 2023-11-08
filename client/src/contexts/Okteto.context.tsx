@@ -3,9 +3,11 @@ import { createContext, useContext, useState, ReactNode, useEffect } from 'react
 import useInterval from 'use-interval';
 
 import okteto, { OktetoContext, OktetoContextList } from '../api/okteto';
+import { OktetoDevList } from '../api/extension';
 
 interface OktetoEnvironment {
   file: string
+  dev: string
   link: string
   contextName: string
   process: ExecProcess | undefined
@@ -14,6 +16,9 @@ interface OktetoEnvironment {
 interface OktetoStore {
   currentContext: OktetoContext | null
   contextList: OktetoContextList
+  currentManifest: string | null
+  currentDev: string | null
+  devList: OktetoDevList
   environment: OktetoEnvironment | null
   output: string
   loading: boolean
@@ -21,7 +26,8 @@ interface OktetoStore {
 
   loginIntoCloud: () => void
   stopEnvironment: () => void,
-  selectEnvironment: (f: string, withBuild: boolean) => void
+  selectManifest: (f: string | null) => void
+  selectDev: (devName: string) => void
   selectContext: (f: string) => void
   relaunchEnvironment: () => void
 }
@@ -38,7 +44,13 @@ export const cloudContextName = 'https://cloud.okteto.com';
 const OktetoProvider = ({ children } : OktetoProviderProps) => {
   const [currentContext, setCurrentContext] = useState<OktetoContext | null>(null);
   const [contextList, setContextList] = useState<OktetoContextList>([]);
+
+  const [currentManifest, setCurrentManifest] = useState<string | null>(null);
+  const [currentDev, setCurrentDev] = useState<string | null>(null);
+  const [devList, setDevList] = useState<OktetoDevList>([]);
+
   const [environment, setEnvironment] = useState<OktetoEnvironment | null>(null);
+
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
@@ -49,16 +61,28 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
     setLoading(false);
   };
 
-  const selectEnvironment = (file: string, withBuild = false) => {
+  const selectManifest = (file: string | null) => {
+    if (!currentContext) return;
+    setCurrentManifest(file);
+  };
+
+  const selectDev = (devName: string) => {
+    if (!currentContext || !currentManifest) return;
+    setCurrentDev(devName);
+    launchEnvironment(currentManifest, devName);
+  };
+
+  const launchEnvironment = (file: string, devName: string) => {
     if (!currentContext) return;
     setOutput('');
     setEnvironment({
       file,
+      dev: devName,
       link: `${currentContext.name}/#/spaces/${currentContext.namespace}`,
       contextName: currentContext.name,
       process: okteto.up(file, currentContext.name, stdout => {
         setOutput(stdout);
-      }, withBuild)
+      })
     });
   };
 
@@ -78,6 +102,8 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
     environment?.process?.close();
     setOutput('');
     setEnvironment(null);
+    setCurrentDev(null);
+    setCurrentManifest(null);
   };
 
   const refreshContext = async () => {
@@ -88,18 +114,16 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
     // Set current context
     const context = list.find(c => c.current);
     setCurrentContext(context ?? null);
-
-    // console.log(currentContext, contextList);
   };
 
   const relaunchEnvironment = async () => {
-    if(!environment || loading) return;
+    if (!environment || loading) return;
 
-    const {file, contextName} = environment;
+    const {file, dev, contextName} = environment;
 
     await stopEnvironment();
     await selectContext(contextName);
-    selectEnvironment(file);
+    launchEnvironment(file, dev);
   }
 
   useInterval(async () => {
@@ -120,6 +144,9 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
     <Okteto.Provider value={{
       currentContext,
       contextList,
+      currentManifest,
+      currentDev,
+      devList,
       environment,
       output,
       loading,
@@ -127,7 +154,8 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
 
       loginIntoCloud,
       stopEnvironment,
-      selectEnvironment,
+      selectManifest,
+      selectDev,
       selectContext,
       relaunchEnvironment
     }}>

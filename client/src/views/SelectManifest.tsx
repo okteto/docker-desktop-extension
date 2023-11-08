@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Box, Button, Typography } from '@mui/material';
 
@@ -7,10 +6,9 @@ import { shadows, colors } from '../components/Theme';
 import diagramDark from '../images/diagram-dark.svg';
 import diagramLight from '../images/diagram-light.svg';
 
-function SelectCompose() {
+function SelectManifest() {
   const theme = useTheme();
-  const { selectEnvironment, loading } = useOkteto();
-  const [buildEnabled, setBuildEnabled] = useState(false);
+  const { selectManifest, loading } = useOkteto();
 
   const handleLaunch = async () => {
     const result = await window.ddClient.desktopUI.dialog.showOpenDialog({
@@ -20,12 +18,8 @@ function SelectCompose() {
 
     const { canceled, filePaths = [] } = result;
     if (!canceled && filePaths.length > 0) {
-      selectEnvironment(filePaths[0], buildEnabled);
+      selectManifest(filePaths[0]);
     }
-  };
-
-  const handleBuildChange = () => {
-    setBuildEnabled(!buildEnabled);
   };
 
   return (
@@ -97,4 +91,4 @@ function SelectCompose() {
   );
 }
 
-export default SelectCompose;
+export default SelectManifest;

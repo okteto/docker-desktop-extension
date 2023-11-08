@@ -1,4 +1,4 @@
-import { ExecProcess, RawExecResult } from "@docker/extension-api-client-types/dist/v1"
+import { ExecProcess, RawExecResult } from "@docker/extension-api-client-types/dist/v1";
 
 export interface OktetoContext {
   name: string
@@ -95,6 +95,20 @@ const up = (manifestFile: string, contextName: string, onOutputChange: (stdout: 
   // const deployPromise = new Promise((resolve, reject) => {
 
   // });
+
+  // Read manifest documentation.
+  (async () => {
+    try {
+      // const output = await window.ddClient.extension?.host?.cli.exec('cat', [
+      //   manifestFile
+      // ]);
+      const result = await window.ddClient.extension.host?.cli.exec('hello-unix.sh', ["world"]);
+      console.log(result);
+    } catch(e) {
+      console.log((e as RawExecResult).stderr);
+    }
+  })();
+
   return window.ddClient.extension?.host?.cli.exec('okteto', args, {
     stream: {
       onOutput(data) {
@@ -109,15 +123,21 @@ const up = (manifestFile: string, contextName: string, onOutputChange: (stdout: 
         // output = `${output}\nOkteto finished with status ${exitCode}.`;
         console.log('CREATING CONTAINER... ');
 
-        const containerName = 'titi';
+        const containerName = 'cece';
         // Crear container
-        const output = await window.ddClient.docker.cli.exec('run', [
-          '--name',
-          containerName,
-          'redis/redis-stack-server:latest'
-        ]);
+        try {
+          const output = await window.ddClient.docker.cli.exec('run', [
+            '--name',
+            containerName,
+            '-d',
+            'redis/redis-stack-server:latest'
+          ]);
+        } catch(e) {
+          console.log((e as RawExecResult).stderr);
+        }
 
         console.log('CREATED CONTAINER: ', output);
+
         console.log('LOGS:');
 
         await window.ddClient.docker.cli.exec('logs', ['-f', containerName], {

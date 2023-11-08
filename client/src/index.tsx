@@ -9,14 +9,14 @@ import { App } from './App';
 
 ReactDOM.render(
   <React.StrictMode>
-    <OktetoProvider>
-      <ThemeProvider>
-        <CssBaseline />
-        <ConfirmProvider>
+    <ThemeProvider>
+      <CssBaseline />
+      <ConfirmProvider>
+        <OktetoProvider>
           <App />
-        </ConfirmProvider>
-      </ThemeProvider>
-    </OktetoProvider>
+        </OktetoProvider>
+      </ConfirmProvider>
+    </ThemeProvider>
   </React.StrictMode>,
   document.getElementById('root'),
 );

@@ -31,6 +31,9 @@ push-extension: prepare-buildx ## Build & Upload extension image to hub
 	docker build --push --platform=linux/arm64 --build-arg TAG=$(TAG) --build-arg OKTETO_ARCH=arm64 --build-arg OKTETO_VERSION=${OKTETO_VERSION} --tag=$(IMAGE):$(TAG) .
 	docker build --push --platform=linux/amd64 --build-arg TAG=$(TAG) --build-arg OKTETO_ARCH=x86_64 --build-arg OKTETO_VERSION=${OKTETO_VERSION} --tag=$(IMAGE):$(TAG) .
 
+develop:
+	docker extension dev ui-source $(IMAGE) http://localhost:3000
+
 help: ## Show this help
 	@echo Please specify a build target. The choices are:
 	@grep -E '^[0-9a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "$(INFO_COLOR)%-30s$(NO_COLOR) %s\n", $$1, $$2}'

@@ -121,8 +121,10 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
 
     const {file, dev, contextName} = environment;
 
-    await stopEnvironment();
-    await selectContext(contextName);
+    stopEnvironment();
+    selectContext(contextName);
+    setCurrentManifest(file);
+    setCurrentDev(dev);
     launchEnvironment(file, dev);
   }
 

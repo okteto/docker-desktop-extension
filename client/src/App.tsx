@@ -19,8 +19,6 @@ export function App() {
 
   const { contextList, currentManifest, currentDev, environment, ready } = useOkteto();
   const isLoggedIn = contextList?.length > 0;
-
-  console.log(environment);
   
   let step : AppStep = 'SelectManifest';
   if (!currentManifest) step = 'SelectManifest';
@@ -30,9 +28,14 @@ export function App() {
   return (
     <Box sx={{
       m: 0,
-      px: 0,
-      py: 2,
+      py: 0,
       height: '100vh',
+      overflow: 'hidden',
+      position: 'absolute',
+      top: 0,
+      bottom: 0,
+      right: 0,
+      left: 0
     }}>
       {!ready ? (
         <Box sx={{ display: 'flex', height: '100%' }}>
@@ -72,7 +75,9 @@ export function App() {
                   flex: 1,
                   flexDirection: 'column',
                   height: '100%',
-                  gap: 1
+                  gap: 1,
+                  px: 3,
+                  py: 2
                 }}>
                   <Header />
                   {environment?.file &&

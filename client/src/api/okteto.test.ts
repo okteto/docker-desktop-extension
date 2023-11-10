@@ -125,7 +125,7 @@ describe('Okteto CLI Calls', () => {
   });
 
   describe('Up Command', () => {
-    it('should call up with the --build option when "withBuild" is set to false', async () => {
+    it('should call up without the --build option', async () => {
       execMock = (cmd: string, args: string[]) => {
         expect(args).not.toContain('--build');
         return processResult;
@@ -133,27 +133,13 @@ describe('Okteto CLI Calls', () => {
       await okteto.up(
         '/docker-compose.yml',
         contextA.name,
-        jest.fn(),
-        false
+        jest.fn()
       );
     });
 
     it('should call up with the --build option when "withBuild" is set to true', async () => {
       execMock = (cmd: string, args: string[]) => {
         expect(args).toContain('--build');
-        return processResult;
-      };
-      await okteto.up(
-        '/docker-compose.yml',
-        contextA.name,
-        jest.fn(),
-        true
-      );
-    });
-
-    it('should call up always with the --deploy option', async () => {
-      execMock = (cmd: string, args: string[]) => {
-        expect(args).toContain('--deploy');
         return processResult;
       };
       await okteto.up(

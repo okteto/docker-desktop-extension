@@ -30,46 +30,53 @@ function SelectDev() {
           width: '100%',
           gap: 1,
         }}>
-          <Button variant="outlined" size="small" startIcon={<ArrowBackIcon />} onClick={() => selectManifest(null)}>
+          <Button size="small" startIcon={<ArrowBackIcon />} onClick={() => selectManifest(null)}>
             Back
           </Button>
         </Box>
-        <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
-          Select Dev Container
-        </Typography>
-        <Typography variant="subtitle1">
-          Choose the development container to start syncronizing your code.
-        </Typography>
         <Box sx={{
           display: 'flex',
           flexDirection: 'column',
           width: '100%',
-          height: '100%',
-          gap: 1,
-          borderRadius: 2,
-          alignItems: 'center',
-          py: 2
+          px: 1
         }}>
-          <List component="nav" sx={{
+          <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+            Select Dev Container
+          </Typography>
+          <Typography variant="subtitle1">
+            Choose the development container to start syncronizing your code.
+          </Typography>
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
             width: '100%',
-            borderRadius: 1,
-            border: '.5px solid',
-            borderColor: theme.palette.divider,
-            maxWidth: '250px',  
-            boxShadow: shadows.primary,
+            height: '100%',
+            gap: 1,
+            borderRadius: 2,
+            alignItems: 'center',
+            py: 4
           }}>
-            <ListItem button>
-              <ListItemText primary="api" onClick={() => handleDevClick('api')} />
-            </ListItem>
-            <Divider />
-            <ListItem button divider>
-              <ListItemText primary="frontend" onClick={() => handleDevClick('frontend')}/>
-            </ListItem>
-            <ListItem button>
-              <ListItemText primary="worker" onClick={() => handleDevClick('worker')} />
-            </ListItem>
-            <Divider light />
-          </List>
+            <List component="nav" sx={{
+              width: '100%',
+              borderRadius: 1,
+              border: '.5px solid',
+              borderColor: theme.palette.divider,
+              maxWidth: '250px',  
+              boxShadow: shadows.primary,
+            }}>
+              <ListItem button>
+                <ListItemText primary="api" onClick={() => handleDevClick('api')} />
+              </ListItem>
+              <Divider />
+              <ListItem button divider>
+                <ListItemText primary="frontend" onClick={() => handleDevClick('frontend')}/>
+              </ListItem>
+              <ListItem button>
+                <ListItemText primary="worker" onClick={() => handleDevClick('worker')} />
+              </ListItem>
+              <Divider light />
+            </List>
+          </Box>
         </Box>
       </Box>
     </>

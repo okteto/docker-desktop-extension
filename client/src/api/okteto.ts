@@ -92,22 +92,6 @@ const endpoints = async (manifestFile: string, contextName: string) : Promise<Ok
 const up = (manifestFile: string, contextName: string, onOutputChange: (stdout: string) => void, withBuild = false) : ExecProcess | undefined => {
   let output = '';
   const args = ['deploy', '-f', manifestFile, '-c', contextName, '--build', '--log-output', 'plain'];
-  // const deployPromise = new Promise((resolve, reject) => {
-
-  // });
-
-  // Read manifest documentation.
-  (async () => {
-    try {
-      // const output = await window.ddClient.extension?.host?.cli.exec('cat', [
-      //   manifestFile
-      // ]);
-      const result = await window.ddClient.extension.host?.cli.exec('hello-unix.sh', ["world"]);
-      console.log(result);
-    } catch(e) {
-      console.log((e as RawExecResult).stderr);
-    }
-  })();
 
   return window.ddClient.extension?.host?.cli.exec('okteto', args, {
     stream: {

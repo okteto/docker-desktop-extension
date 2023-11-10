@@ -74,7 +74,7 @@ function Environment() {
             </Button>
           }
 
-          {/* <Button
+          <Button
             variant="contained"
             sx={{
               bgcolor: colors.brand.green.light,
@@ -87,7 +87,7 @@ function Environment() {
             onClick={relaunchEnvironment}
           >
             Relaunch
-          </Button> */}
+          </Button>
           <Button
             variant="contained"
             color="error"
@@ -119,8 +119,28 @@ function Environment() {
           ))}
         </Atom>
       </Box>
-
-      <Output output={output} />
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        height: '100%',
+        bgcolor: '#101010',
+        border: '1px solid',
+        borderColor: 'transparent',
+        borderRadius: 1,
+        m: 0,
+        px: 3,
+        py: 2,
+        pr: .5,
+        pb: 0,
+        gap: 1,
+        overflow: 'hidden'
+      }}>
+        <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+          Output
+        </Typography>
+        <Output output={output} />
+      </Box>
     </>
   );
 }

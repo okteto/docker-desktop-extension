@@ -1,6 +1,7 @@
 import { DockerMuiThemeProvider } from '@docker/docker-mui-theme';
-
-export const ThemeProvider = DockerMuiThemeProvider;
+import { GlobalStyles } from '@mui/material';
+import { createTheme, Theme, ThemeProvider } from "@mui/material/styles";
+import { ReactNode } from 'react';
 
 export const colors = {
   card: {
@@ -24,4 +25,27 @@ export const shadows = {
     0 22px 18px rgb(0 0 0 / 4%),
     0 12px 10px rgb(0 0 0 / 4%)
   `
+};
+
+type ThemeProviderProps = {
+  children?: ReactNode
+};
+
+export default ({ children }: ThemeProviderProps) => {
+  return (
+    <DockerMuiThemeProvider>
+      <ThemeProvider theme={(theme: Theme) => 
+        createTheme({
+        ...theme,
+        // Here override of the theme.
+      })}>
+        <GlobalStyles styles={{ 
+          body: { 
+            margin: 0,
+          } 
+        }} />
+        {children}
+      </ThemeProvider>
+    </DockerMuiThemeProvider>
+  );
 };

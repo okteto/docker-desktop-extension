@@ -13,16 +13,25 @@
         "darwin": [
           {
             "path": "/darwin/okteto"
+          },
+          {
+            "path": "/darwin/okteto-extension"
           }
         ],
         "windows": [
           {
             "path": "/windows/okteto.exe"
+          },
+          {
+            "path": "/windows/okteto-extension.exe"
           }
         ],
         "linux": [
           {
             "path": "/linux/okteto"
+          },
+          {
+            "path": "/windows/okteto-extension"
           }
         ]
       }

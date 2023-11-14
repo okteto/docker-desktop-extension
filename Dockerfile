@@ -33,7 +33,7 @@ LABEL org.opencontainers.image.title="Okteto" \
     org.opencontainers.image.vendor="Okteto" \
     com.docker.desktop.extension.api.version=">= 0.2.3" \
     com.docker.desktop.extension.icon="https://www.okteto.com/okteto-symbol-circle-inverse-1.1.png" \
-    com.docker.extension.detailed-description="Seamlessly combine Docker Desktop's local containers with cloud-based Kubernetes clusters and experiment the future of cloud-native development" \
+    com.docker.extension.detailed-description="Seamlessly combine Docker Desktop's local containers with remote Kubernetes clusters and experiment the future of cloud-native development" \
     com.docker.extension.publisher-url="https://okteto.com" \
     com.docker.extension.additional-urls="[{\"title\":\"Documentation\",\"url\":\"https://okteto.com/docs\"}, {\"title\":\"Community\",\"url\":\"https://community.okteto.com/\"}]" \
     com.docker.extension.screenshots="[{\"alt\": \"Hybrid Development made Simple\", \"url\": \"https://www.okteto.com/docker-desktop-extension-marketplace-1.png\"}, {\"alt\": \"Hybrid Development for Docker Compose and Kubernetes\", \"url\": \"https://www.okteto.com/docker-desktop-extension-marketplace-2.png\"}]"
@@ -45,3 +45,7 @@ COPY metadata.json .
 COPY --from=okteto-binaries --chmod=755 /home/curl_user/okteto-Darwin-${OKTETO_ARCH} /darwin/okteto
 COPY --from=okteto-binaries --chmod=755 /home/curl_user/okteto-Linux-${OKTETO_ARCH} /linux/okteto
 COPY --from=okteto-binaries --chmod=755 /home/curl_user/okteto.exe /windows/okteto.exe
+
+COPY ./cli/bin/okteto-extension-Darwin-${OKTETO_ARCH} /darwin/okteto-extension
+COPY ./cli/bin/okteto-extension-Linux-${OKTETO_ARCH} /linux/okteto-extension
+COPY ./cli/bin/okteto-extension.exe /windows/okteto-extension.exe

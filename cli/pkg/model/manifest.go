@@ -14,35 +14,43 @@
 package model
 
 import (
+	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 
 	yaml "gopkg.in/yaml.v2"
 )
 
 // Manifest represents an okteto manifest
 type Manifest struct {
+	Folder        string
+	Filename      string
+	Context       string
 	DevContainers map[string]DevContainer `json:"dev,omitempty" yaml:"dev,omitempty"`
 }
 
 // Dev represents a development container
 type DevContainer struct {
-	Name      string            `json:"name,omitempty" yaml:"name,omitempty"`
-	Selector  map[string]string `json:"selector,omitempty" yaml:"selector,omitempty"`
-	Container string            `json:"container,omitempty" yaml:"container,omitempty"`
-	Image     string            `json:"image,omitempty" yaml:"image,omitempty"`
-	Sync      []string          `json:"sync,omitempty" yaml:"sync,omitempty"`
-	Forward   []string          `json:"forward,omitempty" yaml:"forward,omitempty"`
-	Volumes   []string          `json:"volumes,omitempty" yaml:"volumes,omitempty"`
+	Mode    string   `json:"mode,omitempty" yaml:"mode,omitempty"`
+	Image   string   `json:"image,omitempty" yaml:"image,omitempty"`
+	Forward []string `json:"forward,omitempty" yaml:"forward,omitempty"`
 }
 
 // Get returns a Dev object from a given file
 func Get(manifestPath string) (*Manifest, error) {
 	b, err := os.ReadFile(manifestPath)
 	if err != nil {
+		if strings.Contains(err.Error(), "no such file or directory") {
+			return nil, fmt.Errorf("the file '%s' doesn't exist", manifestPath)
+		}
 		return nil, err
 	}
 
-	result := &Manifest{}
+	result := &Manifest{
+		Folder:   filepath.Dir(manifestPath),
+		Filename: filepath.Base(manifestPath),
+	}
 	if err := yaml.Unmarshal(b, result); err != nil {
 		return nil, err
 	}

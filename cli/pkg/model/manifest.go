@@ -24,6 +24,12 @@ import (
 // Manifest represents an okteto manifest
 type Manifest struct {
 	DevContainers map[string]interface{} `json:"dev,omitempty" yaml:"dev,omitempty"`
+	Services      map[string]Service     `json:"services,omitempty" yaml:"services,omitempty"`
+}
+
+// Service represents a docker compose service
+type Service struct {
+	Volumes []string `json:"volumes,omitempty" yaml:"volumes,omitempty"`
 }
 
 type DockerContainers []string

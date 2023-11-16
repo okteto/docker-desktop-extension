@@ -15,6 +15,7 @@ install-extension: ## Install the extension
 	docker extension install $(IMAGE):$(TAG)
 
 update-extension: ## Update the extension
+	docker pull $(IMAGE):$(TAG)
 	docker extension update $(IMAGE):$(TAG)
 
 validate-extension: ## Validate the extension

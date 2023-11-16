@@ -14,31 +14,33 @@
 package model
 
 import (
+	"fmt"
 	"os"
+	"strings"
 
 	yaml "gopkg.in/yaml.v2"
 )
 
 // Manifest represents an okteto manifest
 type Manifest struct {
-	DevContainers map[string]DevContainer `json:"dev,omitempty" yaml:"dev,omitempty"`
+	DevContainers map[string]interface{} `json:"dev,omitempty" yaml:"dev,omitempty"`
+	Services      map[string]Service     `json:"services,omitempty" yaml:"services,omitempty"`
 }
 
-// Dev represents a development container
-type DevContainer struct {
-	Name      string            `json:"name,omitempty" yaml:"name,omitempty"`
-	Selector  map[string]string `json:"selector,omitempty" yaml:"selector,omitempty"`
-	Container string            `json:"container,omitempty" yaml:"container,omitempty"`
-	Image     string            `json:"image,omitempty" yaml:"image,omitempty"`
-	Sync      []string          `json:"sync,omitempty" yaml:"sync,omitempty"`
-	Forward   []string          `json:"forward,omitempty" yaml:"forward,omitempty"`
-	Volumes   []string          `json:"volumes,omitempty" yaml:"volumes,omitempty"`
+// Service represents a docker compose service
+type Service struct {
+	Volumes []string `json:"volumes,omitempty" yaml:"volumes,omitempty"`
 }
+
+type DockerContainers []string
 
 // Get returns a Dev object from a given file
 func Get(manifestPath string) (*Manifest, error) {
 	b, err := os.ReadFile(manifestPath)
 	if err != nil {
+		if strings.Contains(err.Error(), "no such file or directory") {
+			return nil, fmt.Errorf("the file '%s' doesn't exist", manifestPath)
+		}
 		return nil, err
 	}
 

@@ -14,8 +14,11 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 
+	"github.com/okteto/docker-desktop-extension/cli/pkg/app"
 	"github.com/okteto/docker-desktop-extension/cli/pkg/model"
 
 	"github.com/spf13/cobra"
@@ -24,42 +27,40 @@ import (
 // DevContainersOpts represents the options available on up command
 type DevContainersOpts struct {
 	ManifestPath string
-	Namespace    string
-	K8sContext   string
+	Context      string
 }
 
 // DevContainers shows the devcontainers in an okteto manifest with the transformations needed by the docker extension
 func DevContainers() *cobra.Command {
-	// ctx := context.Background()
-	devContainersOpts := &DevContainersOpts{}
+	manifestPath := ""
 	cmd := &cobra.Command{
 		Use:   "devcontainers",
 		Short: "Shows the devcontainers in an okteto manifest",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// manifestOpts := contextCMD.ManifestOptions{Filename: devContainersOpts.ManifestPath, Namespace: devContainersOpts.Namespace, K8sContext: devContainersOpts.K8sContext}
-			m, err := model.Get(devContainersOpts.ManifestPath)
-			// oktetoManifest, err := contextCMD.LoadManifestWithContext(ctx, manifestOpts)
+			if manifestPath == "" {
+				return fmt.Errorf("the flag '-f' is mandatory")
+			}
+			m, err := model.Get(manifestPath)
 			if err != nil {
 				return err
 			}
 
-			if len(m.DevContainers) == 0 {
-				return fmt.Errorf("okteto manifest has no 'dev' section")
+			dockers := app.Translate(m)
+
+			bytes, err := json.MarshalIndent(dockers, "", "    ")
+			if err != nil {
+				return err
 			}
-
-			fmt.Println(len(m.DevContainers))
-
-			// c, err = okteto.GetK8sClient()
-			// if err != nil {
-			// 	return fmt.Errorf("failed to load okteto context '%s': %v", devContainersOpts.K8sContext, err)
-			// }
+			jsonOutput := string(bytes)
+			if jsonOutput == "null" {
+				jsonOutput = "[]"
+			}
+			fmt.Fprint(os.Stdout, jsonOutput)
 
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&devContainersOpts.ManifestPath, "file", "f", "", "path to the okteto manifest file")
-	cmd.Flags().StringVarP(&devContainersOpts.Namespace, "namespace", "n", "", "namespace where the command is executed")
-	cmd.Flags().StringVarP(&devContainersOpts.K8sContext, "context", "c", "", "context where the command is executed")
+	cmd.Flags().StringVarP(&manifestPath, "file", "f", "", "path to the okteto manifest file")
 	return cmd
 }

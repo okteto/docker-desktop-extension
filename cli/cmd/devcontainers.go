@@ -32,22 +32,15 @@ type DevContainersOpts struct {
 
 // DevContainers shows the devcontainers in an okteto manifest with the transformations needed by the docker extension
 func DevContainers() *cobra.Command {
-	// ctx := context.Background()
-	devContainersOpts := &DevContainersOpts{}
+	manifestPath := ""
 	cmd := &cobra.Command{
 		Use:   "devcontainers",
 		Short: "Shows the devcontainers in an okteto manifest",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if devContainersOpts.ManifestPath == "" {
+			if manifestPath == "" {
 				return fmt.Errorf("the flag '-f' is mandatory")
 			}
-			if devContainersOpts.Context == "" {
-				return fmt.Errorf("the flag '-c' is mandatory")
-			}
-			// manifestOpts := contextCMD.ManifestOptions{Filename: devContainersOpts.ManifestPath, K8sContext: devContainersOpts.K8sContext}
-			m, err := model.Get(devContainersOpts.ManifestPath)
-			m.Context = devContainersOpts.Context
-			// oktetoManifest, err := contextCMD.LoadManifestWithContext(ctx, manifestOpts)
+			m, err := model.Get(manifestPath)
 			if err != nil {
 				return err
 			}
@@ -64,16 +57,10 @@ func DevContainers() *cobra.Command {
 			}
 			fmt.Fprint(os.Stdout, jsonOutput)
 
-			// c, err = okteto.GetK8sClient()
-			// if err != nil {
-			// 	return fmt.Errorf("failed to load okteto context '%s': %v", devContainersOpts.K8sContext, err)
-			// }
-
 			return nil
 		},
 	}
 
-	cmd.Flags().StringVarP(&devContainersOpts.ManifestPath, "file", "f", "", "path to the okteto manifest file")
-	cmd.Flags().StringVarP(&devContainersOpts.Context, "context", "c", "", "context where the command is executed")
+	cmd.Flags().StringVarP(&manifestPath, "file", "f", "", "path to the okteto manifest file")
 	return cmd
 }

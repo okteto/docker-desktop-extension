@@ -16,7 +16,6 @@ package model
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"strings"
 
 	yaml "gopkg.in/yaml.v2"
@@ -24,18 +23,10 @@ import (
 
 // Manifest represents an okteto manifest
 type Manifest struct {
-	Folder        string
-	Filename      string
-	Context       string
-	DevContainers map[string]DevContainer `json:"dev,omitempty" yaml:"dev,omitempty"`
+	DevContainers map[string]interface{} `json:"dev,omitempty" yaml:"dev,omitempty"`
 }
 
-// Dev represents a development container
-type DevContainer struct {
-	Mode    string   `json:"mode,omitempty" yaml:"mode,omitempty"`
-	Image   string   `json:"image,omitempty" yaml:"image,omitempty"`
-	Forward []string `json:"forward,omitempty" yaml:"forward,omitempty"`
-}
+type DockerContainers []string
 
 // Get returns a Dev object from a given file
 func Get(manifestPath string) (*Manifest, error) {
@@ -47,10 +38,7 @@ func Get(manifestPath string) (*Manifest, error) {
 		return nil, err
 	}
 
-	result := &Manifest{
-		Folder:   filepath.Dir(manifestPath),
-		Filename: filepath.Base(manifestPath),
-	}
+	result := &Manifest{}
 	if err := yaml.Unmarshal(b, result); err != nil {
 		return nil, err
 	}

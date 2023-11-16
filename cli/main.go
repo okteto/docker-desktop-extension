@@ -29,7 +29,7 @@ import (
 func main() {
 	root := &cobra.Command{
 		Use:   "okteto-extension COMMAND [ARG...]",
-		Short: "Hybrid Development Environments powered by Docker Desktop & Kubernetes",
+		Short: "Remote Development Environments powered by Kubernetes",
 	}
 	root.AddCommand(cmd.DevContainers())
 

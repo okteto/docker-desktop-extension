@@ -127,29 +127,6 @@ const up = (manifestFile: string, contextName: string, devName: string, onOutput
   
 };
 
-// const up = (manifestFile: string, contextName: string, onOutputChange: (stdout: string) => void, withBuild = false) : ExecProcess | undefined => {
-//   let output = '';
-//   const args = ['up', '-f', manifestFile, '-c', contextName, '--deploy', '--log-output', 'plain'];
-//   if (withBuild) {
-//     args.push('--build');
-//   }
-//   return window.ddClient.extension?.host?.cli.exec('okteto', args, {
-//     stream: {
-//       onOutput(data) {
-//         output = `${output}${data.stdout ?? ''}${data.stderr ?? ''}`;
-//         onOutputChange(output);
-//       },
-//       onError(e: any) {
-//         console.error(e);
-//         output = `${output}\nOkteto exited with error ${e}.`;
-//       },
-//       onClose(exitCode: number): void {
-//         output = `${output}\nOkteto finished with status ${exitCode}.`;
-//       }
-//     },
-//   });
-// };
-
 export default {
   contextList,
   contextUse,

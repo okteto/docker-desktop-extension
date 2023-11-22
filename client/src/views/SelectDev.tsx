@@ -1,17 +1,19 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { List, Box, Divider, ListItem, ListItemText, Typography, Button } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-import { shadows, colors } from '../components/Theme';
+import { shadows } from '../components/Theme';
 import { useOkteto } from '../contexts/Okteto.context';
 
 function SelectDev() {
   const theme = useTheme();
-  const { selectManifest, selectDev } = useOkteto();
+  const { selectManifest, selectDev, currentManifest, devList } = useOkteto();
 
   function handleDevClick(devName: string) {
-    selectDev(devName);
+    if (currentManifest) {
+      selectDev(currentManifest, devName);
+    }
   }
 
   return (
@@ -64,17 +66,14 @@ function SelectDev() {
               maxWidth: '250px',  
               boxShadow: shadows.primary,
             }}>
-              <ListItem button>
-                <ListItemText primary="api" onClick={() => handleDevClick('api')} />
-              </ListItem>
-              <Divider />
-              <ListItem button divider>
-                <ListItemText primary="frontend" onClick={() => handleDevClick('frontend')}/>
-              </ListItem>
-              <ListItem button>
-                <ListItemText primary="worker" onClick={() => handleDevClick('worker')} />
-              </ListItem>
-              <Divider light />
+              {devList.map((dev => (
+                <Fragment key={dev}>
+                  <ListItem button>
+                    <ListItemText primary={dev} onClick={() => handleDevClick(dev)} />
+                  </ListItem>
+                  <Divider light />
+                </Fragment>
+              )))}
             </List>
           </Box>
         </Box>

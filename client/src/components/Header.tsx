@@ -1,45 +1,15 @@
 import { Box, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
 import LinearProgress from '@mui/material/LinearProgress';
-import { useConfirm } from 'material-ui-confirm';
 
-import Link from './Link';
-import { useOkteto, cloudContextName } from '../contexts/Okteto.context';
+import { useOkteto } from '../contexts/Okteto.context';
 import logoDark from '../images/logo-dark.svg';
 import logoLight from '../images/logo-light.svg';
+import ContextSelector from './ContextSelector';
 
-function Header({}) {
+function Header({ noLogo = false }) {
   const theme = useTheme();
-  const confirm = useConfirm();
-  const { environment, selectContext, currentContext, contextList, loading } = useOkteto();
-  const moreThanCloud = !(contextList.length === 1 && contextList[0].name === cloudContextName);
-
-  const handleContextChange = async ({ target }: SelectChangeEvent) => {
-    try {
-      if (environment) {
-        await confirm({
-          title: 'Switch Context',
-          content: (
-            <Typography variant="body1">
-              Switching contexts will stop your running environment. Are you sure you want to continue?
-            </Typography>
-          ),
-          confirmationButtonProps: {
-            variant: 'contained'
-          },
-          cancellationButtonProps: {
-            variant: 'outlined'
-          }
-        });
-      }
-      selectContext(target.value);
-    } catch(_) {
-      return;
-    }
-  };
+  const { loading } = useOkteto();
 
   return (
     <>
@@ -63,39 +33,15 @@ function Header({}) {
         px: 1,
         gap: 1
       }}>
-        <img src={theme.palette.mode === 'dark' ? logoDark : logoLight} width="100" />
+        {!noLogo && 
+          <img src={theme.palette.mode === 'dark' ? logoDark : logoLight} width="100" />
+        }
         <div style={{ flex: '1 auto' }} />
         <Typography variant="body2">
           Connected to:
-          {currentContext?.name === 'https://cloud.okteto.com' &&
-            <Link
-              href="https://cloud.okteto.com"
-              variant="body2"
-              sx={{
-                fontWeight: 'bold',
-                color: 'primary',
-                m: 0.5
-              }}
-            >
-              Okteto Cloud
-            </Link>
-          }
         </Typography>
 
-        {moreThanCloud &&
-          <FormControl sx={{ minWidth: 120 }} size="small" disabled={loading}>
-            <Select
-              value={currentContext?.name ?? ''}
-              onChange={handleContextChange}
-              displayEmpty
-              inputProps={{ 'aria-label': 'Without label' }}
-            >
-              {contextList.map(context => (
-                <MenuItem key={context.name} value={context.name}>{context.name}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        }
+        <ContextSelector />
       </Box>
     </>
   );

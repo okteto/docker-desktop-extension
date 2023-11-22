@@ -1,5 +1,5 @@
 import { createDockerDesktopClient } from '@docker/extension-api-client';
-import { Box, Select } from '@mui/material';
+import { Box } from '@mui/material';
 
 import { useOkteto } from './contexts/Okteto.context';
 import Header from './components/Header';
@@ -42,52 +42,39 @@ export function App() {
           <Loader />
         </Box>
       ) : (
-        <>
+        <Box sx={{
+          display: 'flex',
+          flex: 1,
+          flexDirection: 'column',
+          height: '100%',
+          gap: 1,
+          px: 3,
+          py: 2
+        }}>
           {!isLoggedIn ? (
-            <Login />
+            <>
+              <Header noLogo />
+              <Login />
+            </>
           ) : (
             <>
+              <Header />
               {step == 'SelectManifest' &&
-                <Box sx={{
-                  display: 'flex',
-                  flex: 1,
-                  flexDirection: 'column',
-                  height: '100%',
-                  gap: 1
-                }}>
-                  <SelectManifest />
-                </Box>
+                <SelectManifest />
               }
               {step == 'SelectDev' &&
-                <Box sx={{
-                  display: 'flex',
-                  flex: 1,
-                  flexDirection: 'column',
-                  height: '100%',
-                  gap: 1
-                }}>
-                  <SelectDev />
-                </Box>
+                <SelectDev />
               }
               {step == 'RunEnvironment' &&
-                <Box sx={{
-                  display: 'flex',
-                  flex: 1,
-                  flexDirection: 'column',
-                  height: '100%',
-                  gap: 1,
-                  px: 3,
-                  py: 2
-                }}>
-                  <Header />
+                <>
                   {environment?.file &&
                     <Environment key={environment.file} /> 
                   }
-                </Box>
+                </>
               }
             </>
           )}
-        </>
+        </Box>
       )}
     </Box>
   );

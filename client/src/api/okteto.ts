@@ -89,11 +89,11 @@ const endpoints = async (manifestFile: string, contextName: string) : Promise<Ok
   return [];
 };
 
-const up = (manifestFile: string, contextName: string, onOutputChange: (stdout: string) => void, withBuild = false) : ExecProcess | undefined => {
+const up = (manifestFile: string, contextName: string, devName: string, onOutputChange: (stdout: string) => void) : ExecProcess | undefined => {
   let output = '';
-  const args = ['deploy', '-f', manifestFile, '-c', contextName, '--build', '--log-output', 'plain'];
+  const deployArgs = ['deploy', '--build', '-f', manifestFile, '-c', contextName]; //, '--log-output', 'plain'];
 
-  return window.ddClient.extension?.host?.cli.exec('okteto', args, {
+  return window.ddClient.extension?.host?.cli.exec('okteto', deployArgs, {
     stream: {
       onOutput(data) {
         output = `${output}${data.stdout ?? ''}${data.stderr ?? ''}`;
@@ -104,44 +104,20 @@ const up = (manifestFile: string, contextName: string, onOutputChange: (stdout: 
         output = `${output}\nOkteto exited with error ${e}.`;
       },
       onClose: async(exitCode: number): Promise<void> => {
-        // output = `${output}\nOkteto finished with status ${exitCode}.`;
-        console.log('CREATING CONTAINER... ');
+        output = `${output}\nOkteto deploy finished with status ${exitCode}.`;
 
-        const containerName = 'cece';
-        // Crear container
-        try {
-          const output = await window.ddClient.docker.cli.exec('run', [
-            '--name',
-            containerName,
-            '-d',
-            'redis/redis-stack-server:latest'
-          ]);
-        } catch(e) {
-          console.log((e as RawExecResult).stderr);
-        }
-
-        console.log('CREATED CONTAINER: ', output);
-
-        console.log('LOGS:');
-
-        await window.ddClient.docker.cli.exec('logs', ['-f', containerName], {
+        const upArgs = ['up', '-f', manifestFile, '-c', contextName, '--log-output', 'plain', devName];
+        await window.ddClient.extension?.host?.cli.exec('okteto', upArgs, {
           stream: {
             onOutput(data): void {
-              // As we can receive both `stdout` and `stderr`, we wrap them in a JSON object
-              console.log(JSON.stringify(
-                {
-                  stdout: data.stdout,
-                  stderr: data.stderr,
-                },
-                null,
-                "  "
-              ));
+              output = `${output}${data.stdout ?? ''}${data.stderr ?? ''}`;
+              onOutputChange(output);
             },
             onError(error: any): void {
               console.error(error);
             },
             onClose(exitCode: number): void {
-              console.log("onClose with exit code " + exitCode);
+              console.log("okteto up with exit code " + exitCode);
             },
           },
         });

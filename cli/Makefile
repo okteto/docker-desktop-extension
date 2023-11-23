@@ -1,5 +1,5 @@
 BINDIR    := $(CURDIR)/bin
-PLATFORMS := linux/amd64/okteto-extension-Linux-x86_64 darwin/amd64/okteto-extension-Darwin-x86_64 windows/amd64/okteto-extension.exe linux/arm64/okteto-extension-Linux-arm64 darwin/arm64/okteto-extension-Darwin-arm64
+PLATFORMS := linux/amd64/okteto-extension-Linux-amd64 darwin/amd64/okteto-extension-Darwin-amd64 windows/amd64/okteto-extension.exe linux/arm64/okteto-extension-Linux-arm64 darwin/arm64/okteto-extension-Darwin-arm64
 BUILDCOMMAND := go build -trimpath -ldflags "-s -w"
 temp = $(subst /, ,$@)
 os = $(word 1, $(temp))

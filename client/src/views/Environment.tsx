@@ -99,7 +99,7 @@ function Environment() {
         </Box>
 
         <Atom
-          label="Compose File:"
+          label="Okteto Manifest:"
           icon={<InsertDriveFileIcon htmlColor={iconColor} />}
         >
           <Typography variant="body1">{environment?.file}</Typography>

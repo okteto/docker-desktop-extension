@@ -13,7 +13,7 @@ function SelectManifest() {
   const handleLaunch = async () => {
     const result = await window.ddClient.desktopUI.dialog.showOpenDialog({
       properties: ['openFile'],
-      filters: [{ name: 'Compose File', extensions: ['yml', 'yaml'] }]
+      filters: [{ name: 'Okteto Manifest', extensions: ['yml', 'yaml'] }]
     });
 
     const { canceled, filePaths = [] } = result;
@@ -39,7 +39,7 @@ function SelectManifest() {
         />
 
         <Typography variant="h6" sx={{ maxWidth: '400px', textAlign: 'center' }}>
-          Select a Compose file to launch your remote development environment.
+          Select your Okteto Manifest or Docker Compose to launch your remote development environment.
         </Typography>
 
         <Box sx={{

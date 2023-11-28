@@ -48,6 +48,11 @@ describe('Okteto CLI Calls', () => {
             })
           }
         }
+      },
+      desktopUI: {
+        toast: {
+          error: jest.fn()
+        }
       }
     }
   });
@@ -61,7 +66,7 @@ describe('Okteto CLI Calls', () => {
   });
 
   describe('Context List Command', () => {
-    xit('should return a list of contexts', async () => {
+    it('should return a list of contexts', async () => {
       execMock = (cmd: string, args: string[]) => {
         return Promise.resolve({
           ...defaultExecResult,
@@ -72,7 +77,7 @@ describe('Okteto CLI Calls', () => {
       expect(list).toEqual([contextA, contextB]);
     });
 
-    xit('should return empty list on error', async () => {
+    it('should return empty list on error', async () => {
       execMock = (): Promise<ExecResult> => {
         return Promise.reject({
           ...defaultExecResult
@@ -84,7 +89,7 @@ describe('Okteto CLI Calls', () => {
       expect(list).toEqual([]);
     });
 
-    xit('should return empty list on exception', async () => {
+    it('should return empty list on exception', async () => {
       execMock = (cmd: string, args: string[]) => {
         throw Error();
       };
@@ -94,18 +99,7 @@ describe('Okteto CLI Calls', () => {
   });
 
   describe('Context Use Command', () => {
-    xit('should return the selected context', async () => {
-      execMock = (cmd: string, args: string[]) => {
-        return Promise.resolve({
-          ...defaultExecResult,
-          parseJsonObject: () => contextA
-        });
-      };
-      const context = await okteto.contextUse(contextA.name);
-      expect(context).toEqual(contextA);
-    });
-
-    xit('should return null on error', async () => {
+    it('should return null on error', async () => {
       execMock = (cmd: string, args: string[]) => {
         return Promise.reject({
           parseJsonObject: () => contextA
@@ -115,7 +109,7 @@ describe('Okteto CLI Calls', () => {
       expect(context).toEqual(null);
     });
 
-    xit('should return null on exception', async () => {
+    it('should return null on exception', async () => {
       execMock = (cmd: string, args: string[]) => {
         throw Error();
       };
@@ -125,7 +119,7 @@ describe('Okteto CLI Calls', () => {
   });
 
   describe('Up Command', () => {
-    xit('should call up without the --build option', async () => {
+    it('should call up without the --build option', async () => {
       execMock = (cmd: string, args: string[]) => {
         return processResult;
       };

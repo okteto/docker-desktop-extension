@@ -99,7 +99,7 @@ function Environment() {
         </Box>
 
         <Atom
-          label="Compose File:"
+          label="Okteto Manifest:"
           icon={<InsertDriveFileIcon htmlColor={iconColor} />}
         >
           <Typography variant="body1">{environment?.file}</Typography>
@@ -119,8 +119,28 @@ function Environment() {
           ))}
         </Atom>
       </Box>
-
-      <Output output={output} />
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        height: '100%',
+        bgcolor: '#101010',
+        border: '1px solid',
+        borderColor: 'transparent',
+        borderRadius: 1,
+        m: 0,
+        px: 3,
+        py: 2,
+        pr: .5,
+        pb: 0,
+        gap: 1,
+        overflow: 'hidden'
+      }}>
+        <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+          Output
+        </Typography>
+        <Output output={output} />
+      </Box>
     </>
   );
 }

@@ -36,6 +36,9 @@ push-extension: build-cli prepare-buildx ## Build & Upload extension image to hu
 	docker build --push --platform=linux/amd64 --build-arg OKTETO_ARCH=x86_64 --build-arg OKTETO_VERSION=${OKTETO_VERSION} -t=$(IMAGE):$(TAG)-amd64 .
 	docker buildx imagetools create -t $(IMAGE):$(TAG) $(IMAGE):$(TAG)-arm64 $(IMAGE):$(TAG)-amd64
 
+develop:
+	docker extension dev ui-source $(IMAGE) http://localhost:3000
+
 help: ## Show this help
 	@echo Please specify a build target. The choices are:
 	@grep -E '^[0-9a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "$(INFO_COLOR)%-30s$(NO_COLOR) %s\n", $$1, $$2}'

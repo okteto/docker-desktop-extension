@@ -3,9 +3,11 @@ import { createContext, useContext, useState, ReactNode, useEffect } from 'react
 import useInterval from 'use-interval';
 
 import okteto, { OktetoContext, OktetoContextList } from '../api/okteto';
+import { OktetoDevList, listDevs } from '../api/oktetoExtension';
 
 interface OktetoEnvironment {
   file: string
+  dev: string
   link: string
   contextName: string
   process: ExecProcess | undefined
@@ -14,15 +16,19 @@ interface OktetoEnvironment {
 interface OktetoStore {
   currentContext: OktetoContext | null
   contextList: OktetoContextList
+  currentManifest: string | null
+  currentDev: string | null
+  devList: OktetoDevList
   environment: OktetoEnvironment | null
   output: string
   loading: boolean
   ready: boolean
 
-  login: () => void
   stopEnvironment: () => void,
-  selectEnvironment: (f: string, withBuild: boolean) => void
+  selectManifest: (f: string | null) => void
+  selectDev: (file: string, devName: string) => void
   selectContext: (f: string) => void
+  addContext: (f: string) => void
   relaunchEnvironment: () => void
 }
 
@@ -33,32 +39,50 @@ type OktetoProviderProps = {
 const Okteto = createContext<OktetoStore | null>(null);
 
 const CONTEXT_POLLING_INTERVAL = 3000;
-export const defaultContextName = 'https://cloud.okteto.com';
 
 const OktetoProvider = ({ children } : OktetoProviderProps) => {
   const [currentContext, setCurrentContext] = useState<OktetoContext | null>(null);
   const [contextList, setContextList] = useState<OktetoContextList>([]);
+
+  const [currentManifest, setCurrentManifest] = useState<string | null>(null);
+  const [currentDev, setCurrentDev] = useState<string | null>(null);
+  const [devList, setDevList] = useState<OktetoDevList>([]);
+
   const [environment, setEnvironment] = useState<OktetoEnvironment | null>(null);
+
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
 
-  const login = async () => {
-    setLoading(true);
-    await okteto.contextUse(defaultContextName);
-    setLoading(false);
+  const selectManifest = async (file: string | null) => {
+    if (!currentContext) return;
+    if (file) {
+      const devs = await listDevs(file);
+      setDevList(devs);
+      setCurrentManifest(file);
+      if (devs.length === 1) {
+        selectDev(file, devs[0]);
+      }
+    }
   };
 
-  const selectEnvironment = (file: string, withBuild = false) => {
+  const selectDev = (file: string, devName: string) => {
+    if (!currentContext) return;
+    setCurrentDev(devName);
+    launchEnvironment(file, devName);
+  };
+
+  const launchEnvironment = (file: string, devName: string) => {
     if (!currentContext) return;
     setOutput('');
     setEnvironment({
       file,
+      dev: devName,
       link: `${currentContext.name}/#/spaces/${currentContext.namespace}`,
       contextName: currentContext.name,
-      process: okteto.up(file, currentContext.name, stdout => {
+      process: okteto.up(file, currentContext.name, devName, stdout => {
         setOutput(stdout);
-      }, withBuild)
+      })
     });
   };
 
@@ -68,8 +92,17 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
     const context = contextList.find(c => c.name === contextName);
     if (context) {
       stopEnvironment();
-      setCurrentContext(context);
+      await okteto.contextUse(contextName);
+      refreshContext();
     }
+    setLoading(false);
+  };
+
+  const addContext = async (contextName: string) => {
+    setLoading(true);
+    stopEnvironment();
+    await okteto.contextUse(contextName);
+    refreshContext();
     setLoading(false);
   };
 
@@ -77,30 +110,30 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
     environment?.process?.close();
     setOutput('');
     setEnvironment(null);
+    setCurrentDev(null);
+    setCurrentManifest(null);
   };
 
   const refreshContext = async () => {
+    // Set context list
     const list = await okteto.contextList();
     setContextList(list);
 
-    // We consider a user as logged in if he has configured Okteto Cloud's context.
-    const isLoggedIn = Boolean(list.find(c => c.name === defaultContextName));
-    if (!isLoggedIn) {
-      setCurrentContext(null);
-    } else if (!currentContext) {
-      const context = list.find(c => c.name === defaultContextName) ?? null;
-      setCurrentContext(context);
-    }
+    // Set current context
+    const context = list.find(c => c.current);
+    setCurrentContext(context ?? null);
   };
 
   const relaunchEnvironment = async () => {
-    if(!environment || loading) return;
+    if (!environment || loading) return;
 
-    const {file, contextName} = environment;
+    const {file, dev, contextName} = environment;
 
-    await stopEnvironment();
-    await selectContext(contextName);
-    selectEnvironment(file);
+    stopEnvironment();
+    selectContext(contextName);
+    setCurrentManifest(file);
+    setCurrentDev(dev);
+    launchEnvironment(file, dev);
   }
 
   useInterval(async () => {
@@ -121,15 +154,19 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
     <Okteto.Provider value={{
       currentContext,
       contextList,
+      currentManifest,
+      currentDev,
+      devList,
       environment,
       output,
       loading,
       ready,
 
-      login,
       stopEnvironment,
-      selectEnvironment,
+      selectManifest,
+      selectDev,
       selectContext,
+      addContext,
       relaunchEnvironment
     }}>
       {children}

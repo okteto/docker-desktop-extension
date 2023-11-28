@@ -1,16 +1,25 @@
+import { useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
 import logoDark from '../images/logo-dark.svg';
 import logoLight from '../images/logo-light.svg';
-import { useOkteto } from '../contexts/Okteto.context';
+import ContextDialog from '../components/ContextDialog';
 
 function Login() {
   const theme = useTheme();
-  const { login } = useOkteto();
+  const [open, setOpen] = useState(false);
 
-  const handleLogin = () => {
-    login();
+  const handleOpenDialog = () => {
+    setOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpen(false);
+  };
+  
+  const handleTrial = () => {
+    window.ddClient.host.openExternal('https://www.okteto.com/free-trial/');
   }
 
   return (
@@ -23,24 +32,64 @@ function Login() {
       height: '100%',
       gap: 2
     }}>
-      <img src={theme.palette.mode === 'dark' ? logoDark : logoLight} width="240" />
-
-      <Typography variant="h4">
-      Hybrid Development made Simple
-      </Typography>
-
-      <Typography variant="h6" sx={{ maxWidth: '650px', textAlign: 'center' }}>
-        Seamlessly combine Docker Desktop's local containers with cloud-based Kubernetes clusters and experiment the future of cloud-native development
-      </Typography>
-
-      <Button
-        variant="contained"
-        size="large"
-        sx={{ mt: '20px', fontSize: '1.1rem' }}
-        onClick={handleLogin}
-      >
-        Login
-      </Button>
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 6
+      }}>
+        <Box sx={{
+          display: 'flex',
+          borderRight: '1px solid',
+          borderColor: 'white',
+          height: '100%',
+          justifyContent: 'center',
+          pr: 6,
+        }}>
+          <img src={theme.palette.mode === 'dark' ? logoDark : logoLight} width="240" />
+        </Box>
+        <Box sx={{
+          display: 'flex',
+          flex: 1,
+          flexDirection: 'column',
+          alignItems: 'start',
+          gap: 2
+        }}>
+          <Typography variant="h4">
+            Code Locally, Run Remotely
+          </Typography>
+          <Typography variant="h5" component="div">
+            Ready to level up your development experience with Okteto?<br/>
+            Start by installing Okteto on your Kubernetes cluster.
+          </Typography>
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 1
+          }}>
+            <Button
+              variant="contained"
+              size="large"
+              sx={{ fontSize: '1.1rem' }}
+              onClick={handleTrial}
+            >
+              Try for Free
+            </Button>
+            <Button
+              variant="outlined"
+              size="large"
+              sx={{ fontSize: '1.1rem' }}
+              onClick={handleOpenDialog}
+            >
+              Add your context
+            </Button>
+          </Box>
+        </Box>
+      </Box>
+      <ContextDialog open={open} onClose={handleCloseDialog}/>
     </Box>
   );
 }

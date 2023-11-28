@@ -30,8 +30,6 @@ function Output({ output }: OutputProps) {
         flexDirection: 'column',
         flex: 1,
         width: '100%',
-        px: 3,
-        py: 2,
         bgcolor: '#101010',
         color: 'grey.300',
         border: '0',

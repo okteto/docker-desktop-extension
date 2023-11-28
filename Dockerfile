@@ -18,15 +18,16 @@ RUN --mount=type=cache,target=/usr/local/share/.cache/yarn-${TARGETARCH} yarn bu
 FROM curlimages/curl as okteto-binaries
 
 ARG OKTETO_ARCH
+ARG TARGETARCH
 ARG OKTETO_VERSION
 
-RUN curl -sLf --retry 3 -o okteto-Darwin-${OKTETO_ARCH} https://github.com/okteto/okteto/releases/download/${OKTETO_VERSION}/okteto-Darwin-${OKTETO_ARCH}
-RUN curl -sLf --retry 3 -o okteto-Linux-${OKTETO_ARCH} https://github.com/okteto/okteto/releases/download/${OKTETO_VERSION}/okteto-Linux-${OKTETO_ARCH}
+RUN curl -sLf --retry 3 -o okteto-Darwin-${TARGETARCH} https://github.com/okteto/okteto/releases/download/${OKTETO_VERSION}/okteto-Darwin-${OKTETO_ARCH}
+RUN curl -sLf --retry 3 -o okteto-Linux-${TARGETARCH} https://github.com/okteto/okteto/releases/download/${OKTETO_VERSION}/okteto-Linux-${OKTETO_ARCH}
 RUN curl -sLf --retry 3 -o okteto.exe https://github.com/okteto/okteto/releases/download/${OKTETO_VERSION}/okteto.exe
 
 FROM debian:bullseye-slim
 
-ARG OKTETO_ARCH
+ARG TARGETARCH
 
 LABEL org.opencontainers.image.title="Okteto" \
     org.opencontainers.image.description="Remote Development Environments powered by Kubernetes" \
@@ -42,10 +43,10 @@ COPY --from=client-builder /app/client/dist ui
 COPY okteto.svg .
 COPY metadata.json .
 
-COPY --from=okteto-binaries --chmod=755 /home/curl_user/okteto-Darwin-${OKTETO_ARCH} /darwin/okteto
-COPY --from=okteto-binaries --chmod=755 /home/curl_user/okteto-Linux-${OKTETO_ARCH} /linux/okteto
+COPY --from=okteto-binaries --chmod=755 /home/curl_user/okteto-Darwin-${TARGETARCH} /darwin/okteto
+COPY --from=okteto-binaries --chmod=755 /home/curl_user/okteto-Linux-${TARGETARCH} /linux/okteto
 COPY --from=okteto-binaries --chmod=755 /home/curl_user/okteto.exe /windows/okteto.exe
 
-COPY ./cli/bin/okteto-extension-Darwin-${OKTETO_ARCH} /darwin/okteto-extension
-COPY ./cli/bin/okteto-extension-Linux-${OKTETO_ARCH} /linux/okteto-extension
+COPY ./cli/bin/okteto-extension-Darwin-${TARGETARCH} /darwin/okteto-extension
+COPY ./cli/bin/okteto-extension-Linux-${TARGETARCH} /linux/okteto-extension
 COPY ./cli/bin/okteto-extension.exe /windows/okteto-extension.exe

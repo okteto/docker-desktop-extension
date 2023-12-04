@@ -1,6 +1,6 @@
 IMAGE?=okteto/docker-desktop-extension
 TAG?=dev
-OKTETO_VERSION?=2.21.0
+OKTETO_VERSION?=2.23.0
 
 BUILDER=buildx-multi-arch
 

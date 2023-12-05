@@ -56,12 +56,9 @@ function Login() {
           alignItems: 'start',
           gap: 2
         }}>
-          <Typography variant="h4">
-            Code Locally, Run Remotely
-          </Typography>
           <Typography variant="h5" component="div">
             Ready to level up your development experience with Okteto?<br/>
-            Start by installing Okteto on your Kubernetes cluster.
+            Install Okteto on your Kubernetes cluster.
           </Typography>
           <Box sx={{
             display: 'flex',

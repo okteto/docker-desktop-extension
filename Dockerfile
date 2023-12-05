@@ -30,14 +30,14 @@ FROM debian:bullseye-slim
 ARG TARGETARCH
 
 LABEL org.opencontainers.image.title="Okteto" \
-    org.opencontainers.image.description="Remote Development Environments powered by Kubernetes" \
+    org.opencontainers.image.description="Development Environments powered by Kubernetes" \
     org.opencontainers.image.vendor="Okteto" \
     com.docker.desktop.extension.api.version=">= 0.2.3" \
     com.docker.desktop.extension.icon="https://www.okteto.com/okteto-symbol-circle-inverse-1.1.png" \
     com.docker.extension.detailed-description="Okteto enables seamless deployment of remote development environments for Docker Compose and Kubernetes applications" \
     com.docker.extension.publisher-url="https://okteto.com" \
     com.docker.extension.additional-urls="[{\"title\":\"Documentation\",\"url\":\"https://okteto.com/docs\"}, {\"title\":\"Community\",\"url\":\"https://community.okteto.com/\"}]" \
-    com.docker.extension.screenshots="[{\"alt\": \"Remote Development Environments powered by Kubernetes\", \"url\": \"https://www.okteto.com/docker-desktop-extension-marketplace-1.png\"}, {\"alt\": \"Code locally and see the results immediatelly on your remote cluster\", \"url\": \"https://www.okteto.com/docker-desktop-extension-marketplace-2.png\"}]"
+    com.docker.extension.screenshots="[{\"alt\": \"Development Environments powered by Kubernetes\", \"url\": \"https://www.okteto.com/docker-desktop-extension-marketplace-1.png\"}, {\"alt\": \"Code locally and see the results immediatelly on your remote cluster\", \"url\": \"https://www.okteto.com/docker-desktop-extension-marketplace-2.png\"}]"
 
 COPY --from=client-builder /app/client/dist ui
 COPY okteto.svg .

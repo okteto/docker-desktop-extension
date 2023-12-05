@@ -19,7 +19,7 @@ const ENDPOINTS_POLLING_INTERVAL = 5000;
 
 function Environment() {
   const theme = useTheme();
-  const { output, environment, stopEnvironment, relaunchEnvironment } = useOkteto();
+  const { output, environment, stopEnvironment, redeployEnvironment } = useOkteto();
   const [endpoints, setEndpoints] = useState<Array<string>>([]);
 
   const handleOpenEnvironment = () => {
@@ -58,7 +58,7 @@ function Environment() {
           gap: 1
         }}>
           <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-            Remote Environment
+            Dev Environment
           </Typography>
 
           <div style={{ flex: '1 auto' }} />
@@ -84,9 +84,9 @@ function Environment() {
               }
             }}
             startIcon={<ReplayIcon />}
-            onClick={relaunchEnvironment}
+            onClick={redeployEnvironment}
           >
-            Relaunch
+            Redeploy
           </Button>
           <Button
             variant="contained"

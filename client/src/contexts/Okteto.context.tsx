@@ -29,7 +29,7 @@ interface OktetoStore {
   selectDev: (file: string, devName: string) => void
   selectContext: (f: string) => void
   addContext: (f: string) => void
-  relaunchEnvironment: () => void
+  redeployEnvironment: () => void
 }
 
 type OktetoProviderProps = {
@@ -69,10 +69,10 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
   const selectDev = (file: string, devName: string) => {
     if (!currentContext) return;
     setCurrentDev(devName);
-    launchEnvironment(file, devName);
+    deployEnvironment(file, devName);
   };
 
-  const launchEnvironment = (file: string, devName: string) => {
+  const deployEnvironment = (file: string, devName: string) => {
     if (!currentContext) return;
     setOutput('');
     setEnvironment({
@@ -87,7 +87,7 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
   };
 
   const selectContext = async (contextName: string) => {
-    // TODO: What do we do if context is changed with an environment launched? Dialog?
+    // TODO: What do we do if context is changed with an environment deployed? Dialog?
     setLoading(true);
     const context = contextList.find(c => c.name === contextName);
     if (context) {
@@ -124,7 +124,7 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
     setCurrentContext(context ?? null);
   };
 
-  const relaunchEnvironment = async () => {
+  const redeployEnvironment = async () => {
     if (!environment || loading) return;
 
     const {file, dev, contextName} = environment;
@@ -133,7 +133,7 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
     selectContext(contextName);
     setCurrentManifest(file);
     setCurrentDev(dev);
-    launchEnvironment(file, dev);
+    deployEnvironment(file, dev);
   }
 
   useInterval(async () => {
@@ -167,7 +167,7 @@ const OktetoProvider = ({ children } : OktetoProviderProps) => {
       selectDev,
       selectContext,
       addContext,
-      relaunchEnvironment
+      redeployEnvironment
     }}>
       {children}
     </Okteto.Provider>

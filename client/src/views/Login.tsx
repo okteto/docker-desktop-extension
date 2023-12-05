@@ -58,7 +58,8 @@ function Login() {
         }}>
           <Typography variant="h5" component="div">
             Ready to level up your development experience with Okteto?<br/>
-            Install Okteto on your Kubernetes cluster.
+            1) Install Okteto on your Kubernetes cluster<br/>
+            2) Add a context pointing to your cluster
           </Typography>
           <Box sx={{
             display: 'flex',
@@ -73,7 +74,7 @@ function Login() {
               sx={{ fontSize: '1.1rem' }}
               onClick={handleTrial}
             >
-              Try for Free
+              Install Okteto for Free
             </Button>
             <Button
               variant="outlined"

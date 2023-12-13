@@ -57,9 +57,11 @@ function Login() {
           gap: 2
         }}>
           <Typography variant="h5" component="div">
-            Ready to level up your development experience with Okteto?<br/>
-            1) Install Okteto on your Kubernetes cluster<br/>
-            2) Add a context pointing to your cluster
+            Ready to level up your development experience with Okteto?
+            <ol>
+              <li>Install Okteto on your Kubernetes cluster</li>
+              <li>Add a context pointing to your cluster</li>
+            </ol>
           </Typography>
           <Box sx={{
             display: 'flex',

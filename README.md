@@ -1,6 +1,6 @@
 # Docker Extension for Okteto
 
-Remote Development Environments for your Docker Compose applications.
+A new development experience for applications running on Kubernetes.
 
 ## Overwiew
 
@@ -8,7 +8,7 @@ Do you love Docker Desktop, but your application is starting to get too big for 
 
 ## Try It Out Yourself!
 
-Using the Docker Extension for Okteto is very simple. Once you have the extension installed, simply point it to the location of the Docker compose file describing your services and click the "Launch Remote Environment" button! In a matter of minutes, all the services you require should be up and running in the cloud.
+Using the Docker Extension for Okteto is very simple. Once you have the extension installed, simply point it to the location of the Docker compose file or [Okteto Manifest](https://www.okteto.com/docs/reference/manifest/) describing your services and click the "Deploy Dev Environment" button! In a matter of minutes, all the services you require should be up and running in the cloud.
 
 ![Okteto Extension](images/extension-ui.png)
 

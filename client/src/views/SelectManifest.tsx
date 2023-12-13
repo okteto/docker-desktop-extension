@@ -10,7 +10,7 @@ function SelectManifest() {
   const theme = useTheme();
   const { selectManifest, loading } = useOkteto();
 
-  const handleLaunch = async () => {
+  const handleDeploy = async () => {
     const result = await window.ddClient.desktopUI.dialog.showOpenDialog({
       properties: ['openFile'],
       filters: [{ name: 'Okteto Manifest', extensions: ['yml', 'yaml'] }]
@@ -39,7 +39,7 @@ function SelectManifest() {
         />
 
         <Typography variant="h6" sx={{ maxWidth: '400px', textAlign: 'center' }}>
-          Select your Okteto Manifest or Docker Compose to launch your remote development environment.
+          Select your Okteto Manifest or Docker Compose to deploy your development environment
         </Typography>
 
         <Box sx={{
@@ -54,9 +54,9 @@ function SelectManifest() {
             variant="contained"
             size="large"
             sx={{ fontSize: '1rem', height: '3.2rem' }}
-            onClick={handleLaunch}
+            onClick={handleDeploy}
           >
-            Launch Remote Environment
+            Deploy Dev Environment
           </Button>
         </Box>
       </Box>
@@ -75,7 +75,7 @@ function SelectManifest() {
       >
         <Typography variant="body1" sx={{ flex: 1 }}>
           <strong>New to Okteto?</strong><br />
-          Learn how Okteto helps simplify the application development process by leveraging remote environments.
+          Learn how Okteto helps simplify the development of microservices on Kubernetes.
         </Typography>
 
         <Button

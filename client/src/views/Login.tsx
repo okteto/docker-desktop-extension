@@ -47,7 +47,7 @@ function Login() {
           sx={{
             display: 'flex',
             borderRight: '1px solid',
-            borderColor: 'white',
+            borderColor: theme.palette.divider,
             height: '100%',
             justifyContent: 'center',
             pr: 6,

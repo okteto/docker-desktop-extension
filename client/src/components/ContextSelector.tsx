@@ -69,8 +69,6 @@ function ContextSelector({}) {
         }}
         variant="outlined"
       >
-        <MenuItem value={10}>Ten</MenuItem>
-        <MenuItem value={20}>Twenty</MenuItem>
         {contextList.length === 0 && (
           <MenuItem disabled value="">
             <em>No context found</em>

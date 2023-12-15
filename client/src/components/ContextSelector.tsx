@@ -16,7 +16,8 @@ const NEW_LABEL = '--new-context';
 function ContextSelector({}) {
   const theme = useTheme();
   const confirm = useConfirm();
-  const { environment, selectContext, currentContext, contextList, loading } = useOkteto();
+  const { environment, selectContext, currentContext, contextList, loading } =
+    useOkteto();
   const [open, setOpen] = useState(false);
 
   const handleOpenDialog = () => {
@@ -34,19 +35,20 @@ function ContextSelector({}) {
           title: 'Switch Context',
           content: (
             <Typography variant="body1">
-              Switching contexts will stop your running environment. Are you sure you want to continue?
+              Switching contexts will stop your running environment. Are you
+              sure you want to continue?
             </Typography>
           ),
           confirmationButtonProps: {
-            variant: 'contained'
+            variant: 'contained',
           },
           cancellationButtonProps: {
-            variant: 'outlined'
-          }
+            variant: 'outlined',
+          },
         });
       }
       selectContext(target.value);
-    } catch(_) {
+    } catch (_) {
       return;
     }
   };
@@ -54,20 +56,25 @@ function ContextSelector({}) {
   return (
     <FormControl sx={{ minWidth: 120 }} size="small" disabled={loading}>
       <Select
+        id="context-selector"
         value={currentContext?.name ?? ''}
         onChange={handleContextChange}
         displayEmpty
         inputProps={{ 'aria-label': 'Without label' }}
         SelectDisplayProps={{
-          style: { display: 'flex', alignItems: 'center' },
+          style: { 
+            display: 'flex', 
+            alignItems: 'center' 
+          },
         }}
+        variant="outlined"
       >
-        {contextList.length === 0 &&
+        {contextList.length === 0 && (
           <MenuItem disabled value="">
             <em>No context found</em>
           </MenuItem>
-        }
-        {contextList.map(context => (
+        )}
+        {contextList.map((context) => (
           <MenuItem key={context.name} value={context.name}>
             <ListItemIcon>
               <CloudCircleIcon />
@@ -81,9 +88,9 @@ function ContextSelector({}) {
             <AddCircleIcon />
           </ListItemIcon>
           <ListItemText primary="Add new context" />
-          </MenuItem>
+        </MenuItem>
       </Select>
-      <ContextDialog open={open} onClose={handleCloseDialog}/>
+      <ContextDialog open={open} onClose={handleCloseDialog} />
     </FormControl>
   );
 }
